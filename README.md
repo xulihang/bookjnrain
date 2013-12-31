@@ -5,7 +5,7 @@
 
 + Java 
 
-Android的官方编程语言，功能强大，支持多，但需要重头学Java。表示对Java理解不能。
+  Android的官方编程语言，功能强大，支持多，但需要重头学Java。表示对Java理解不能。
 
 + AppCan  
 
