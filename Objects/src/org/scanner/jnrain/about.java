@@ -267,6 +267,7 @@ public anywheresoftware.b4a.keywords.Common __c = null;
 public anywheresoftware.b4a.objects.ButtonWrapper _button1 = null;
 public anywheresoftware.b4a.objects.LabelWrapper _label1 = null;
 public anywheresoftware.b4a.objects.LabelWrapper _label2 = null;
+public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2service = null;
 public org.scanner.jnrain.main _main = null;
 
 public static void initializeProcessGlobals() {
