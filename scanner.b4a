@@ -10,14 +10,13 @@ UserTypesHint=
 NumberOfFiles=2
 File1=about.bal
 File2=scanner.bal
-NumberOfLibraries=7
+NumberOfLibraries=6
 Library1=b4azxing
 Library2=clipboard
 Library3=core
 Library4=http
 Library5=httputils2
 Library6=json
-Library7=sql
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -35,14 +34,12 @@ Sub Process_Globals
 	'These variables can be accessed from all modules.
 	Dim result=1 As String
 	Dim HttpClient1 As HttpClient
-	Dim URL As String
 End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
     Dim zx As Zxing_B4A
-
 	Dim Button1 As Button
 	Dim Label1 As Label
 	Dim Label2 As Label
@@ -56,7 +53,6 @@ Sub Globals
 	Dim msg As String
 	Dim bookpubdate As String
     Dim job1 As HttpJob
-	
 	Dim Button3 As Button
 End Sub
 
@@ -97,56 +93,58 @@ Sub Button1_Click
 End Sub
 
 Sub Button2_Click
-	URL="https://api.douban.com/v2/book/isbn/:"&result
     GetJSONData
 	Button3.Enabled=True
 End Sub
 
 Sub HttpClient1_ResponseSuccess (Response As HttpResponse, TaskId As Int)
-   Log("ResponseSuccess")
-   ProgressDialogHide
-   Dim jresult As String
-   jresult = Response.GetString("UTF8") 'Convert the response to a string
-   sJSONData = jresult
-   'Log(jresult) ' test dump
+    Log("ResponseSuccess")
+    ProgressDialogHide
+    Dim jresult As String
+    jresult = Response.GetString("UTF8") 'Convert the response to a string
+    sJSONData = jresult
+    'Log(jresult) ' test dump
 End Sub
 
 Sub HttpClient1_ResponseError (Reason As String, StatusCode As Int, TaskId As Int)
-   Log(Reason)
-   Log(StatusCode)
-   ProgressDialogHide
-   msg = "连接失败。"
-   If Reason <> Null Then msg = msg & CRLF & Reason
-   ToastMessageShow (msg, True)
+    Log(Reason)
+    Log(StatusCode)
+    ProgressDialogHide
+    msg = "连接失败。"
+	Button3.Enabled=False
+    If Reason <> Null Then msg = msg & CRLF & Reason
+    ToastMessageShow (msg, True)
 End Sub
 
 Sub GetJSONData()
-   Dim request As HttpRequest
-   request.InitializeGet(URL)
-   request.Timeout = 10000 'set timeout to 10 seconds
-   If HttpClient1.Execute(request, 1) = False Then Return 'Will be false if their is already a running task (with the same id).
-   ProgressDialogShow("获取数据中...")
+    Dim URL As String
+    URL="https://api.douban.com/v2/book/isbn/:"&result
+    Dim request As HttpRequest
+    request.InitializeGet(URL)
+    request.Timeout = 10000 'set timeout to 10 seconds
+    If HttpClient1.Execute(request, 1) = False Then Return 'Will be false if their is already a running task (with the same id).
+    ProgressDialogShow("获取数据中...")
 
 End Sub
 
 Sub LoadJSONDATA()
 
-  Log("Data:"&sJSONData)
+    Log("Data:"&sJSONData)
  
-  Dim JSON As JSONParser
-  JSON.Initialize(sJSONData)
-  Dim map1 As Map
-  map1 = JSON.Nextobject
-  'Log(map1.Size)
-  'm = map1.GetKeyAt(12)
-  bookname = map1.GetValueAt(12)
-  bookprice= map1.GetValueAt(13)
-  bookpublisher= map1.GetValueAt(9)
-  bookpubdate= map1.GetValueAt(4)
-  'Log(m.Get("title"))
-  'Log(sJSONData)
-  'Log(map1)
-   Label2.Text="条码："&result&CRLF&"书名："&bookname&CRLF&"价格："&bookprice&CRLF&"出版社："&bookpublisher&CRLF&"出版年份："&bookpubdate
+    Dim JSON As JSONParser
+    JSON.Initialize(sJSONData)
+    Dim map1 As Map
+    map1 = JSON.Nextobject
+    'Log(map1.Size)
+    'm = map1.GetKeyAt(12)
+    bookname = map1.GetValueAt(12)
+    bookprice= map1.GetValueAt(13)
+    bookpublisher= map1.GetValueAt(9)
+    bookpubdate= map1.GetValueAt(4)
+    'Log(m.Get("title"))
+    'Log(sJSONData)
+    'Log(map1)
+    Label2.Text="条码："&result&CRLF&"书名："&bookname&CRLF&"价格："&bookprice&CRLF&"出版社："&bookpublisher&CRLF&"出版年份："&bookpubdate
 End Sub
 
 Sub JobDone (job As HttpJob)
@@ -168,23 +166,28 @@ Sub JobDone (job As HttpJob)
 End Sub
 
 Sub Quit_Click
- ExitApplication
+    ExitApplication
 End Sub
 
 Sub about_Click
- StartActivity(about)
+    StartActivity(about)
 End Sub
 
 Sub cp_Click
- Dim CC As BClipboard
- CC.setText(Label2.Text)
+    Dim CC As BClipboard
+    CC.setText(Label2.Text)
 End Sub
 
 Sub Button3_Click
-  LoadJSONDATA
+    LoadJSONDATA
 End Sub
 
 Sub upload_Click 
-  job1.Initialize("Job1",Me)
-  job1.PostString("http://192.168.1.104/login","username=admin&password=admin&isbn="&result)
+    Dim now As Long
+    Dim time As String
+	now = DateTime.now
+    time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
+	Log(time)
+    job1.Initialize("Job1",Me)
+    job1.PostString("http://192.168.1.103:8080/login","username=admin&password=admin&isbn="&result&"&time="&time)
 End Sub

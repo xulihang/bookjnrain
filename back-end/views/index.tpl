@@ -10,6 +10,7 @@
 		<input type="text" name="username" />
 		<input type="password" name="password" />
 		<input type="text" name="isbn" />
+		<input type="text" name="time" />
 		</br>
     <INPUT TYPE="submit" VALUE="Login" METHOD="post" NAME="Submit"><br />
 	</form>

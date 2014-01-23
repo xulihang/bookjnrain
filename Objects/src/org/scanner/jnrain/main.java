@@ -266,7 +266,6 @@ public class main extends Activity implements B4AActivity{
 public anywheresoftware.b4a.keywords.Common __c = null;
 public static String _result = "";
 public static anywheresoftware.b4a.http.HttpClientWrapper _httpclient1 = null;
-public static String _url = "";
 public ice.zxing.b4aZXingLib _zx = null;
 public anywheresoftware.b4a.objects.ButtonWrapper _button1 = null;
 public anywheresoftware.b4a.objects.LabelWrapper _label1 = null;
@@ -291,93 +290,96 @@ vis = vis | (main.mostCurrent != null);
 vis = vis | (about.mostCurrent != null);
 return vis;}
 public static String  _about_click() throws Exception{
- //BA.debugLineNum = 153;BA.debugLine="Sub about_Click";
- //BA.debugLineNum = 154;BA.debugLine="StartActivity(about)";
+ //BA.debugLineNum = 152;BA.debugLine="Sub about_Click";
+ //BA.debugLineNum = 153;BA.debugLine="StartActivity(about)";
 anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(mostCurrent._about.getObject()));
- //BA.debugLineNum = 155;BA.debugLine="End Sub";
+ //BA.debugLineNum = 154;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_create(boolean _firsttime) throws Exception{
- //BA.debugLineNum = 42;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
- //BA.debugLineNum = 44;BA.debugLine="HttpClient1.Initialize(\"HttpClient1\")";
+ //BA.debugLineNum = 39;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+ //BA.debugLineNum = 41;BA.debugLine="HttpClient1.Initialize(\"HttpClient1\")";
 _httpclient1.Initialize("HttpClient1");
- //BA.debugLineNum = 45;BA.debugLine="Activity.LoadLayout(\"scanner\")";
+ //BA.debugLineNum = 42;BA.debugLine="Activity.LoadLayout(\"scanner\")";
 mostCurrent._activity.LoadLayout("scanner",mostCurrent.activityBA);
- //BA.debugLineNum = 46;BA.debugLine="Activity.AddMenuItem(\"复制到剪贴板\",\"cp\")";
+ //BA.debugLineNum = 43;BA.debugLine="Activity.AddMenuItem(\"复制到剪贴板\",\"cp\")";
 mostCurrent._activity.AddMenuItem("复制到剪贴板","cp");
- //BA.debugLineNum = 47;BA.debugLine="Activity.AddMenuItem(\"上传到服务器\",\"upload\")";
+ //BA.debugLineNum = 44;BA.debugLine="Activity.AddMenuItem(\"上传到服务器\",\"upload\")";
 mostCurrent._activity.AddMenuItem("上传到服务器","upload");
- //BA.debugLineNum = 48;BA.debugLine="Activity.AddMenuItem(\"关于\",\"about\")";
+ //BA.debugLineNum = 45;BA.debugLine="Activity.AddMenuItem(\"关于\",\"about\")";
 mostCurrent._activity.AddMenuItem("关于","about");
- //BA.debugLineNum = 49;BA.debugLine="Activity.AddMenuItem(\"退出\",\"Quit\")";
+ //BA.debugLineNum = 46;BA.debugLine="Activity.AddMenuItem(\"退出\",\"Quit\")";
 mostCurrent._activity.AddMenuItem("退出","Quit");
- //BA.debugLineNum = 51;BA.debugLine="Button2.Enabled=False";
+ //BA.debugLineNum = 48;BA.debugLine="Button2.Enabled=False";
 mostCurrent._button2.setEnabled(anywheresoftware.b4a.keywords.Common.False);
- //BA.debugLineNum = 52;BA.debugLine="Button3.Enabled=False";
+ //BA.debugLineNum = 49;BA.debugLine="Button3.Enabled=False";
 mostCurrent._button3.setEnabled(anywheresoftware.b4a.keywords.Common.False);
- //BA.debugLineNum = 53;BA.debugLine="End Sub";
+ //BA.debugLineNum = 50;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_pause(boolean _userclosed) throws Exception{
- //BA.debugLineNum = 66;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
- //BA.debugLineNum = 68;BA.debugLine="End Sub";
+ //BA.debugLineNum = 63;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
+ //BA.debugLineNum = 65;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_resume() throws Exception{
- //BA.debugLineNum = 62;BA.debugLine="Sub Activity_Resume";
- //BA.debugLineNum = 64;BA.debugLine="End Sub";
+ //BA.debugLineNum = 59;BA.debugLine="Sub Activity_Resume";
+ //BA.debugLineNum = 61;BA.debugLine="End Sub";
 return "";
 }
 public static String  _button1_click() throws Exception{
- //BA.debugLineNum = 74;BA.debugLine="Sub Button1_Click";
- //BA.debugLineNum = 75;BA.debugLine="zx.BeginScan(\"myzx\")";
+ //BA.debugLineNum = 71;BA.debugLine="Sub Button1_Click";
+ //BA.debugLineNum = 72;BA.debugLine="zx.BeginScan(\"myzx\")";
 mostCurrent._zx.BeginScan(mostCurrent.activityBA,"myzx");
- //BA.debugLineNum = 76;BA.debugLine="End Sub";
+ //BA.debugLineNum = 73;BA.debugLine="End Sub";
 return "";
 }
 public static String  _button2_click() throws Exception{
- //BA.debugLineNum = 78;BA.debugLine="Sub Button2_Click";
- //BA.debugLineNum = 79;BA.debugLine="URL=\"https://api.douban.com/v2/book/isbn/:\"&result";
-_url = "https://api.douban.com/v2/book/isbn/:"+_result;
- //BA.debugLineNum = 80;BA.debugLine="GetJSONData";
+ //BA.debugLineNum = 75;BA.debugLine="Sub Button2_Click";
+ //BA.debugLineNum = 76;BA.debugLine="GetJSONData";
 _getjsondata();
- //BA.debugLineNum = 81;BA.debugLine="Button3.Enabled=True";
+ //BA.debugLineNum = 77;BA.debugLine="Button3.Enabled=True";
 mostCurrent._button3.setEnabled(anywheresoftware.b4a.keywords.Common.True);
- //BA.debugLineNum = 82;BA.debugLine="End Sub";
+ //BA.debugLineNum = 78;BA.debugLine="End Sub";
 return "";
 }
 public static String  _button3_click() throws Exception{
- //BA.debugLineNum = 162;BA.debugLine="Sub Button3_Click";
- //BA.debugLineNum = 163;BA.debugLine="LoadJSONDATA";
+ //BA.debugLineNum = 161;BA.debugLine="Sub Button3_Click";
+ //BA.debugLineNum = 162;BA.debugLine="LoadJSONDATA";
 _loadjsondata();
- //BA.debugLineNum = 164;BA.debugLine="End Sub";
+ //BA.debugLineNum = 163;BA.debugLine="End Sub";
 return "";
 }
 public static String  _cp_click() throws Exception{
 b4a.util.BClipboard _cc = null;
- //BA.debugLineNum = 157;BA.debugLine="Sub cp_Click";
- //BA.debugLineNum = 158;BA.debugLine="Dim CC As BClipboard";
+ //BA.debugLineNum = 156;BA.debugLine="Sub cp_Click";
+ //BA.debugLineNum = 157;BA.debugLine="Dim CC As BClipboard";
 _cc = new b4a.util.BClipboard();
- //BA.debugLineNum = 159;BA.debugLine="CC.setText(Label2.Text)";
+ //BA.debugLineNum = 158;BA.debugLine="CC.setText(Label2.Text)";
 _cc.setText(mostCurrent.activityBA,mostCurrent._label2.getText());
- //BA.debugLineNum = 160;BA.debugLine="End Sub";
+ //BA.debugLineNum = 159;BA.debugLine="End Sub";
 return "";
 }
 public static String  _getjsondata() throws Exception{
+String _url = "";
 anywheresoftware.b4a.http.HttpClientWrapper.HttpUriRequestWrapper _request = null;
- //BA.debugLineNum = 102;BA.debugLine="Sub GetJSONData()";
- //BA.debugLineNum = 103;BA.debugLine="Dim request As HttpRequest";
+ //BA.debugLineNum = 99;BA.debugLine="Sub GetJSONData()";
+ //BA.debugLineNum = 100;BA.debugLine="Dim URL As String";
+_url = "";
+ //BA.debugLineNum = 101;BA.debugLine="URL=\"https://api.douban.com/v2/book/isbn/:\"&result";
+_url = "https://api.douban.com/v2/book/isbn/:"+_result;
+ //BA.debugLineNum = 102;BA.debugLine="Dim request As HttpRequest";
 _request = new anywheresoftware.b4a.http.HttpClientWrapper.HttpUriRequestWrapper();
- //BA.debugLineNum = 104;BA.debugLine="request.InitializeGet(URL)";
+ //BA.debugLineNum = 103;BA.debugLine="request.InitializeGet(URL)";
 _request.InitializeGet(_url);
- //BA.debugLineNum = 105;BA.debugLine="request.Timeout = 10000 'set timeout to 10 seconds";
+ //BA.debugLineNum = 104;BA.debugLine="request.Timeout = 10000 'set timeout to 10 seconds";
 _request.setTimeout((int) (10000));
- //BA.debugLineNum = 106;BA.debugLine="If HttpClient1.Execute(request, 1) = False Then Return 'Will be false if their is already a running task (with the same id).";
+ //BA.debugLineNum = 105;BA.debugLine="If HttpClient1.Execute(request, 1) = False Then Return 'Will be false if their is already a running task (with the same id).";
 if (_httpclient1.Execute(processBA,_request,(int) (1))==anywheresoftware.b4a.keywords.Common.False) { 
 if (true) return "";};
- //BA.debugLineNum = 107;BA.debugLine="ProgressDialogShow(\"获取数据中...\")";
+ //BA.debugLineNum = 106;BA.debugLine="ProgressDialogShow(\"获取数据中...\")";
 anywheresoftware.b4a.keywords.Common.ProgressDialogShow(mostCurrent.activityBA,"获取数据中...");
- //BA.debugLineNum = 109;BA.debugLine="End Sub";
+ //BA.debugLineNum = 108;BA.debugLine="End Sub";
 return "";
 }
 
@@ -395,140 +397,142 @@ about._process_globals();
 		}
     }
 }public static String  _globals() throws Exception{
- //BA.debugLineNum = 20;BA.debugLine="Sub Globals";
- //BA.debugLineNum = 23;BA.debugLine="Dim zx As Zxing_B4A";
+ //BA.debugLineNum = 19;BA.debugLine="Sub Globals";
+ //BA.debugLineNum = 22;BA.debugLine="Dim zx As Zxing_B4A";
 mostCurrent._zx = new ice.zxing.b4aZXingLib();
- //BA.debugLineNum = 25;BA.debugLine="Dim Button1 As Button";
+ //BA.debugLineNum = 23;BA.debugLine="Dim Button1 As Button";
 mostCurrent._button1 = new anywheresoftware.b4a.objects.ButtonWrapper();
- //BA.debugLineNum = 26;BA.debugLine="Dim Label1 As Label";
+ //BA.debugLineNum = 24;BA.debugLine="Dim Label1 As Label";
 mostCurrent._label1 = new anywheresoftware.b4a.objects.LabelWrapper();
- //BA.debugLineNum = 27;BA.debugLine="Dim Label2 As Label";
+ //BA.debugLineNum = 25;BA.debugLine="Dim Label2 As Label";
 mostCurrent._label2 = new anywheresoftware.b4a.objects.LabelWrapper();
- //BA.debugLineNum = 28;BA.debugLine="Dim bookname As String";
+ //BA.debugLineNum = 26;BA.debugLine="Dim bookname As String";
 mostCurrent._bookname = "";
- //BA.debugLineNum = 29;BA.debugLine="Dim bookprice As String";
+ //BA.debugLineNum = 27;BA.debugLine="Dim bookprice As String";
 mostCurrent._bookprice = "";
- //BA.debugLineNum = 30;BA.debugLine="Dim bookpublisher As String";
+ //BA.debugLineNum = 28;BA.debugLine="Dim bookpublisher As String";
 mostCurrent._bookpublisher = "";
- //BA.debugLineNum = 31;BA.debugLine="Dim Button2 As Button";
+ //BA.debugLineNum = 29;BA.debugLine="Dim Button2 As Button";
 mostCurrent._button2 = new anywheresoftware.b4a.objects.ButtonWrapper();
- //BA.debugLineNum = 32;BA.debugLine="Dim ImageView1 As ImageView";
+ //BA.debugLineNum = 30;BA.debugLine="Dim ImageView1 As ImageView";
 mostCurrent._imageview1 = new anywheresoftware.b4a.objects.ImageViewWrapper();
- //BA.debugLineNum = 33;BA.debugLine="Dim Label3 As Label";
+ //BA.debugLineNum = 31;BA.debugLine="Dim Label3 As Label";
 mostCurrent._label3 = new anywheresoftware.b4a.objects.LabelWrapper();
- //BA.debugLineNum = 34;BA.debugLine="Dim sJSONData As String";
+ //BA.debugLineNum = 32;BA.debugLine="Dim sJSONData As String";
 mostCurrent._sjsondata = "";
- //BA.debugLineNum = 35;BA.debugLine="Dim msg As String";
+ //BA.debugLineNum = 33;BA.debugLine="Dim msg As String";
 mostCurrent._msg = "";
- //BA.debugLineNum = 36;BA.debugLine="Dim bookpubdate As String";
+ //BA.debugLineNum = 34;BA.debugLine="Dim bookpubdate As String";
 mostCurrent._bookpubdate = "";
- //BA.debugLineNum = 37;BA.debugLine="Dim job1 As HttpJob";
+ //BA.debugLineNum = 35;BA.debugLine="Dim job1 As HttpJob";
 mostCurrent._job1 = new anywheresoftware.b4a.samples.httputils2.httpjob();
- //BA.debugLineNum = 39;BA.debugLine="Dim Button3 As Button";
+ //BA.debugLineNum = 36;BA.debugLine="Dim Button3 As Button";
 mostCurrent._button3 = new anywheresoftware.b4a.objects.ButtonWrapper();
- //BA.debugLineNum = 40;BA.debugLine="End Sub";
+ //BA.debugLineNum = 37;BA.debugLine="End Sub";
 return "";
 }
 public static String  _httpclient1_responseerror(String _reason,int _statuscode,int _taskid) throws Exception{
- //BA.debugLineNum = 93;BA.debugLine="Sub HttpClient1_ResponseError (Reason As String, StatusCode As Int, TaskId As Int)";
- //BA.debugLineNum = 94;BA.debugLine="Log(Reason)";
+ //BA.debugLineNum = 89;BA.debugLine="Sub HttpClient1_ResponseError (Reason As String, StatusCode As Int, TaskId As Int)";
+ //BA.debugLineNum = 90;BA.debugLine="Log(Reason)";
 anywheresoftware.b4a.keywords.Common.Log(_reason);
- //BA.debugLineNum = 95;BA.debugLine="Log(StatusCode)";
+ //BA.debugLineNum = 91;BA.debugLine="Log(StatusCode)";
 anywheresoftware.b4a.keywords.Common.Log(BA.NumberToString(_statuscode));
- //BA.debugLineNum = 96;BA.debugLine="ProgressDialogHide";
+ //BA.debugLineNum = 92;BA.debugLine="ProgressDialogHide";
 anywheresoftware.b4a.keywords.Common.ProgressDialogHide();
- //BA.debugLineNum = 97;BA.debugLine="msg = \"连接失败。\"";
+ //BA.debugLineNum = 93;BA.debugLine="msg = \"连接失败。\"";
 mostCurrent._msg = "连接失败。";
- //BA.debugLineNum = 98;BA.debugLine="If Reason <> Null Then msg = msg & CRLF & Reason";
+ //BA.debugLineNum = 94;BA.debugLine="Button3.Enabled=False";
+mostCurrent._button3.setEnabled(anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 95;BA.debugLine="If Reason <> Null Then msg = msg & CRLF & Reason";
 if (_reason!= null) { 
 mostCurrent._msg = mostCurrent._msg+anywheresoftware.b4a.keywords.Common.CRLF+_reason;};
- //BA.debugLineNum = 99;BA.debugLine="ToastMessageShow (msg, True)";
+ //BA.debugLineNum = 96;BA.debugLine="ToastMessageShow (msg, True)";
 anywheresoftware.b4a.keywords.Common.ToastMessageShow(mostCurrent._msg,anywheresoftware.b4a.keywords.Common.True);
- //BA.debugLineNum = 100;BA.debugLine="End Sub";
+ //BA.debugLineNum = 97;BA.debugLine="End Sub";
 return "";
 }
 public static String  _httpclient1_responsesuccess(anywheresoftware.b4a.http.HttpClientWrapper.HttpResponeWrapper _response,int _taskid) throws Exception{
 String _jresult = "";
- //BA.debugLineNum = 84;BA.debugLine="Sub HttpClient1_ResponseSuccess (Response As HttpResponse, TaskId As Int)";
- //BA.debugLineNum = 85;BA.debugLine="Log(\"ResponseSuccess\")";
+ //BA.debugLineNum = 80;BA.debugLine="Sub HttpClient1_ResponseSuccess (Response As HttpResponse, TaskId As Int)";
+ //BA.debugLineNum = 81;BA.debugLine="Log(\"ResponseSuccess\")";
 anywheresoftware.b4a.keywords.Common.Log("ResponseSuccess");
- //BA.debugLineNum = 86;BA.debugLine="ProgressDialogHide";
+ //BA.debugLineNum = 82;BA.debugLine="ProgressDialogHide";
 anywheresoftware.b4a.keywords.Common.ProgressDialogHide();
- //BA.debugLineNum = 87;BA.debugLine="Dim jresult As String";
+ //BA.debugLineNum = 83;BA.debugLine="Dim jresult As String";
 _jresult = "";
- //BA.debugLineNum = 88;BA.debugLine="jresult = Response.GetString(\"UTF8\") 'Convert the response to a string";
+ //BA.debugLineNum = 84;BA.debugLine="jresult = Response.GetString(\"UTF8\") 'Convert the response to a string";
 _jresult = _response.GetString("UTF8");
- //BA.debugLineNum = 89;BA.debugLine="sJSONData = jresult";
+ //BA.debugLineNum = 85;BA.debugLine="sJSONData = jresult";
 mostCurrent._sjsondata = _jresult;
- //BA.debugLineNum = 91;BA.debugLine="End Sub";
+ //BA.debugLineNum = 87;BA.debugLine="End Sub";
 return "";
 }
 public static String  _jobdone(anywheresoftware.b4a.samples.httputils2.httpjob _job) throws Exception{
- //BA.debugLineNum = 131;BA.debugLine="Sub JobDone (job As HttpJob)";
- //BA.debugLineNum = 132;BA.debugLine="Log(\"JobName = \" & job.JobName & \", Success = \" & job.Success)";
+ //BA.debugLineNum = 130;BA.debugLine="Sub JobDone (job As HttpJob)";
+ //BA.debugLineNum = 131;BA.debugLine="Log(\"JobName = \" & job.JobName & \", Success = \" & job.Success)";
 anywheresoftware.b4a.keywords.Common.Log("JobName = "+_job._jobname+", Success = "+BA.ObjectToString(_job._success));
- //BA.debugLineNum = 133;BA.debugLine="If job.Success = True Then";
+ //BA.debugLineNum = 132;BA.debugLine="If job.Success = True Then";
 if (_job._success==anywheresoftware.b4a.keywords.Common.True) { 
- //BA.debugLineNum = 134;BA.debugLine="Select job.JobName";
+ //BA.debugLineNum = 133;BA.debugLine="Select job.JobName";
 switch (BA.switchObjectToInt(_job._jobname,"Job1","Job2","Job3")) {
 case 0:
 case 1:
- //BA.debugLineNum = 137;BA.debugLine="Log(job.GetString)";
+ //BA.debugLineNum = 136;BA.debugLine="Log(job.GetString)";
 anywheresoftware.b4a.keywords.Common.Log(_job._getstring());
  break;
 case 2:
- //BA.debugLineNum = 140;BA.debugLine="Activity.SetBackgroundImage(job.GetBitmap)";
+ //BA.debugLineNum = 139;BA.debugLine="Activity.SetBackgroundImage(job.GetBitmap)";
 mostCurrent._activity.SetBackgroundImage((android.graphics.Bitmap)(_job._getbitmap().getObject()));
  break;
 }
 ;
  }else {
- //BA.debugLineNum = 143;BA.debugLine="Log(\"Error: \" & job.ErrorMessage)";
+ //BA.debugLineNum = 142;BA.debugLine="Log(\"Error: \" & job.ErrorMessage)";
 anywheresoftware.b4a.keywords.Common.Log("Error: "+_job._errormessage);
- //BA.debugLineNum = 144;BA.debugLine="ToastMessageShow(\"Error: \" & job.ErrorMessage, True)";
+ //BA.debugLineNum = 143;BA.debugLine="ToastMessageShow(\"Error: \" & job.ErrorMessage, True)";
 anywheresoftware.b4a.keywords.Common.ToastMessageShow("Error: "+_job._errormessage,anywheresoftware.b4a.keywords.Common.True);
  };
- //BA.debugLineNum = 146;BA.debugLine="job.Release";
+ //BA.debugLineNum = 145;BA.debugLine="job.Release";
 _job._release();
- //BA.debugLineNum = 147;BA.debugLine="End Sub";
+ //BA.debugLineNum = 146;BA.debugLine="End Sub";
 return "";
 }
 public static String  _loadjsondata() throws Exception{
 anywheresoftware.b4a.objects.collections.JSONParser _json = null;
 anywheresoftware.b4a.objects.collections.Map _map1 = null;
- //BA.debugLineNum = 111;BA.debugLine="Sub LoadJSONDATA()";
- //BA.debugLineNum = 113;BA.debugLine="Log(\"Data:\"&sJSONData)";
+ //BA.debugLineNum = 110;BA.debugLine="Sub LoadJSONDATA()";
+ //BA.debugLineNum = 112;BA.debugLine="Log(\"Data:\"&sJSONData)";
 anywheresoftware.b4a.keywords.Common.Log("Data:"+mostCurrent._sjsondata);
- //BA.debugLineNum = 115;BA.debugLine="Dim JSON As JSONParser";
+ //BA.debugLineNum = 114;BA.debugLine="Dim JSON As JSONParser";
 _json = new anywheresoftware.b4a.objects.collections.JSONParser();
- //BA.debugLineNum = 116;BA.debugLine="JSON.Initialize(sJSONData)";
+ //BA.debugLineNum = 115;BA.debugLine="JSON.Initialize(sJSONData)";
 _json.Initialize(mostCurrent._sjsondata);
- //BA.debugLineNum = 117;BA.debugLine="Dim map1 As Map";
+ //BA.debugLineNum = 116;BA.debugLine="Dim map1 As Map";
 _map1 = new anywheresoftware.b4a.objects.collections.Map();
- //BA.debugLineNum = 118;BA.debugLine="map1 = JSON.Nextobject";
+ //BA.debugLineNum = 117;BA.debugLine="map1 = JSON.Nextobject";
 _map1 = _json.NextObject();
- //BA.debugLineNum = 121;BA.debugLine="bookname = map1.GetValueAt(12)";
+ //BA.debugLineNum = 120;BA.debugLine="bookname = map1.GetValueAt(12)";
 mostCurrent._bookname = BA.ObjectToString(_map1.GetValueAt((int) (12)));
- //BA.debugLineNum = 122;BA.debugLine="bookprice= map1.GetValueAt(13)";
+ //BA.debugLineNum = 121;BA.debugLine="bookprice= map1.GetValueAt(13)";
 mostCurrent._bookprice = BA.ObjectToString(_map1.GetValueAt((int) (13)));
- //BA.debugLineNum = 123;BA.debugLine="bookpublisher= map1.GetValueAt(9)";
+ //BA.debugLineNum = 122;BA.debugLine="bookpublisher= map1.GetValueAt(9)";
 mostCurrent._bookpublisher = BA.ObjectToString(_map1.GetValueAt((int) (9)));
- //BA.debugLineNum = 124;BA.debugLine="bookpubdate= map1.GetValueAt(4)";
+ //BA.debugLineNum = 123;BA.debugLine="bookpubdate= map1.GetValueAt(4)";
 mostCurrent._bookpubdate = BA.ObjectToString(_map1.GetValueAt((int) (4)));
- //BA.debugLineNum = 128;BA.debugLine="Label2.Text=\"条码：\"&result&CRLF&\"书名：\"&bookname&CRLF&\"价格：\"&bookprice&CRLF&\"出版社：\"&bookpublisher&CRLF&\"出版年份：\"&bookpubdate";
+ //BA.debugLineNum = 127;BA.debugLine="Label2.Text=\"条码：\"&result&CRLF&\"书名：\"&bookname&CRLF&\"价格：\"&bookprice&CRLF&\"出版社：\"&bookpublisher&CRLF&\"出版年份：\"&bookpubdate";
 mostCurrent._label2.setText((Object)("条码："+_result+anywheresoftware.b4a.keywords.Common.CRLF+"书名："+mostCurrent._bookname+anywheresoftware.b4a.keywords.Common.CRLF+"价格："+mostCurrent._bookprice+anywheresoftware.b4a.keywords.Common.CRLF+"出版社："+mostCurrent._bookpublisher+anywheresoftware.b4a.keywords.Common.CRLF+"出版年份："+mostCurrent._bookpubdate));
- //BA.debugLineNum = 129;BA.debugLine="End Sub";
+ //BA.debugLineNum = 128;BA.debugLine="End Sub";
 return "";
 }
 public static String  _myzx_result(String _atype,String _values) throws Exception{
- //BA.debugLineNum = 55;BA.debugLine="Sub myzx_result(atype As String,Values As String)";
- //BA.debugLineNum = 57;BA.debugLine="result=Values";
+ //BA.debugLineNum = 52;BA.debugLine="Sub myzx_result(atype As String,Values As String)";
+ //BA.debugLineNum = 54;BA.debugLine="result=Values";
 _result = _values;
- //BA.debugLineNum = 58;BA.debugLine="Label2.Text = \"结果为：\"&result";
+ //BA.debugLineNum = 55;BA.debugLine="Label2.Text = \"结果为：\"&result";
 mostCurrent._label2.setText((Object)("结果为："+_result));
- //BA.debugLineNum = 59;BA.debugLine="Button2.Enabled=True";
+ //BA.debugLineNum = 56;BA.debugLine="Button2.Enabled=True";
 mostCurrent._button2.setEnabled(anywheresoftware.b4a.keywords.Common.True);
- //BA.debugLineNum = 60;BA.debugLine="End Sub";
+ //BA.debugLineNum = 57;BA.debugLine="End Sub";
 return "";
 }
 public static String  _process_globals() throws Exception{
@@ -537,25 +541,35 @@ public static String  _process_globals() throws Exception{
 _result = BA.NumberToString(1);
  //BA.debugLineNum = 16;BA.debugLine="Dim HttpClient1 As HttpClient";
 _httpclient1 = new anywheresoftware.b4a.http.HttpClientWrapper();
- //BA.debugLineNum = 17;BA.debugLine="Dim URL As String";
-_url = "";
- //BA.debugLineNum = 18;BA.debugLine="End Sub";
+ //BA.debugLineNum = 17;BA.debugLine="End Sub";
 return "";
 }
 public static String  _quit_click() throws Exception{
- //BA.debugLineNum = 149;BA.debugLine="Sub Quit_Click";
- //BA.debugLineNum = 150;BA.debugLine="ExitApplication";
+ //BA.debugLineNum = 148;BA.debugLine="Sub Quit_Click";
+ //BA.debugLineNum = 149;BA.debugLine="ExitApplication";
 anywheresoftware.b4a.keywords.Common.ExitApplication();
- //BA.debugLineNum = 151;BA.debugLine="End Sub";
+ //BA.debugLineNum = 150;BA.debugLine="End Sub";
 return "";
 }
 public static String  _upload_click() throws Exception{
- //BA.debugLineNum = 166;BA.debugLine="Sub upload_Click";
- //BA.debugLineNum = 167;BA.debugLine="job1.Initialize(\"Job1\",Me)";
+long _now = 0L;
+String _time = "";
+ //BA.debugLineNum = 165;BA.debugLine="Sub upload_Click";
+ //BA.debugLineNum = 166;BA.debugLine="Dim now As Long";
+_now = 0L;
+ //BA.debugLineNum = 167;BA.debugLine="Dim time As String";
+_time = "";
+ //BA.debugLineNum = 168;BA.debugLine="now = DateTime.now";
+_now = anywheresoftware.b4a.keywords.Common.DateTime.getNow();
+ //BA.debugLineNum = 169;BA.debugLine="time=DateTime.GetYear(now)&\"/\"&DateTime.GetMonth(now)&\"/\"&DateTime.GetDayOfMonth(now)&\"/\"&DateTime.GetHour(now)&\"/\"&DateTime.GetMinute(now)&\"/\"";
+_time = BA.NumberToString(anywheresoftware.b4a.keywords.Common.DateTime.GetYear(_now))+"/"+BA.NumberToString(anywheresoftware.b4a.keywords.Common.DateTime.GetMonth(_now))+"/"+BA.NumberToString(anywheresoftware.b4a.keywords.Common.DateTime.GetDayOfMonth(_now))+"/"+BA.NumberToString(anywheresoftware.b4a.keywords.Common.DateTime.GetHour(_now))+"/"+BA.NumberToString(anywheresoftware.b4a.keywords.Common.DateTime.GetMinute(_now))+"/";
+ //BA.debugLineNum = 170;BA.debugLine="Log(time)";
+anywheresoftware.b4a.keywords.Common.Log(_time);
+ //BA.debugLineNum = 171;BA.debugLine="job1.Initialize(\"Job1\",Me)";
 mostCurrent._job1._initialize(processBA,"Job1",main.getObject());
- //BA.debugLineNum = 168;BA.debugLine="job1.PostString(\"http://192.168.1.104/login\",\"username=admin&password=admin&isbn=\"&result)";
-mostCurrent._job1._poststring("http://192.168.1.104/login","username=admin&password=admin&isbn="+_result);
- //BA.debugLineNum = 169;BA.debugLine="End Sub";
+ //BA.debugLineNum = 172;BA.debugLine="job1.PostString(\"http://192.168.1.103:8080/login\",\"username=admin&password=admin&isbn=\"&result&\"&time=\"&time)";
+mostCurrent._job1._poststring("http://192.168.1.103:8080/login","username=admin&password=admin&isbn="+_result+"&time="+_time);
+ //BA.debugLineNum = 173;BA.debugLine="End Sub";
 return "";
 }
 }
