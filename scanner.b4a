@@ -189,5 +189,5 @@ Sub upload_Click
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
 	Log(time)
     job1.Initialize("Job1",Me)
-    job1.PostString("http://192.168.1.103:8080/login","username=admin&password=admin&isbn="&result&"&time="&time)
+    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username=admin&password=admin&isbn="&result&"&time="&time)
 End Sub

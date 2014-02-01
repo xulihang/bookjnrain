@@ -567,8 +567,8 @@ _time = BA.NumberToString(anywheresoftware.b4a.keywords.Common.DateTime.GetYear(
 anywheresoftware.b4a.keywords.Common.Log(_time);
  //BA.debugLineNum = 171;BA.debugLine="job1.Initialize(\"Job1\",Me)";
 mostCurrent._job1._initialize(processBA,"Job1",main.getObject());
- //BA.debugLineNum = 172;BA.debugLine="job1.PostString(\"http://192.168.1.103:8080/login\",\"username=admin&password=admin&isbn=\"&result&\"&time=\"&time)";
-mostCurrent._job1._poststring("http://192.168.1.103:8080/login","username=admin&password=admin&isbn="+_result+"&time="+_time);
+ //BA.debugLineNum = 172;BA.debugLine="job1.PostString(\"https://bottle-bookjnrain.rhcloud.com/login\",\"username=admin&password=admin&isbn=\"&result&\"&time=\"&time)";
+mostCurrent._job1._poststring("https://bottle-bookjnrain.rhcloud.com/login","username=admin&password=admin&isbn="+_result+"&time="+_time);
  //BA.debugLineNum = 173;BA.debugLine="End Sub";
 return "";
 }
