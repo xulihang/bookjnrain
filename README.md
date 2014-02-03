@@ -36,7 +36,7 @@
 
   https://bottle-bookjnrain.rhcloud.com/query （在线查询页面）
 
-  https://bottle-bookjnrain.rhcloud.com/reset（危险操作，清空数据库）
+  https://bottle-bookjnrain.rhcloud.com/reset （危险操作，清空数据库）
 
 
   
