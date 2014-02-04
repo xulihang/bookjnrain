@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-  
-from bottle import route, run, template, request
+import os
+from bottle import route, run, template, request, static_file
 import sqlite3
 import json
 import urllib
@@ -44,6 +45,40 @@ def login():
 def index():
     
     return template("index")
+
+#下载页面的
+@route("/get")
+def get():
+    
+    return static_file("book.db","./",download="book.db")
+
+#生成xls文件并提供下载
+@route("/getxls")
+def getxls():
+    os.system("python newxls.py")
+    return static_file("test.xls","./",download="test.xls")
+
+  
+#重置数据库
+@route("/reset")
+def reset():
+    conn = sqlite3.connect('book.db')
+    c = conn.cursor()
+    c.execute("delete from book")
+    conn.commit()
+    c.close()
+    conn.close()
+    return '数据库已清空！';
+
+#查询界面
+@route("/query")
+def query():
+    os.system("python query.py")
+    return static_file("out.html",root='static')       
+
+@route('/static/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root='static')
 
 #插入
 def insert():
