@@ -13,8 +13,8 @@ import anywheresoftware.b4a.B4AUncaughtException;
 import anywheresoftware.b4a.debug.*;
 import java.lang.ref.WeakReference;
 
-public class about extends Activity implements B4AActivity{
-	public static about mostCurrent;
+public class web extends Activity implements B4AActivity{
+	public static web mostCurrent;
 	static boolean afterFirstLayout;
 	static boolean isFirst = true;
     private static boolean processGlobalsRun = false;
@@ -31,7 +31,7 @@ public class about extends Activity implements B4AActivity{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (isFirst) {
-			processBA = new BA(this.getApplicationContext(), null, null, "org.scanner.jnrain", "org.scanner.jnrain.about");
+			processBA = new BA(this.getApplicationContext(), null, null, "org.scanner.jnrain", "org.scanner.jnrain.web");
 			processBA.loadHtSubs(this.getClass());
 	        float deviceScale = getApplicationContext().getResources().getDisplayMetrics().density;
 	        BALayout.setDeviceScale(deviceScale);
@@ -40,7 +40,7 @@ public class about extends Activity implements B4AActivity{
 		else if (previousOne != null) {
 			Activity p = previousOne.get();
 			if (p != null && p != this) {
-                BA.LogInfo("Killing previous instance (about).");
+                BA.LogInfo("Killing previous instance (web).");
 				p.finish();
 			}
 		}
@@ -79,7 +79,7 @@ public class about extends Activity implements B4AActivity{
 	private void afterFirstLayout() {
         if (this != mostCurrent)
 			return;
-		activityBA = new BA(this, layout, processBA, "org.scanner.jnrain", "org.scanner.jnrain.about");
+		activityBA = new BA(this, layout, processBA, "org.scanner.jnrain", "org.scanner.jnrain.web");
         
         processBA.sharedProcessBA.activityBA = new java.lang.ref.WeakReference<BA>(activityBA);
         anywheresoftware.b4a.objects.ViewWrapper.lastId = 0;
@@ -88,19 +88,19 @@ public class about extends Activity implements B4AActivity{
         if (BA.shellMode) {
 			if (isFirst)
 				processBA.raiseEvent2(null, true, "SHELL", false);
-			processBA.raiseEvent2(null, true, "CREATE", true, "org.scanner.jnrain.about", processBA, activityBA, _activity, anywheresoftware.b4a.keywords.Common.Density);
+			processBA.raiseEvent2(null, true, "CREATE", true, "org.scanner.jnrain.web", processBA, activityBA, _activity, anywheresoftware.b4a.keywords.Common.Density);
 			_activity.reinitializeForShell(activityBA, "activity");
 		}
         initializeProcessGlobals();		
         initializeGlobals();
         
-        BA.LogInfo("** Activity (about) Create, isFirst = " + isFirst + " **");
+        BA.LogInfo("** Activity (web) Create, isFirst = " + isFirst + " **");
         processBA.raiseEvent2(null, true, "activity_create", false, isFirst);
 		isFirst = false;
 		if (this != mostCurrent)
 			return;
         processBA.setActivityPaused(false);
-        BA.LogInfo("** Activity (about) Resume **");
+        BA.LogInfo("** Activity (web) Resume **");
         processBA.raiseEvent(null, "activity_resume");
         if (android.os.Build.VERSION.SDK_INT >= 11) {
 			try {
@@ -154,7 +154,7 @@ public class about extends Activity implements B4AActivity{
 		}
 	}
     public static Class<?> getObject() {
-		return about.class;
+		return web.class;
 	}
     private Boolean onKeySubExist = null;
     private Boolean onKeyUpSubExist = null;
@@ -217,7 +217,7 @@ public class about extends Activity implements B4AActivity{
         if (_activity == null) //workaround for emulator bug (Issue 2423)
             return;
 		anywheresoftware.b4a.Msgbox.dismiss(true);
-        BA.LogInfo("** Activity (about) Pause, UserClosed = " + activityBA.activity.isFinishing() + " **");
+        BA.LogInfo("** Activity (web) Pause, UserClosed = " + activityBA.activity.isFinishing() + " **");
         processBA.raiseEvent2(_activity, true, "activity_pause", false, activityBA.activity.isFinishing());		
         processBA.setActivityPaused(true);
         mostCurrent = null;
@@ -250,7 +250,7 @@ public class about extends Activity implements B4AActivity{
 			if (mostCurrent == null || mostCurrent != activity.get())
 				return;
 			processBA.setActivityPaused(false);
-            BA.LogInfo("** Activity (about) Resume **");
+            BA.LogInfo("** Activity (web) Resume **");
 		    processBA.raiseEvent(mostCurrent._activity, "activity_resume", (Object[])null);
 		}
     }
@@ -264,12 +264,16 @@ public class about extends Activity implements B4AActivity{
 	}
 
 public anywheresoftware.b4a.keywords.Common __c = null;
+public anywheresoftware.b4a.samples.httputils2.httpjob _job1 = null;
 public anywheresoftware.b4a.objects.ButtonWrapper _button1 = null;
-public anywheresoftware.b4a.objects.LabelWrapper _label1 = null;
-public anywheresoftware.b4a.objects.LabelWrapper _label2 = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _button2 = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _button3 = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _button4 = null;
+public anywheresoftware.b4a.objects.ButtonWrapper _button5 = null;
+public anywheresoftware.b4a.objects.EditTextWrapper _edittext1 = null;
 public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2service = null;
 public org.scanner.jnrain.main _main = null;
-public org.scanner.jnrain.web _web = null;
+public org.scanner.jnrain.about _about = null;
 
 public static void initializeProcessGlobals() {
              try {
@@ -279,38 +283,137 @@ public static void initializeProcessGlobals() {
             }
 }
 public static String  _activity_create(boolean _firsttime) throws Exception{
- //BA.debugLineNum = 21;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
- //BA.debugLineNum = 23;BA.debugLine="Activity.LoadLayout(\"about\")";
-mostCurrent._activity.LoadLayout("about",mostCurrent.activityBA);
- //BA.debugLineNum = 25;BA.debugLine="End Sub";
+ //BA.debugLineNum = 24;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+ //BA.debugLineNum = 26;BA.debugLine="Activity.LoadLayout(\"web\")";
+mostCurrent._activity.LoadLayout("web",mostCurrent.activityBA);
+ //BA.debugLineNum = 28;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_pause(boolean _userclosed) throws Exception{
- //BA.debugLineNum = 31;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
- //BA.debugLineNum = 33;BA.debugLine="End Sub";
+ //BA.debugLineNum = 34;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
+ //BA.debugLineNum = 36;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_resume() throws Exception{
- //BA.debugLineNum = 27;BA.debugLine="Sub Activity_Resume";
- //BA.debugLineNum = 29;BA.debugLine="End Sub";
+ //BA.debugLineNum = 30;BA.debugLine="Sub Activity_Resume";
+ //BA.debugLineNum = 32;BA.debugLine="End Sub";
 return "";
 }
 public static String  _button1_click() throws Exception{
- //BA.debugLineNum = 37;BA.debugLine="Sub Button1_Click";
- //BA.debugLineNum = 38;BA.debugLine="Activity.Finish";
+ //BA.debugLineNum = 85;BA.debugLine="Sub Button1_Click";
+ //BA.debugLineNum = 86;BA.debugLine="Activity.Finish";
 mostCurrent._activity.Finish();
- //BA.debugLineNum = 39;BA.debugLine="End Sub";
+ //BA.debugLineNum = 87;BA.debugLine="End Sub";
+return "";
+}
+public static String  _button2_click() throws Exception{
+anywheresoftware.b4a.objects.IntentWrapper _intent1 = null;
+ //BA.debugLineNum = 79;BA.debugLine="Sub Button2_Click";
+ //BA.debugLineNum = 80;BA.debugLine="ToastMessageShow(\"将用系统浏览器访问\",False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器访问",anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 81;BA.debugLine="Dim Intent1 As Intent";
+_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();
+ //BA.debugLineNum = 82;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/query\", 0)";
+_intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/query",(int) (0));
+ //BA.debugLineNum = 83;BA.debugLine="StartActivity(Intent1)";
+anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(_intent1.getObject()));
+ //BA.debugLineNum = 84;BA.debugLine="End Sub";
+return "";
+}
+public static String  _button3_click() throws Exception{
+anywheresoftware.b4a.objects.IntentWrapper _intent1 = null;
+ //BA.debugLineNum = 73;BA.debugLine="Sub Button3_Click";
+ //BA.debugLineNum = 74;BA.debugLine="ToastMessageShow(\"将用系统浏览器下载\",False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器下载",anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 75;BA.debugLine="Dim Intent1 As Intent";
+_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();
+ //BA.debugLineNum = 76;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/get\", 0)";
+_intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/get",(int) (0));
+ //BA.debugLineNum = 77;BA.debugLine="StartActivity(Intent1)";
+anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(_intent1.getObject()));
+ //BA.debugLineNum = 78;BA.debugLine="End Sub";
+return "";
+}
+public static String  _button4_click() throws Exception{
+anywheresoftware.b4a.objects.IntentWrapper _intent1 = null;
+ //BA.debugLineNum = 67;BA.debugLine="Sub Button4_Click";
+ //BA.debugLineNum = 68;BA.debugLine="ToastMessageShow(\"将用系统浏览器下载\",False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器下载",anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 69;BA.debugLine="Dim Intent1 As Intent";
+_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();
+ //BA.debugLineNum = 70;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/getxls\", 0)";
+_intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/getxls",(int) (0));
+ //BA.debugLineNum = 71;BA.debugLine="StartActivity(Intent1)";
+anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(_intent1.getObject()));
+ //BA.debugLineNum = 72;BA.debugLine="End Sub";
+return "";
+}
+public static String  _button5_click() throws Exception{
+ //BA.debugLineNum = 58;BA.debugLine="Sub Button5_Click";
+ //BA.debugLineNum = 59;BA.debugLine="If EditText1.Text=\"admin\" Then";
+if ((mostCurrent._edittext1.getText()).equals("admin")) { 
+ //BA.debugLineNum = 60;BA.debugLine="ToastMessageShow(\"即将清空数据库。。。\",False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("即将清空数据库。。。",anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 61;BA.debugLine="job1.Initialize(\"Job1\",Me)";
+mostCurrent._job1._initialize(processBA,"Job1",web.getObject());
+ //BA.debugLineNum = 62;BA.debugLine="job1.Download(\"https://bottle-bookjnrain.rhcloud.com/reset\")";
+mostCurrent._job1._download("https://bottle-bookjnrain.rhcloud.com/reset");
+ }else {
+ //BA.debugLineNum = 64;BA.debugLine="ToastMessageShow(\"密码错误！\",False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("密码错误！",anywheresoftware.b4a.keywords.Common.False);
+ };
+ //BA.debugLineNum = 66;BA.debugLine="End Sub";
 return "";
 }
 public static String  _globals() throws Exception{
  //BA.debugLineNum = 12;BA.debugLine="Sub Globals";
+ //BA.debugLineNum = 15;BA.debugLine="Dim job1 As HttpJob";
+mostCurrent._job1 = new anywheresoftware.b4a.samples.httputils2.httpjob();
  //BA.debugLineNum = 16;BA.debugLine="Dim Button1 As Button";
 mostCurrent._button1 = new anywheresoftware.b4a.objects.ButtonWrapper();
- //BA.debugLineNum = 17;BA.debugLine="Dim Label1 As Label";
-mostCurrent._label1 = new anywheresoftware.b4a.objects.LabelWrapper();
- //BA.debugLineNum = 18;BA.debugLine="Dim Label2 As Label";
-mostCurrent._label2 = new anywheresoftware.b4a.objects.LabelWrapper();
- //BA.debugLineNum = 19;BA.debugLine="End Sub";
+ //BA.debugLineNum = 17;BA.debugLine="Dim Button2 As Button";
+mostCurrent._button2 = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 18;BA.debugLine="Dim Button3 As Button";
+mostCurrent._button3 = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 19;BA.debugLine="Dim Button4 As Button";
+mostCurrent._button4 = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 20;BA.debugLine="Dim Button5 As Button";
+mostCurrent._button5 = new anywheresoftware.b4a.objects.ButtonWrapper();
+ //BA.debugLineNum = 21;BA.debugLine="Dim EditText1 As EditText";
+mostCurrent._edittext1 = new anywheresoftware.b4a.objects.EditTextWrapper();
+ //BA.debugLineNum = 22;BA.debugLine="End Sub";
+return "";
+}
+public static String  _jobdone(anywheresoftware.b4a.samples.httputils2.httpjob _job) throws Exception{
+ //BA.debugLineNum = 39;BA.debugLine="Sub JobDone (job As HttpJob)";
+ //BA.debugLineNum = 40;BA.debugLine="Log(\"JobName = \" & job.JobName & \", Success = \" & job.Success)";
+anywheresoftware.b4a.keywords.Common.Log("JobName = "+_job._jobname+", Success = "+BA.ObjectToString(_job._success));
+ //BA.debugLineNum = 41;BA.debugLine="If job.Success = True Then";
+if (_job._success==anywheresoftware.b4a.keywords.Common.True) { 
+ //BA.debugLineNum = 42;BA.debugLine="Select job.JobName";
+switch (BA.switchObjectToInt(_job._jobname,"Job1","Job2","Job3")) {
+case 0:
+case 1:
+ //BA.debugLineNum = 45;BA.debugLine="Log(job.GetString)";
+anywheresoftware.b4a.keywords.Common.Log(_job._getstring());
+ //BA.debugLineNum = 46;BA.debugLine="ToastMessageShow(\"数据库已清空！\",False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("数据库已清空！",anywheresoftware.b4a.keywords.Common.False);
+ break;
+case 2:
+ //BA.debugLineNum = 49;BA.debugLine="Activity.SetBackgroundImage(job.GetBitmap)";
+mostCurrent._activity.SetBackgroundImage((android.graphics.Bitmap)(_job._getbitmap().getObject()));
+ break;
+}
+;
+ }else {
+ //BA.debugLineNum = 52;BA.debugLine="Log(\"Error: \" & job.ErrorMessage)";
+anywheresoftware.b4a.keywords.Common.Log("Error: "+_job._errormessage);
+ //BA.debugLineNum = 53;BA.debugLine="ToastMessageShow(\"Error: \" & job.ErrorMessage, True)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("Error: "+_job._errormessage,anywheresoftware.b4a.keywords.Common.True);
+ };
+ //BA.debugLineNum = 55;BA.debugLine="job.Release";
+_job._release();
+ //BA.debugLineNum = 56;BA.debugLine="End Sub";
 return "";
 }
 public static String  _process_globals() throws Exception{

@@ -1,15 +1,18 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=1
+NumberOfModules=2
 Module1=about
 ModuleVisible1=1
+Module2=web
+ModuleVisible2=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~'End of default text.~\n~
 UserTypesHint=
-NumberOfFiles=2
+NumberOfFiles=3
 File1=about.bal
 File2=scanner.bal
+File3=web.bal
 NumberOfLibraries=6
 Library1=b4azxing
 Library2=clipboard
@@ -60,6 +63,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	HttpClient1.Initialize("HttpClient1")
 	Activity.LoadLayout("scanner")
+	Activity.AddMenuItem("在线工具","web")
 	Activity.AddMenuItem("复制到剪贴板","cp")
 	Activity.AddMenuItem("上传到服务器","upload")
 	Activity.AddMenuItem("关于","about")
@@ -154,6 +158,7 @@ Sub JobDone (job As HttpJob)
 			Case "Job1", "Job2"
 				'print the result to the logs
 				Log(job.GetString)
+				ToastMessageShow("上传成功！",False)
 			Case "Job3"
 				'show the downloaded image
 				Activity.SetBackgroundImage(job.GetBitmap)
@@ -173,6 +178,10 @@ Sub about_Click
     StartActivity(about)
 End Sub
 
+Sub web_Click
+    StartActivity(web)
+End Sub
+
 Sub cp_Click
     Dim CC As BClipboard
     CC.setText(Label2.Text)
@@ -183,6 +192,7 @@ Sub Button3_Click
 End Sub
 
 Sub upload_Click 
+    ToastMessageShow("上传中，请等待提示。",False)
     Dim now As Long
     Dim time As String
 	now = DateTime.now
