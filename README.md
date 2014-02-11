@@ -28,15 +28,15 @@
 
   现采用openshift提供的免费空间做后台。由于gfw，只能用https连接，但不影响使用。
 
-  https://bottle-bookjnrain.rhcloud.com/index （登入数据页面）
+  `https://bottle-bookjnrain.rhcloud.com/index` （登入数据页面）
 
-  https://bottle-bookjnrain.rhcloud.com/get （下载sqlite数据库文件）
+  `https://bottle-bookjnrain.rhcloud.com/get` （下载sqlite数据库文件）
 
-  https://bottle-bookjnrain.rhcloud.com/getxls （生成并提供xls文件下载）
+  `https://bottle-bookjnrain.rhcloud.com/getxls` （生成并提供xls文件下载）
 
-  https://bottle-bookjnrain.rhcloud.com/query （在线查询页面）
+  `https://bottle-bookjnrain.rhcloud.com/query` （在线查询页面）
 
-  https://bottle-bookjnrain.rhcloud.com/reset （危险操作，清空数据库）
+  `https://bottle-bookjnrain.rhcloud.com/reset` （危险操作，清空数据库）
 
 
   

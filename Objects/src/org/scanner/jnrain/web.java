@@ -323,12 +323,12 @@ return "";
 public static String  _button3_click() throws Exception{
 anywheresoftware.b4a.objects.IntentWrapper _intent1 = null;
  //BA.debugLineNum = 73;BA.debugLine="Sub Button3_Click";
- //BA.debugLineNum = 74;BA.debugLine="ToastMessageShow(\"将用系统浏览器下载\",False)";
-anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器下载",anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 74;BA.debugLine="ToastMessageShow(\"将用系统浏览器访问\",False)";
+anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器访问",anywheresoftware.b4a.keywords.Common.False);
  //BA.debugLineNum = 75;BA.debugLine="Dim Intent1 As Intent";
 _intent1 = new anywheresoftware.b4a.objects.IntentWrapper();
- //BA.debugLineNum = 76;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/get\", 0)";
-_intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/get",(int) (0));
+ //BA.debugLineNum = 76;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/index\", 0)";
+_intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/index",(int) (0));
  //BA.debugLineNum = 77;BA.debugLine="StartActivity(Intent1)";
 anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(_intent1.getObject()));
  //BA.debugLineNum = 78;BA.debugLine="End Sub";

@@ -2,15 +2,18 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>书籍登录</title>
 </head>
 <body>
 
 	<form action="/login" method="post">
-		<input type="text" name="username" />
-		<input type="password" name="password" />
-		<input type="text" name="isbn" />
-		<input type="text" name="time" />
+		<a>用户帐号:</a><input type="text" name="username" />
+		</br>
+		<a>用户密码:</a><input type="password" name="password" />
+		</br>
+		<a>图书条码:</a><input type="text" name="isbn" />
+		</br>
+		<a>扫描时间:</a><input type="text" name="time" />
 		</br>
     <INPUT TYPE="submit" VALUE="Login" METHOD="post" NAME="Submit"><br />
 	</form>
