@@ -46,6 +46,7 @@ Sub JobDone (job As HttpJob)
 			Case "Job1", "Job2"
 				'print the result to the logs
 				Log(job.GetString)
+				ProgressDialogHide
 				ToastMessageShow("数据库已清空！",False)
 			Case "Job3"
 				'show the downloaded image
@@ -60,9 +61,9 @@ End Sub
 
 Sub Button5_Click
     If EditText1.Text="admin" Then
-	    ToastMessageShow("即将清空数据库。。。",False) 
+	    ProgressDialogShow("清空中...") 
 	    job1.Initialize("Job1",Me)
-        job1.Download("https://bottle-bookjnrain.rhcloud.com/reset")
+        job1.PostString("https://bottle-bookjnrain.rhcloud.com/reset","username=admin&password=admin")
 	Else
 	    ToastMessageShow("密码错误！",False)
 	End If

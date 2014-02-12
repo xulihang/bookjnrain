@@ -60,15 +60,23 @@ def getxls():
 
   
 #重置数据库
-@route("/reset")
+@route("/reset",method="post")
 def reset():
-    conn = sqlite3.connect('book.db')
-    c = conn.cursor()
-    c.execute("delete from book")
-    conn.commit()
-    c.close()
-    conn.close()
-    return '数据库已清空！';
+    username = request.forms.get("username");
+    password = request.forms.get("password");
+    if username =='admin' and password =='admin':
+        conn = sqlite3.connect('book.db')
+        c = conn.cursor()
+        c.execute("delete from book")
+        conn.commit()
+        c.close()
+        conn.close()
+        return '数据库已清空！';
+
+#重置数据库登录
+@route("/resetpage")
+def resetpage():
+    return template("reset")
 
 #查询界面
 @route("/query")
