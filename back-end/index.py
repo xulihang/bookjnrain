@@ -58,7 +58,62 @@ def getxls():
     os.system("python newxls.py")
     return static_file("test.xls","./",download="test.xls")
 
-  
+#手工输入
+@route("/handlogin",method="post")
+def reset():
+    username = request.forms.get("username");
+    password = request.forms.get("password");
+    title = request.forms.get("title");
+    price = request.forms.get("price");
+    isbn = request.forms.get("isbn");
+    pubdate=request.forms.get("pubdate");
+    publisher=request.forms.get("publisher");
+    lasttime = request.forms.get("time");
+    print(username,password,isbn)
+    exist=1#默认插入
+    print exist
+    if username =='admin' and password =='admin':
+        #判断是否已经存在
+        conn = sqlite3.connect('book.db')
+        c = conn.cursor()
+        for isbncode in c.execute('select code from book'):
+            if str("(u'"+isbn+"',)") == str(isbncode):
+                exist=0
+        print exist
+        if exist==0:
+            #update()
+            status="已更新原有记录。"
+            conn = sqlite3.connect('book.db')
+            c = conn.cursor()
+            c.execute("update book set title='"+title+"' where code Like "+isbn+"")
+            c.execute("update book set price='"+price+"' where code Like "+isbn+"")
+            c.execute("update book set publisher='"+publisher+"' where code Like "+isbn+"")
+            c.execute("update book set pubdate='"+pubdate+"' where code Like "+isbn+"")
+            c.execute("update book set lasttime='"+lasttime+"' where code Like "+isbn+"")
+            conn.commit()
+            c.close()
+            conn.close()
+        else:
+            #insert()
+            status="已插入新的记录。"
+            conn = sqlite3.connect('book.db')
+            c = conn.cursor()
+            c.execute("insert into book values ('"+title+"','"+price+"','"+publisher+"','"+isbn+"','"+pubdate+"','"+lasttime+"','0')")
+            conn.commit()
+            c.close()
+            conn.close()
+            
+        return '登录成功：'+status;
+    else :
+        return username+'登录失败';
+
+#手工输入页面
+@route("/hand")
+def resetpage():
+    return template("hand")  
+
+
+
 #重置数据库
 @route("/reset",method="post")
 def reset():
@@ -113,6 +168,8 @@ def update():
     c = conn.cursor()
     c.execute("update book set lasttime='"+lasttime+"' where code Like "+isbn+"")
     conn.commit()
+    c.close()
+    conn.close()
 
 
 def find():

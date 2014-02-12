@@ -77,7 +77,7 @@ End Sub
 Sub Button3_Click
 	ToastMessageShow("将用系统浏览器访问",False)
 	Dim Intent1 As Intent
-    Intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/index", 0)
+    Intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/hand", 0)
     StartActivity(Intent1) 
 End Sub
 Sub Button2_Click
