@@ -270,6 +270,9 @@ public anywheresoftware.b4a.objects.LabelWrapper _label2 = null;
 public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2service = null;
 public org.scanner.jnrain.main _main = null;
 public org.scanner.jnrain.web _web = null;
+  public Object[] GetGlobals() {
+		return new Object[] {"Activity",mostCurrent._activity,"Button1",mostCurrent._button1,"HttpUtils2Service",mostCurrent._httputils2service,"Label1",mostCurrent._label1,"Label2",mostCurrent._label2,"Main",Debug.moduleToString(org.scanner.jnrain.main.class),"web",Debug.moduleToString(org.scanner.jnrain.web.class)};
+}
 
 public static void initializeProcessGlobals() {
              try {
@@ -279,29 +282,77 @@ public static void initializeProcessGlobals() {
             }
 }
 public static String  _activity_create(boolean _firsttime) throws Exception{
- //BA.debugLineNum = 21;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
- //BA.debugLineNum = 23;BA.debugLine="Activity.LoadLayout(\"about\")";
+		Debug.PushSubsStack("Activity_Create (about) ","about",1,mostCurrent.activityBA,mostCurrent);
+try {
+Debug.locals.put("FirstTime", _firsttime);
+ BA.debugLineNum = 21;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+Debug.ShouldStop(1048576);
+ BA.debugLineNum = 23;BA.debugLine="Activity.LoadLayout(\"about\")";
+Debug.ShouldStop(4194304);
 mostCurrent._activity.LoadLayout("about",mostCurrent.activityBA);
- //BA.debugLineNum = 25;BA.debugLine="End Sub";
+ BA.debugLineNum = 25;BA.debugLine="End Sub";
+Debug.ShouldStop(16777216);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _activity_pause(boolean _userclosed) throws Exception{
- //BA.debugLineNum = 31;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
- //BA.debugLineNum = 33;BA.debugLine="End Sub";
+		Debug.PushSubsStack("Activity_Pause (about) ","about",1,mostCurrent.activityBA,mostCurrent);
+try {
+Debug.locals.put("UserClosed", _userclosed);
+ BA.debugLineNum = 31;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
+Debug.ShouldStop(1073741824);
+ BA.debugLineNum = 33;BA.debugLine="End Sub";
+Debug.ShouldStop(1);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _activity_resume() throws Exception{
- //BA.debugLineNum = 27;BA.debugLine="Sub Activity_Resume";
- //BA.debugLineNum = 29;BA.debugLine="End Sub";
+		Debug.PushSubsStack("Activity_Resume (about) ","about",1,mostCurrent.activityBA,mostCurrent);
+try {
+ BA.debugLineNum = 27;BA.debugLine="Sub Activity_Resume";
+Debug.ShouldStop(67108864);
+ BA.debugLineNum = 29;BA.debugLine="End Sub";
+Debug.ShouldStop(268435456);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _button1_click() throws Exception{
- //BA.debugLineNum = 37;BA.debugLine="Sub Button1_Click";
- //BA.debugLineNum = 38;BA.debugLine="Activity.Finish";
+		Debug.PushSubsStack("Button1_Click (about) ","about",1,mostCurrent.activityBA,mostCurrent);
+try {
+ BA.debugLineNum = 37;BA.debugLine="Sub Button1_Click";
+Debug.ShouldStop(16);
+ BA.debugLineNum = 38;BA.debugLine="Activity.Finish";
+Debug.ShouldStop(32);
 mostCurrent._activity.Finish();
- //BA.debugLineNum = 39;BA.debugLine="End Sub";
+ BA.debugLineNum = 39;BA.debugLine="End Sub";
+Debug.ShouldStop(64);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _globals() throws Exception{
  //BA.debugLineNum = 12;BA.debugLine="Sub Globals";
  //BA.debugLineNum = 16;BA.debugLine="Dim Button1 As Button";

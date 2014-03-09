@@ -274,6 +274,9 @@ public anywheresoftware.b4a.objects.EditTextWrapper _edittext1 = null;
 public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2service = null;
 public org.scanner.jnrain.main _main = null;
 public org.scanner.jnrain.about _about = null;
+  public Object[] GetGlobals() {
+		return new Object[] {"about",Debug.moduleToString(org.scanner.jnrain.about.class),"Activity",mostCurrent._activity,"Button1",mostCurrent._button1,"Button2",mostCurrent._button2,"Button3",mostCurrent._button3,"Button4",mostCurrent._button4,"Button5",mostCurrent._button5,"EditText1",mostCurrent._edittext1,"HttpUtils2Service",mostCurrent._httputils2service,"job1",mostCurrent._job1,"Main",Debug.moduleToString(org.scanner.jnrain.main.class)};
+}
 
 public static void initializeProcessGlobals() {
              try {
@@ -283,88 +286,197 @@ public static void initializeProcessGlobals() {
             }
 }
 public static String  _activity_create(boolean _firsttime) throws Exception{
- //BA.debugLineNum = 24;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
- //BA.debugLineNum = 26;BA.debugLine="Activity.LoadLayout(\"web\")";
+		Debug.PushSubsStack("Activity_Create (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
+Debug.locals.put("FirstTime", _firsttime);
+ BA.debugLineNum = 24;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+Debug.ShouldStop(8388608);
+ BA.debugLineNum = 26;BA.debugLine="Activity.LoadLayout(\"web\")";
+Debug.ShouldStop(33554432);
 mostCurrent._activity.LoadLayout("web",mostCurrent.activityBA);
- //BA.debugLineNum = 28;BA.debugLine="End Sub";
+ BA.debugLineNum = 28;BA.debugLine="End Sub";
+Debug.ShouldStop(134217728);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _activity_pause(boolean _userclosed) throws Exception{
- //BA.debugLineNum = 34;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
- //BA.debugLineNum = 36;BA.debugLine="End Sub";
+		Debug.PushSubsStack("Activity_Pause (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
+Debug.locals.put("UserClosed", _userclosed);
+ BA.debugLineNum = 34;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
+Debug.ShouldStop(2);
+ BA.debugLineNum = 36;BA.debugLine="End Sub";
+Debug.ShouldStop(8);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _activity_resume() throws Exception{
- //BA.debugLineNum = 30;BA.debugLine="Sub Activity_Resume";
- //BA.debugLineNum = 32;BA.debugLine="End Sub";
+		Debug.PushSubsStack("Activity_Resume (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
+ BA.debugLineNum = 30;BA.debugLine="Sub Activity_Resume";
+Debug.ShouldStop(536870912);
+ BA.debugLineNum = 32;BA.debugLine="End Sub";
+Debug.ShouldStop(-2147483648);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _button1_click() throws Exception{
- //BA.debugLineNum = 86;BA.debugLine="Sub Button1_Click";
- //BA.debugLineNum = 87;BA.debugLine="Activity.Finish";
+		Debug.PushSubsStack("Button1_Click (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
+ BA.debugLineNum = 86;BA.debugLine="Sub Button1_Click";
+Debug.ShouldStop(2097152);
+ BA.debugLineNum = 87;BA.debugLine="Activity.Finish";
+Debug.ShouldStop(4194304);
 mostCurrent._activity.Finish();
- //BA.debugLineNum = 88;BA.debugLine="End Sub";
+ BA.debugLineNum = 88;BA.debugLine="End Sub";
+Debug.ShouldStop(8388608);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _button2_click() throws Exception{
+		Debug.PushSubsStack("Button2_Click (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
 anywheresoftware.b4a.objects.IntentWrapper _intent1 = null;
- //BA.debugLineNum = 80;BA.debugLine="Sub Button2_Click";
- //BA.debugLineNum = 81;BA.debugLine="ToastMessageShow(\"将用系统浏览器访问\",False)";
+ BA.debugLineNum = 80;BA.debugLine="Sub Button2_Click";
+Debug.ShouldStop(32768);
+ BA.debugLineNum = 81;BA.debugLine="ToastMessageShow(\"将用系统浏览器访问\",False)";
+Debug.ShouldStop(65536);
 anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器访问",anywheresoftware.b4a.keywords.Common.False);
- //BA.debugLineNum = 82;BA.debugLine="Dim Intent1 As Intent";
-_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();
- //BA.debugLineNum = 83;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/query\", 0)";
+ BA.debugLineNum = 82;BA.debugLine="Dim Intent1 As Intent";
+Debug.ShouldStop(131072);
+_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();Debug.locals.put("Intent1", _intent1);
+ BA.debugLineNum = 83;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/query\", 0)";
+Debug.ShouldStop(262144);
 _intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/query",(int) (0));
- //BA.debugLineNum = 84;BA.debugLine="StartActivity(Intent1)";
+ BA.debugLineNum = 84;BA.debugLine="StartActivity(Intent1)";
+Debug.ShouldStop(524288);
 anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(_intent1.getObject()));
- //BA.debugLineNum = 85;BA.debugLine="End Sub";
+ BA.debugLineNum = 85;BA.debugLine="End Sub";
+Debug.ShouldStop(1048576);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _button3_click() throws Exception{
+		Debug.PushSubsStack("Button3_Click (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
 anywheresoftware.b4a.objects.IntentWrapper _intent1 = null;
- //BA.debugLineNum = 74;BA.debugLine="Sub Button3_Click";
- //BA.debugLineNum = 75;BA.debugLine="ToastMessageShow(\"将用系统浏览器访问\",False)";
+ BA.debugLineNum = 74;BA.debugLine="Sub Button3_Click";
+Debug.ShouldStop(512);
+ BA.debugLineNum = 75;BA.debugLine="ToastMessageShow(\"将用系统浏览器访问\",False)";
+Debug.ShouldStop(1024);
 anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器访问",anywheresoftware.b4a.keywords.Common.False);
- //BA.debugLineNum = 76;BA.debugLine="Dim Intent1 As Intent";
-_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();
- //BA.debugLineNum = 77;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/hand\", 0)";
+ BA.debugLineNum = 76;BA.debugLine="Dim Intent1 As Intent";
+Debug.ShouldStop(2048);
+_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();Debug.locals.put("Intent1", _intent1);
+ BA.debugLineNum = 77;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/hand\", 0)";
+Debug.ShouldStop(4096);
 _intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/hand",(int) (0));
- //BA.debugLineNum = 78;BA.debugLine="StartActivity(Intent1)";
+ BA.debugLineNum = 78;BA.debugLine="StartActivity(Intent1)";
+Debug.ShouldStop(8192);
 anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(_intent1.getObject()));
- //BA.debugLineNum = 79;BA.debugLine="End Sub";
+ BA.debugLineNum = 79;BA.debugLine="End Sub";
+Debug.ShouldStop(16384);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _button4_click() throws Exception{
+		Debug.PushSubsStack("Button4_Click (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
 anywheresoftware.b4a.objects.IntentWrapper _intent1 = null;
- //BA.debugLineNum = 68;BA.debugLine="Sub Button4_Click";
- //BA.debugLineNum = 69;BA.debugLine="ToastMessageShow(\"将用系统浏览器下载\",False)";
+ BA.debugLineNum = 68;BA.debugLine="Sub Button4_Click";
+Debug.ShouldStop(8);
+ BA.debugLineNum = 69;BA.debugLine="ToastMessageShow(\"将用系统浏览器下载\",False)";
+Debug.ShouldStop(16);
 anywheresoftware.b4a.keywords.Common.ToastMessageShow("将用系统浏览器下载",anywheresoftware.b4a.keywords.Common.False);
- //BA.debugLineNum = 70;BA.debugLine="Dim Intent1 As Intent";
-_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();
- //BA.debugLineNum = 71;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/getxls\", 0)";
+ BA.debugLineNum = 70;BA.debugLine="Dim Intent1 As Intent";
+Debug.ShouldStop(32);
+_intent1 = new anywheresoftware.b4a.objects.IntentWrapper();Debug.locals.put("Intent1", _intent1);
+ BA.debugLineNum = 71;BA.debugLine="Intent1.Initialize2(\"https://bottle-bookjnrain.rhcloud.com/getxls\", 0)";
+Debug.ShouldStop(64);
 _intent1.Initialize2("https://bottle-bookjnrain.rhcloud.com/getxls",(int) (0));
- //BA.debugLineNum = 72;BA.debugLine="StartActivity(Intent1)";
+ BA.debugLineNum = 72;BA.debugLine="StartActivity(Intent1)";
+Debug.ShouldStop(128);
 anywheresoftware.b4a.keywords.Common.StartActivity(mostCurrent.activityBA,(Object)(_intent1.getObject()));
- //BA.debugLineNum = 73;BA.debugLine="End Sub";
+ BA.debugLineNum = 73;BA.debugLine="End Sub";
+Debug.ShouldStop(256);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _button5_click() throws Exception{
- //BA.debugLineNum = 59;BA.debugLine="Sub Button5_Click";
- //BA.debugLineNum = 60;BA.debugLine="If EditText1.Text=\"admin\" Then";
+		Debug.PushSubsStack("Button5_Click (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
+ BA.debugLineNum = 59;BA.debugLine="Sub Button5_Click";
+Debug.ShouldStop(67108864);
+ BA.debugLineNum = 60;BA.debugLine="If EditText1.Text=\"admin\" Then";
+Debug.ShouldStop(134217728);
 if ((mostCurrent._edittext1.getText()).equals("admin")) { 
- //BA.debugLineNum = 61;BA.debugLine="ProgressDialogShow(\"清空中...\")";
+ BA.debugLineNum = 61;BA.debugLine="ProgressDialogShow(\"清空中...\")";
+Debug.ShouldStop(268435456);
 anywheresoftware.b4a.keywords.Common.ProgressDialogShow(mostCurrent.activityBA,"清空中...");
- //BA.debugLineNum = 62;BA.debugLine="job1.Initialize(\"Job1\",Me)";
+ BA.debugLineNum = 62;BA.debugLine="job1.Initialize(\"Job1\",Me)";
+Debug.ShouldStop(536870912);
 mostCurrent._job1._initialize(processBA,"Job1",web.getObject());
- //BA.debugLineNum = 63;BA.debugLine="job1.PostString(\"https://bottle-bookjnrain.rhcloud.com/reset\",\"username=admin&password=admin\")";
+ BA.debugLineNum = 63;BA.debugLine="job1.PostString(\"https://bottle-bookjnrain.rhcloud.com/reset\",\"username=admin&password=admin\")";
+Debug.ShouldStop(1073741824);
 mostCurrent._job1._poststring("https://bottle-bookjnrain.rhcloud.com/reset","username=admin&password=admin");
  }else {
- //BA.debugLineNum = 65;BA.debugLine="ToastMessageShow(\"密码错误！\",False)";
+ BA.debugLineNum = 65;BA.debugLine="ToastMessageShow(\"密码错误！\",False)";
+Debug.ShouldStop(1);
 anywheresoftware.b4a.keywords.Common.ToastMessageShow("密码错误！",anywheresoftware.b4a.keywords.Common.False);
  };
- //BA.debugLineNum = 67;BA.debugLine="End Sub";
+ BA.debugLineNum = 67;BA.debugLine="End Sub";
+Debug.ShouldStop(4);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _globals() throws Exception{
  //BA.debugLineNum = 12;BA.debugLine="Sub Globals";
  //BA.debugLineNum = 15;BA.debugLine="Dim job1 As HttpJob";
@@ -385,39 +497,61 @@ mostCurrent._edittext1 = new anywheresoftware.b4a.objects.EditTextWrapper();
 return "";
 }
 public static String  _jobdone(anywheresoftware.b4a.samples.httputils2.httpjob _job) throws Exception{
- //BA.debugLineNum = 39;BA.debugLine="Sub JobDone (job As HttpJob)";
- //BA.debugLineNum = 40;BA.debugLine="Log(\"JobName = \" & job.JobName & \", Success = \" & job.Success)";
+		Debug.PushSubsStack("JobDone (web) ","web",2,mostCurrent.activityBA,mostCurrent);
+try {
+Debug.locals.put("job", _job);
+ BA.debugLineNum = 39;BA.debugLine="Sub JobDone (job As HttpJob)";
+Debug.ShouldStop(64);
+ BA.debugLineNum = 40;BA.debugLine="Log(\"JobName = \" & job.JobName & \", Success = \" & job.Success)";
+Debug.ShouldStop(128);
 anywheresoftware.b4a.keywords.Common.Log("JobName = "+_job._jobname+", Success = "+BA.ObjectToString(_job._success));
- //BA.debugLineNum = 41;BA.debugLine="If job.Success = True Then";
+ BA.debugLineNum = 41;BA.debugLine="If job.Success = True Then";
+Debug.ShouldStop(256);
 if (_job._success==anywheresoftware.b4a.keywords.Common.True) { 
- //BA.debugLineNum = 42;BA.debugLine="Select job.JobName";
+ BA.debugLineNum = 42;BA.debugLine="Select job.JobName";
+Debug.ShouldStop(512);
 switch (BA.switchObjectToInt(_job._jobname,"Job1","Job2","Job3")) {
 case 0:
 case 1:
- //BA.debugLineNum = 45;BA.debugLine="Log(job.GetString)";
+ BA.debugLineNum = 45;BA.debugLine="Log(job.GetString)";
+Debug.ShouldStop(4096);
 anywheresoftware.b4a.keywords.Common.Log(_job._getstring());
- //BA.debugLineNum = 46;BA.debugLine="ProgressDialogHide";
+ BA.debugLineNum = 46;BA.debugLine="ProgressDialogHide";
+Debug.ShouldStop(8192);
 anywheresoftware.b4a.keywords.Common.ProgressDialogHide();
- //BA.debugLineNum = 47;BA.debugLine="ToastMessageShow(\"数据库已清空！\",False)";
+ BA.debugLineNum = 47;BA.debugLine="ToastMessageShow(\"数据库已清空！\",False)";
+Debug.ShouldStop(16384);
 anywheresoftware.b4a.keywords.Common.ToastMessageShow("数据库已清空！",anywheresoftware.b4a.keywords.Common.False);
  break;
 case 2:
- //BA.debugLineNum = 50;BA.debugLine="Activity.SetBackgroundImage(job.GetBitmap)";
+ BA.debugLineNum = 50;BA.debugLine="Activity.SetBackgroundImage(job.GetBitmap)";
+Debug.ShouldStop(131072);
 mostCurrent._activity.SetBackgroundImage((android.graphics.Bitmap)(_job._getbitmap().getObject()));
  break;
 }
 ;
  }else {
- //BA.debugLineNum = 53;BA.debugLine="Log(\"Error: \" & job.ErrorMessage)";
+ BA.debugLineNum = 53;BA.debugLine="Log(\"Error: \" & job.ErrorMessage)";
+Debug.ShouldStop(1048576);
 anywheresoftware.b4a.keywords.Common.Log("Error: "+_job._errormessage);
- //BA.debugLineNum = 54;BA.debugLine="ToastMessageShow(\"Error: \" & job.ErrorMessage, True)";
+ BA.debugLineNum = 54;BA.debugLine="ToastMessageShow(\"Error: \" & job.ErrorMessage, True)";
+Debug.ShouldStop(2097152);
 anywheresoftware.b4a.keywords.Common.ToastMessageShow("Error: "+_job._errormessage,anywheresoftware.b4a.keywords.Common.True);
  };
- //BA.debugLineNum = 56;BA.debugLine="job.Release";
+ BA.debugLineNum = 56;BA.debugLine="job.Release";
+Debug.ShouldStop(8388608);
 _job._release();
- //BA.debugLineNum = 57;BA.debugLine="End Sub";
+ BA.debugLineNum = 57;BA.debugLine="End Sub";
+Debug.ShouldStop(16777216);
 return "";
 }
+catch (Exception e) {
+			Debug.ErrorCaught(e);
+			throw e;
+		} 
+finally {
+			Debug.PopSubsStack();
+		}}
 public static String  _process_globals() throws Exception{
  //BA.debugLineNum = 6;BA.debugLine="Sub Process_Globals";
  //BA.debugLineNum = 10;BA.debugLine="End Sub";

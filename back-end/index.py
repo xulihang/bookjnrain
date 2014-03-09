@@ -10,10 +10,10 @@ import urllib
 def login():
     global isbn
     global lasttime
-    username = request.forms.get("username");
-    password = request.forms.get("password");
-    isbn = request.forms.get("isbn");
-    lasttime = request.forms.get("time");
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    isbn = request.forms.get("isbn")
+    lasttime = request.forms.get("time")
     print(username,password,isbn,lasttime)
     exist=1#默认插入
     print exist
@@ -36,9 +36,9 @@ def login():
             insert()
         
 
-        return username+'登录成功';
+        return username+'登录成功'
     else :
-        return username+'登录失败';
+        return username+'登录失败'
 
 #用户登录页面的
 @route("/index")
@@ -61,14 +61,14 @@ def getxls():
 #手工输入
 @route("/handlogin",method="post")
 def reset():
-    username = request.forms.get("username");
-    password = request.forms.get("password");
-    title = request.forms.get("title");
-    price = request.forms.get("price");
-    isbn = request.forms.get("isbn");
-    pubdate=request.forms.get("pubdate");
-    publisher=request.forms.get("publisher");
-    lasttime = request.forms.get("time");
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    title = request.forms.get("title")
+    price = request.forms.get("price")
+    isbn = request.forms.get("isbn")
+    pubdate=request.forms.get("pubdate")
+    publisher=request.forms.get("publisher")
+    lasttime = request.forms.get("time")
     print(username,password,isbn)
     exist=1#默认插入
     print exist
@@ -103,9 +103,9 @@ def reset():
             c.close()
             conn.close()
             
-        return '登录成功：'+status;
+        return '登录成功：'+status
     else :
-        return username+'登录失败';
+        return username+'登录失败'
 
 #手工输入页面
 @route("/hand")
@@ -117,8 +117,8 @@ def resetpage():
 #重置数据库
 @route("/reset",method="post")
 def reset():
-    username = request.forms.get("username");
-    password = request.forms.get("password");
+    username = request.forms.get("username")
+    password = request.forms.get("password")
     if username =='admin' and password =='admin':
         conn = sqlite3.connect('book.db')
         c = conn.cursor()
@@ -126,7 +126,9 @@ def reset():
         conn.commit()
         c.close()
         conn.close()
-        return '数据库已清空！';
+        return '数据库已清空！'
+    else:
+        return '密码错误！'
 
 #重置数据库登录
 @route("/resetpage")

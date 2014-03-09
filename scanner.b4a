@@ -1,24 +1,27 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=2
+NumberOfModules=3
 Module1=about
 ModuleVisible1=1
 Module2=web
 ModuleVisible2=1
+Module3=SlideMenu
+ModuleVisible3=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~'End of default text.~\n~
-UserTypesHint=
+UserTypesHint=ActionItem,SlideMenu
 NumberOfFiles=3
 File1=about.bal
 File2=scanner.bal
 File3=web.bal
-NumberOfLibraries=5
-Library1=b4azxing
-Library2=clipboard
-Library3=core
-Library4=httputils2
-Library5=json
+NumberOfLibraries=6
+Library1=animation
+Library2=b4azxing
+Library3=clipboard
+Library4=core
+Library5=httputils2
+Library6=json
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -53,6 +56,9 @@ Sub Globals
 	Dim sJSONData As String
 	Dim bookpubdate As String
     Dim job1 As HttpJob
+	Dim sm As SlideMenu
+	Dim Button3 As Button
+	Dim startX, startY As Float
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -65,6 +71,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.AddMenuItem("退出","Quit")
 	'DBload //（调用函数）
 	Button2.Enabled=False
+    Initilize_sm
 End Sub
 
 Sub myzx_result(atype As String,Values As String)
@@ -74,8 +81,17 @@ Sub myzx_result(atype As String,Values As String)
 	Button2.Enabled=True
 End Sub
 
-Sub Activity_Resume
+Sub Initilize_sm
+	sm.Initialize(Activity, Me, "SlideMenu", 42dip, 180dip)
 
+	sm.AddItem("在线工具", Null, 1)
+	sm.AddItem("复制到剪贴板", Null, 2)
+	sm.AddItem("上传到服务器", Null, 3)
+	sm.AddItem("关于", Null, 4)
+	sm.AddItem("退出", Null, 5)
+End Sub
+Sub Activity_Resume
+    Initilize_sm
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -156,6 +172,7 @@ End Sub
 Sub cp_Click
     Dim CC As BClipboard
     CC.setText(Label2.Text)
+	ToastMessageShow("结果已复制到剪切板。",False)
 End Sub
 
 Sub upload_Click 
@@ -168,4 +185,49 @@ Sub upload_Click
 	Log(time)
     job1.Initialize("Job1",Me)
     job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username=admin&password=admin&isbn="&result&"&time="&time)
+End Sub
+
+Sub Button3_Click
+	sm.Show
+End Sub
+
+'Event sub which is called when an item in the slidemenu is clicked
+Sub SlideMenu_Click(Item As Object)
+	'ToastMessageShow("Item clicked: " & Item, False)
+	Select Item
+		Case 1
+		    web_Click
+		Case 2
+		    cp_Click
+		Case 3
+		    upload_Click 
+		Case 4
+		    about_Click
+	    Case 5
+		    ExitApplication
+	End Select
+End Sub
+
+
+Sub Activity_Touch (Action As Int, X As Float, Y As Float)
+    Dim leftorright As Int
+	leftorright=0
+	Select Action
+		Case Activity.ACTION_DOWN
+			startX = X
+			startY = Y
+		Case Activity.ACTION_UP
+			If Abs(Y - startY) > 20%y Then Return
+			If X - startX > 30%x Then '向右划
+			    If leftorright=0 Then
+				    sm.show
+					leftorright=1
+				End If
+			Else If startX - X > 30%x Then '向左划
+			    If leftorright=1 Then
+				    sm.show
+					leftorright=0
+				End If
+			End If
+	End Select
 End Sub
