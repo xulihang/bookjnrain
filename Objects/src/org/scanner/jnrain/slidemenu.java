@@ -34,8 +34,9 @@ public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2serv
 public org.scanner.jnrain.main _main = null;
 public org.scanner.jnrain.about _about = null;
 public org.scanner.jnrain.web _web = null;
+public org.scanner.jnrain.query _query = null;
   public Object[] GetGlobals() {
-		return new Object[] {"about",Debug.moduleToString(org.scanner.jnrain.about.class),"HttpUtils2Service",_httputils2service,"Main",Debug.moduleToString(org.scanner.jnrain.main.class),"mBackPanel",_mbackpanel,"mEventName",_meventname,"mInAnimation",_minanimation,"mListView",_mlistview,"mModule",_mmodule,"mOutAnimation",_moutanimation,"mSlidePanel",_mslidepanel,"web",Debug.moduleToString(org.scanner.jnrain.web.class)};
+		return new Object[] {"about",Debug.moduleToString(org.scanner.jnrain.about.class),"HttpUtils2Service",_httputils2service,"Main",Debug.moduleToString(org.scanner.jnrain.main.class),"mBackPanel",_mbackpanel,"mEventName",_meventname,"mInAnimation",_minanimation,"mListView",_mlistview,"mModule",_mmodule,"mOutAnimation",_moutanimation,"mSlidePanel",_mslidepanel,"query",Debug.moduleToString(org.scanner.jnrain.query.class),"web",Debug.moduleToString(org.scanner.jnrain.web.class)};
 }
 public static class _actionitem{
 public boolean IsInitialized;

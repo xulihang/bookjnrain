@@ -55,6 +55,13 @@
 			android:label="听雨扫描器"
 			android:screenOrientation="unspecified">
 		</activity>
+		<activity
+			android:windowSoftInputMode="stateHidden"
+			android:launchMode="singleTop"
+			android:name=".query"
+			android:label="听雨扫描器"
+			android:screenOrientation="unspecified">
+		</activity>
 		<service android:name="anywheresoftware.b4a.samples.httputils2.httputils2service">
 		</service>
 		<receiver android:name="anywheresoftware.b4a.samples.httputils2.httputils2service$httputils2service_BR">

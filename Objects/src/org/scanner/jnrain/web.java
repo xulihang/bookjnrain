@@ -274,8 +274,9 @@ public anywheresoftware.b4a.objects.EditTextWrapper _edittext1 = null;
 public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2service = null;
 public org.scanner.jnrain.main _main = null;
 public org.scanner.jnrain.about _about = null;
+public org.scanner.jnrain.query _query = null;
   public Object[] GetGlobals() {
-		return new Object[] {"about",Debug.moduleToString(org.scanner.jnrain.about.class),"Activity",mostCurrent._activity,"Button1",mostCurrent._button1,"Button2",mostCurrent._button2,"Button3",mostCurrent._button3,"Button4",mostCurrent._button4,"Button5",mostCurrent._button5,"EditText1",mostCurrent._edittext1,"HttpUtils2Service",mostCurrent._httputils2service,"job1",mostCurrent._job1,"Main",Debug.moduleToString(org.scanner.jnrain.main.class)};
+		return new Object[] {"about",Debug.moduleToString(org.scanner.jnrain.about.class),"Activity",mostCurrent._activity,"Button1",mostCurrent._button1,"Button2",mostCurrent._button2,"Button3",mostCurrent._button3,"Button4",mostCurrent._button4,"Button5",mostCurrent._button5,"EditText1",mostCurrent._edittext1,"HttpUtils2Service",mostCurrent._httputils2service,"job1",mostCurrent._job1,"Main",Debug.moduleToString(org.scanner.jnrain.main.class),"query",Debug.moduleToString(org.scanner.jnrain.query.class)};
 }
 
 public static void initializeProcessGlobals() {

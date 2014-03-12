@@ -270,8 +270,9 @@ public anywheresoftware.b4a.objects.LabelWrapper _label2 = null;
 public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2service = null;
 public org.scanner.jnrain.main _main = null;
 public org.scanner.jnrain.web _web = null;
+public org.scanner.jnrain.query _query = null;
   public Object[] GetGlobals() {
-		return new Object[] {"Activity",mostCurrent._activity,"Button1",mostCurrent._button1,"HttpUtils2Service",mostCurrent._httputils2service,"Label1",mostCurrent._label1,"Label2",mostCurrent._label2,"Main",Debug.moduleToString(org.scanner.jnrain.main.class),"web",Debug.moduleToString(org.scanner.jnrain.web.class)};
+		return new Object[] {"Activity",mostCurrent._activity,"Button1",mostCurrent._button1,"HttpUtils2Service",mostCurrent._httputils2service,"Label1",mostCurrent._label1,"Label2",mostCurrent._label2,"Main",Debug.moduleToString(org.scanner.jnrain.main.class),"query",Debug.moduleToString(org.scanner.jnrain.query.class),"web",Debug.moduleToString(org.scanner.jnrain.web.class)};
 }
 
 public static void initializeProcessGlobals() {
