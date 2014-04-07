@@ -271,9 +271,6 @@ public anywheresoftware.b4a.samples.httputils2.httputils2service _httputils2serv
 public org.scanner.jnrain.main _main = null;
 public org.scanner.jnrain.about _about = null;
 public org.scanner.jnrain.web _web = null;
-  public Object[] GetGlobals() {
-		return new Object[] {"about",Debug.moduleToString(org.scanner.jnrain.about.class),"Activity",mostCurrent._activity,"Button1",mostCurrent._button1,"HttpUtils2Service",mostCurrent._httputils2service,"ListView1",mostCurrent._listview1,"Main",Debug.moduleToString(org.scanner.jnrain.main.class),"SQL1",_sql1,"web",Debug.moduleToString(org.scanner.jnrain.web.class)};
-}
 
 public static void initializeProcessGlobals() {
              try {
@@ -283,117 +280,57 @@ public static void initializeProcessGlobals() {
             }
 }
 public static String  _activity_create(boolean _firsttime) throws Exception{
-		Debug.PushSubsStack("Activity_Create (query) ","query",4,mostCurrent.activityBA,mostCurrent);
-try {
 anywheresoftware.b4a.sql.SQL.CursorWrapper _cursor1 = null;
 int _i = 0;
-Debug.locals.put("FirstTime", _firsttime);
- BA.debugLineNum = 20;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
-Debug.ShouldStop(524288);
- BA.debugLineNum = 22;BA.debugLine="Activity.LoadLayout(\"query\")";
-Debug.ShouldStop(2097152);
+ //BA.debugLineNum = 20;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+ //BA.debugLineNum = 22;BA.debugLine="Activity.LoadLayout(\"query\")";
 mostCurrent._activity.LoadLayout("query",mostCurrent.activityBA);
- BA.debugLineNum = 23;BA.debugLine="If SQL1.IsInitialized = False Then";
-Debug.ShouldStop(4194304);
+ //BA.debugLineNum = 23;BA.debugLine="If SQL1.IsInitialized = False Then";
 if (_sql1.IsInitialized()==anywheresoftware.b4a.keywords.Common.False) { 
- BA.debugLineNum = 24;BA.debugLine="SQL1.Initialize(File.DirInternal, \"mybook.db\", False)";
-Debug.ShouldStop(8388608);
-Debug.DebugWarningEngine.CheckInitialize(_sql1);_sql1.Initialize(anywheresoftware.b4a.keywords.Common.File.getDirInternal(),"mybook.db",anywheresoftware.b4a.keywords.Common.False);
+ //BA.debugLineNum = 24;BA.debugLine="SQL1.Initialize(File.DirInternal, \"mybook.db\", False)";
+_sql1.Initialize(anywheresoftware.b4a.keywords.Common.File.getDirInternal(),"mybook.db",anywheresoftware.b4a.keywords.Common.False);
  };
- BA.debugLineNum = 26;BA.debugLine="Dim Cursor1 As Cursor";
-Debug.ShouldStop(33554432);
-_cursor1 = new anywheresoftware.b4a.sql.SQL.CursorWrapper();Debug.locals.put("Cursor1", _cursor1);
- BA.debugLineNum = 27;BA.debugLine="Cursor1 = SQL1.ExecQuery(\"SELECT title FROM book\")";
-Debug.ShouldStop(67108864);
+ //BA.debugLineNum = 26;BA.debugLine="Dim Cursor1 As Cursor";
+_cursor1 = new anywheresoftware.b4a.sql.SQL.CursorWrapper();
+ //BA.debugLineNum = 27;BA.debugLine="Cursor1 = SQL1.ExecQuery(\"SELECT title FROM book\")";
 _cursor1.setObject((android.database.Cursor)(_sql1.ExecQuery("SELECT title FROM book")));
- BA.debugLineNum = 28;BA.debugLine="For i = 0 To Cursor1.RowCount - 1";
-Debug.ShouldStop(134217728);
+ //BA.debugLineNum = 28;BA.debugLine="For i = 0 To Cursor1.RowCount - 1";
 {
 final int step14 = 1;
 final int limit14 = (int) (_cursor1.getRowCount()-1);
 for (_i = (int) (0); (step14 > 0 && _i <= limit14) || (step14 < 0 && _i >= limit14); _i = ((int)(0 + _i + step14))) {
-Debug.locals.put("i", _i);
- BA.debugLineNum = 29;BA.debugLine="Cursor1.Position = i";
-Debug.ShouldStop(268435456);
+ //BA.debugLineNum = 29;BA.debugLine="Cursor1.Position = i";
 _cursor1.setPosition(_i);
- BA.debugLineNum = 30;BA.debugLine="ListView1.AddSingleLine2(Cursor1.GetString(\"title\"),i)";
-Debug.ShouldStop(536870912);
+ //BA.debugLineNum = 30;BA.debugLine="ListView1.AddSingleLine2(Cursor1.GetString(\"title\"),i)";
 mostCurrent._listview1.AddSingleLine2(_cursor1.GetString("title"),(Object)(_i));
- BA.debugLineNum = 31;BA.debugLine="Log(\"************************\")";
-Debug.ShouldStop(1073741824);
+ //BA.debugLineNum = 31;BA.debugLine="Log(\"************************\")";
 anywheresoftware.b4a.keywords.Common.Log("************************");
- BA.debugLineNum = 32;BA.debugLine="Log(Cursor1.GetString(\"title\"))";
-Debug.ShouldStop(-2147483648);
+ //BA.debugLineNum = 32;BA.debugLine="Log(Cursor1.GetString(\"title\"))";
 anywheresoftware.b4a.keywords.Common.Log(_cursor1.GetString("title"));
  }
-}Debug.locals.put("i", _i);
-;
- BA.debugLineNum = 34;BA.debugLine="Cursor1.Close";
-Debug.ShouldStop(2);
+};
+ //BA.debugLineNum = 34;BA.debugLine="Cursor1.Close";
 _cursor1.Close();
- BA.debugLineNum = 35;BA.debugLine="End Sub";
-Debug.ShouldStop(4);
+ //BA.debugLineNum = 35;BA.debugLine="End Sub";
 return "";
 }
-catch (Exception e) {
-			Debug.ErrorCaught(e);
-			throw e;
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
 public static String  _activity_pause(boolean _userclosed) throws Exception{
-		Debug.PushSubsStack("Activity_Pause (query) ","query",4,mostCurrent.activityBA,mostCurrent);
-try {
-Debug.locals.put("UserClosed", _userclosed);
- BA.debugLineNum = 41;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
-Debug.ShouldStop(256);
- BA.debugLineNum = 43;BA.debugLine="End Sub";
-Debug.ShouldStop(1024);
+ //BA.debugLineNum = 41;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
+ //BA.debugLineNum = 43;BA.debugLine="End Sub";
 return "";
 }
-catch (Exception e) {
-			Debug.ErrorCaught(e);
-			throw e;
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
 public static String  _activity_resume() throws Exception{
-		Debug.PushSubsStack("Activity_Resume (query) ","query",4,mostCurrent.activityBA,mostCurrent);
-try {
- BA.debugLineNum = 37;BA.debugLine="Sub Activity_Resume";
-Debug.ShouldStop(16);
- BA.debugLineNum = 39;BA.debugLine="End Sub";
-Debug.ShouldStop(64);
+ //BA.debugLineNum = 37;BA.debugLine="Sub Activity_Resume";
+ //BA.debugLineNum = 39;BA.debugLine="End Sub";
 return "";
 }
-catch (Exception e) {
-			Debug.ErrorCaught(e);
-			throw e;
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
 public static String  _button1_click() throws Exception{
-		Debug.PushSubsStack("Button1_Click (query) ","query",4,mostCurrent.activityBA,mostCurrent);
-try {
- BA.debugLineNum = 47;BA.debugLine="Sub Button1_Click";
-Debug.ShouldStop(16384);
- BA.debugLineNum = 48;BA.debugLine="Activity.Finish";
-Debug.ShouldStop(32768);
+ //BA.debugLineNum = 45;BA.debugLine="Sub Button1_Click";
+ //BA.debugLineNum = 46;BA.debugLine="Activity.Finish";
 mostCurrent._activity.Finish();
- BA.debugLineNum = 49;BA.debugLine="End Sub";
-Debug.ShouldStop(65536);
+ //BA.debugLineNum = 47;BA.debugLine="End Sub";
 return "";
 }
-catch (Exception e) {
-			Debug.ErrorCaught(e);
-			throw e;
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
 public static String  _globals() throws Exception{
  //BA.debugLineNum = 12;BA.debugLine="Sub Globals";
  //BA.debugLineNum = 16;BA.debugLine="Dim Button1 As Button";
@@ -404,46 +341,26 @@ mostCurrent._listview1 = new anywheresoftware.b4a.objects.ListViewWrapper();
 return "";
 }
 public static String  _listview1_itemclick(int _position,Object _value) throws Exception{
-		Debug.PushSubsStack("ListView1_ItemClick (query) ","query",4,mostCurrent.activityBA,mostCurrent);
-try {
 String _info = "";
 anywheresoftware.b4a.sql.SQL.CursorWrapper _cursor1 = null;
-Debug.locals.put("Position", _position);
-Debug.locals.put("Value", _value);
- BA.debugLineNum = 50;BA.debugLine="Sub ListView1_ItemClick (Position As Int, Value As Object)";
-Debug.ShouldStop(131072);
- BA.debugLineNum = 51;BA.debugLine="Dim info As String";
-Debug.ShouldStop(262144);
-_info = "";Debug.locals.put("info", _info);
- BA.debugLineNum = 53;BA.debugLine="Dim Cursor1 As Cursor";
-Debug.ShouldStop(1048576);
-_cursor1 = new anywheresoftware.b4a.sql.SQL.CursorWrapper();Debug.locals.put("Cursor1", _cursor1);
- BA.debugLineNum = 54;BA.debugLine="Cursor1 = SQL1.ExecQuery(\"SELECT introduction FROM book\")";
-Debug.ShouldStop(2097152);
+ //BA.debugLineNum = 49;BA.debugLine="Sub ListView1_ItemClick (Position As Int, Value As Object)";
+ //BA.debugLineNum = 50;BA.debugLine="Dim info As String";
+_info = "";
+ //BA.debugLineNum = 52;BA.debugLine="Dim Cursor1 As Cursor";
+_cursor1 = new anywheresoftware.b4a.sql.SQL.CursorWrapper();
+ //BA.debugLineNum = 53;BA.debugLine="Cursor1 = SQL1.ExecQuery(\"SELECT introduction FROM book\")";
 _cursor1.setObject((android.database.Cursor)(_sql1.ExecQuery("SELECT introduction FROM book")));
- BA.debugLineNum = 55;BA.debugLine="Cursor1.Position = Position";
-Debug.ShouldStop(4194304);
+ //BA.debugLineNum = 54;BA.debugLine="Cursor1.Position = Position";
 _cursor1.setPosition(_position);
- BA.debugLineNum = 56;BA.debugLine="info=Cursor1.GetString(\"introduction\")";
-Debug.ShouldStop(8388608);
-_info = _cursor1.GetString("introduction");Debug.locals.put("info", _info);
- BA.debugLineNum = 57;BA.debugLine="Cursor1.Close";
-Debug.ShouldStop(16777216);
+ //BA.debugLineNum = 55;BA.debugLine="info=Cursor1.GetString(\"introduction\")";
+_info = _cursor1.GetString("introduction");
+ //BA.debugLineNum = 56;BA.debugLine="Cursor1.Close";
 _cursor1.Close();
- BA.debugLineNum = 58;BA.debugLine="Msgbox(info,\"信息\")";
-Debug.ShouldStop(33554432);
+ //BA.debugLineNum = 57;BA.debugLine="Msgbox(info,\"信息\")";
 anywheresoftware.b4a.keywords.Common.Msgbox(_info,"信息",mostCurrent.activityBA);
- BA.debugLineNum = 59;BA.debugLine="End Sub";
-Debug.ShouldStop(67108864);
+ //BA.debugLineNum = 58;BA.debugLine="End Sub";
 return "";
 }
-catch (Exception e) {
-			Debug.ErrorCaught(e);
-			throw e;
-		} 
-finally {
-			Debug.PopSubsStack();
-		}}
 public static String  _process_globals() throws Exception{
  //BA.debugLineNum = 6;BA.debugLine="Sub Process_Globals";
  //BA.debugLineNum = 9;BA.debugLine="Dim SQL1 As SQL";

@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=4
+NumberOfModules=10
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -9,23 +9,50 @@ Module3=SlideMenu
 ModuleVisible3=1
 Module4=query
 ModuleVisible4=1
+Module5=register
+ModuleVisible5=1
+Module6=login
+ModuleVisible6=1
+Module7=profile
+ModuleVisible7=1
+Module8=avatarcrop
+ModuleVisible8=1
+Module9=CustomListView
+ModuleVisible9=1
+Module10=comment
+ModuleVisible10=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~'End of default text.~\n~
-UserTypesHint=SlideMenu,ActionItem
-NumberOfFiles=4
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
+UserTypesHint=CustomListView,SlideMenu,ActionItem
+NumberOfFiles=12
 File1=about.bal
-File2=query.bal
-File3=scanner.bal
-File4=web.bal
-NumberOfLibraries=7
+File2=comment.bal
+File3=comment.png
+File4=crop.bal
+File5=login.bal
+File6=praise_no.png
+File7=praise_yes.png
+File8=profile.bal
+File9=query.bal
+File10=register.bal
+File11=scanner.bal
+File12=web.bal
+NumberOfLibraries=14
 Library1=animation
 Library2=b4azxing
 Library3=clipboard
 Library4=core
-Library5=httputils2
-Library6=json
-Library7=sql
+Library5=encryption
+Library6=httputils2
+Library7=id
+Library8=json
+Library9=phone
+Library10=preferenceactivity
+Library11=reflection
+Library12=rsimageprocessing
+Library13=sql
+Library14=stringutils
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -43,6 +70,11 @@ Sub Process_Globals
 	'These variables can be accessed from all modules.
 	Dim result=1 As String
 	Dim SQL1 As SQL
+	Dim SQL2 As SQL
+	Dim SQL3 As SQL
+	Dim manager As PreferenceManager
+	Dim screen As PreferenceScreen
+	Public book As Long
 End Sub
 
 Sub Globals
@@ -59,16 +91,40 @@ Sub Globals
 	Dim Button2 As Button
 	Dim ImageView1 As ImageView
 	Dim Label3 As Label
-	Dim sJSONData As String
+	'Dim sJSONData As String
 	Dim bookpubdate As String
     Dim job1 As HttpJob
 	Dim sm As SlideMenu
 	Dim Button3 As Button
 	Dim startX, startY As Float
+	Dim Label4 As Label
+	Dim Label5 As Label
+	Dim Label6 As Label
+	Dim Panel1 As Panel
+	Dim Panel2 As Panel
+	Dim Panel3 As Panel
+	Dim ScrollView1 As ScrollView
+	Dim Button4 As Button
+	Dim Button5 As Button
+	Dim Button7 As Button
+	Dim Button8 As Button
+	Dim Button9 As Button
+	Dim changeprofile As Button
+	Dim Label7 As Label
+	Dim Button6 As Button 'setting
+	Dim WebView1 As WebView
+	Dim clv1 As CustomListView
+	Private su As StringUtils
+	Dim Button10 As Button 'Toggle
+	Dim Button11 As Button 
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
+	If FirstTime Then
+		CreatePreferenceScreen
+		If manager.GetAll.Size = 0 Then SetDefaults
+	End If
 	If File.Exists(File.DirInternal,"mybook.db") Then
 		ToastMessageShow("数据库已存在",False)
     Else
@@ -79,6 +135,22 @@ Sub Activity_Create(FirstTime As Boolean)
 	If SQL1.IsInitialized = False Then
 	    SQL1.Initialize(File.DirInternal, "mybook.db", False)
 	End If
+	
+	If File.Exists(File.DirInternal,"user") Then '判断是否登录以加载用户资料
+	    Dim Reader As TextReader
+        Dim username As String
+        Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		username = Reader.ReadLine
+		If File.Exists(File.DirInternal,username&"-praise.db")=False Then
+	        SQL2.Initialize(File.DirInternal, username&"-praise.db", True)
+		    SQL2.ExecNonQuery("CREATE TABLE statics (isbn,praise,comment)")
+	    End If
+	
+	    If SQL2.IsInitialized = False Then
+	        SQL2.Initialize(File.DirInternal, username&"-praise.db", False)
+	    End If
+	End If
+	
 	Activity.LoadLayout("scanner")
 	Activity.AddMenuItem("在线工具","web")
 	Activity.AddMenuItem("复制到剪贴板","cp")
@@ -89,6 +161,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.AddMenuItem("退出","Quit")
 	'DBload //（调用函数）
 	Button2.Enabled=False
+	Button10.Visible=False
+	Panel2.Visible=False
+	Panel3.Visible=False
     Initilize_sm
 End Sub
 
@@ -97,6 +172,44 @@ Sub myzx_result(atype As String,Values As String)
 	result=Values
 	Label2.Text = "结果为："&result
 	Button2.Enabled=True
+End Sub
+
+Sub Initilize_scrollview
+    Dim Reader As TextReader
+    Dim username As String
+	Dim password As String
+	If Button4.IsInitialized=True Then
+		Button4.RemoveView
+		Button5.RemoveView
+	End If
+	If Button7.IsInitialized=True Then
+	    Label7.RemoveView
+	    Button7.RemoveView
+		changeprofile.RemoveView
+	End If
+	If File.Exists(File.DirInternal,"user") Then
+        Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		username = Reader.ReadLine
+        password = Reader.ReadLine
+        Reader.Close 
+	    Label7.Initialize("")
+		Label7.Text=username&"已登录"
+		Label7.TextSize=20
+	    Button7.Initialize("Button7")
+	    Button7.Text="注销"
+		changeprofile.Initialize("changeprofile")
+	    changeprofile.Text="修改我的资料"
+		ScrollView1.Panel.AddView(Label7,10dip,10dip,ScrollView1.Width-100dip,50dip)
+		ScrollView1.Panel.AddView(Button7,10dip,60dip,ScrollView1.Width-20dip,50dip)
+		ScrollView1.Panel.AddView(changeprofile,10dip,110dip,ScrollView1.Width-20dip,50dip)
+	Else
+	    Button4.Initialize("Button4")
+	    Button4.Text="注册"
+	    Button5.Initialize("Button5")
+	    Button5.Text="登录"
+	    ScrollView1.Panel.AddView(Button4,10dip,10dip,ScrollView1.Width-20dip,50dip)
+	    ScrollView1.Panel.AddView(Button5,10dip,60dip,ScrollView1.Width-20dip,50dip)
+    End If
 End Sub
 
 Sub Initilize_sm
@@ -112,6 +225,8 @@ Sub Initilize_sm
 End Sub
 Sub Activity_Resume
     Initilize_sm
+	Initilize_scrollview
+	HandleSettings
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -127,18 +242,22 @@ Sub Button1_Click
 End Sub
 
 Sub Button2_Click
+    getinfo(result)
+End Sub
+
+Sub getinfo(ISBN As String)
     Dim job2 As HttpJob
 	job2.Initialize("Job2",Me)
-    job2.Download("https://api.douban.com/v2/book/isbn/:"&result)
+    job2.Download("https://api.douban.com/v2/book/isbn/:"&ISBN)
 	ProgressDialogShow("获取数据中...")
 End Sub
 
-Sub LoadJSONDATA()
+Sub LoadJSONDATA(sJSONDATA As String)
 
-    Log("Data:"&sJSONData)
+    Log("Data:"&sJSONDATA)
  
     Dim JSON As JSONParser
-    JSON.Initialize(sJSONData)
+    JSON.Initialize(sJSONDATA)
     Dim map1 As Map
     map1 = JSON.Nextobject
     'Log(map1.Size)
@@ -147,8 +266,11 @@ Sub LoadJSONDATA()
     bookprice= map1.GetValueAt(13)
     bookpublisher= map1.GetValueAt(9)
     bookpubdate= map1.GetValueAt(4)  '根据index
-	booksummary= map1.Get("summary") '根据Key的名称
+	booksummary= map1.get("summary") '根据Key的名称
     Label2.Text="条码："&result&CRLF&"书名："&bookname&CRLF&"价格："&bookprice&CRLF&"出版社："&bookpublisher&CRLF&"出版年份："&bookpubdate
+	If manager.GetBoolean("check1")=True Then
+	    storetodatabase_Click
+	End If
 End Sub
 
 Sub JobDone (job As HttpJob)
@@ -164,18 +286,48 @@ Sub JobDone (job As HttpJob)
 			    ProgressDialogHide
 			    Dim jresult As String
 			    jresult = job.GetString
-				sJSONData = jresult
-				LoadJSONDATA
+				'sJSONData = jresult
+				LoadJSONDATA(jresult)
+			Case "Job3"　
+			    '用于下载赞的次数
+			    Log(job.GetString)
+			Case "Job4"  
+				'用于上传赞
+				ProgressDialogHide
+				'Log(job.GetString)
+				ToastMessageShow("赞+1",False)
+			Case "getlatest"  
+				'最新上传
+				ProgressDialogHide
+				'Log(job.GetString)
+				'Log(job.GetInputStream)
+				'File.WriteString(File.DirInternal,"count.db",job.GetString)
+				Dim out As OutputStream
+				out=File.OpenOutput(File.DirInternal,"count.db",False)
+                File.Copy2(job.GetInputStream,out)
+				out.Close
+				createlistview
 		End Select
 	Else
-	    ProgressDialogHide
-		Log("Error: " & job.ErrorMessage)
-		ToastMessageShow("Error: " & job.ErrorMessage, True)
+	    Select job.JobName
+		    Case "Job1","Job2"
+	            ProgressDialogHide
+		        Log("Error: " & job.ErrorMessage)
+		        ToastMessageShow("Error: " & job.ErrorMessage, True)
+			Case "Job3"
+			    ProgressDialogHide
+		        Log("Error: " & job.ErrorMessage)
+			Case "Job4"	
+			
+		End Select 	
 	End If
 	job.Release
 End Sub
 
 Sub Quit_Click
+    If manager.GetBoolean("check2")=True Then
+	    File.Delete(File.DirInternal,"user")
+	End If
     ExitApplication
 End Sub
 
@@ -202,7 +354,7 @@ Sub upload_Click
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
 	Log(time)
     job1.Initialize("Job1",Me)
-    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username=admin&password=admin&isbn="&result&"&time="&time)
+    job1.PostString("http://192.168.42.53:8080/login","username=admin&password=admin&isbn="&result&"&time="&time&"&bookname="&bookname)
 End Sub
 
 Sub storetodatabase_Click
@@ -213,8 +365,8 @@ Sub storetodatabase_Click
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
 	Dim Cursor1 As Cursor
 	Cursor1 = SQL1.ExecQuery("SELECT title FROM book")
-    For i = 0 To Cursor1.RowCount - 1
-	    Cursor1.Position = i
+    For I = 0 To Cursor1.RowCount - 1
+	    Cursor1.Position = I
 		If Cursor1.GetString("title")=bookname Then
 		    exist=1
 			ToastMessageShow("该图书已扫描过。",False)
@@ -233,6 +385,10 @@ End Sub
 
 Sub Button3_Click
 	sm.Show
+End Sub
+
+Sub Button6_Click
+	StartActivity(screen.CreateIntent)
 End Sub
 
 'Event sub which is called when an item in the slidemenu is clicked
@@ -278,4 +434,385 @@ Sub Activity_Touch (Action As Int, X As Float, Y As Float)
 				End If
 			End If
 	End Select
+End Sub
+
+
+Sub Label6_Click
+    Initilize_scrollview
+    Label6.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_selected.png"))
+	Label5.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_normal.png"))
+	Label4.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_normal.png"))
+	Panel1.Visible=False
+	Panel2.Visible=False
+	Panel3.Visible=True
+	Button10.Visible=False
+End Sub
+Sub Label5_Click
+    Label5.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_selected.png"))
+	Label6.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_normal.png"))
+	Label4.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_normal.png"))
+	Panel1.Visible=False
+	Panel2.Visible=True
+	Panel3.Visible=False
+	Button10.Visible=True
+End Sub
+Sub Label4_Click
+    Label4.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_selected.png"))
+	Label6.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_normal.png"))
+	Label5.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_normal.png"))
+	Panel1.Visible=True
+	Panel2.Visible=False
+	Panel3.Visible=False
+	Button10.Visible=False
+End Sub
+
+
+Sub changeprofile_Click
+    StartActivity(profile)
+End Sub
+Sub Button7_Click
+    'Dim job3 As HttpJob
+	'job3.Initialize("Job3",Me)
+    'job3.Download("http://e.jiangnan.edu.cn/main.logout.do")
+	'ProgressDialogShow("注销中...")
+	ToastMessageShow("注销成功！",False)
+	File.Delete(File.DirInternal,"user")
+	Initilize_scrollview
+End Sub
+Sub Button5_Click
+	StartActivity(login)
+End Sub
+
+Sub Button4_Click
+	StartActivity(register)
+End Sub
+
+Sub SetDefaults
+	'defaults are only set on the first run.
+	manager.SetBoolean("check1", True)
+	manager.SetBoolean("check2", True)
+End Sub
+
+Sub CreatePreferenceScreen
+	screen.Initialize("设置", "")
+	'create two categories
+	Dim cat1, cat2 As PreferenceCategory
+	cat1.Initialize("扫描")
+	cat1.AddCheckBox("check1", "查书后自动存储", "手工存储可确保存储成功。", True)
+	'cat1.AddEditText("edit1", "EditText1", "This is EditText1", "")
+	
+	cat2.Initialize("账户")
+	cat2.AddCheckBox("check2", "退出时清除登录记录。", "", True)
+	'add the categories to the main screen
+	screen.AddPreferenceCategory(cat1)
+	screen.AddPreferenceCategory(cat2)
+End Sub
+
+Sub HandleSettings
+	'Select manager.GetBoolean("check1")
+	'    Case True
+		    
+	'End Select
+End Sub
+
+'Panel2上两个按钮
+Sub Button9_Click
+    If WebView1.Visible=True Then
+        WebView1.Visible=False
+	End If
+	createlistview
+End Sub
+Sub Button8_Click
+	ProgressDialogShow("加载中")
+	WebView1.LoadUrl("https://bottle-bookjnrain.rhcloud.com/query")
+End Sub
+Sub WebView1_PageFinished (Url As String)
+	ProgressDialogHide
+	If WebView1.Visible=False Then
+	    clv1.AsView.Visible=False
+        WebView1.Visible=True
+	End If
+End Sub
+
+'以下是Panel2上的ListView
+Sub createlistview
+	clv1.Initialize(Me, "clv1")
+	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-40dip)
+	
+	If SQL3.IsInitialized = False Then
+	    SQL3.Initialize(File.DirInternal, "count.db", False)
+	End If
+	
+	Dim Cursor1 As Cursor
+	Cursor1 = SQL3.ExecQuery("SELECT * FROM statics")
+	For i = 0 To Cursor1.RowCount - 1
+		Cursor1.Position = i
+
+		Log("************************")
+		Log(Cursor1.GetString("bookname"))
+		
+		
+	    Dim ProperHeight As Int
+	    ProperHeight=autosize(Cursor1.GetString("bookname"))+20dip
+		Log(ProperHeight)
+
+		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("isbn"))
+	Next
+	Cursor1.Close
+	
+	clv1.AsView.Visible=True
+End Sub
+
+Sub clv1_ItemClick (Index As Int, Value As Object)
+	'Msgbox("Hello","Hello")
+	Dim r As List 
+    r.Initialize 
+    r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","评论"))
+    Dim m As Int
+    Dim x As id 
+    m = x.InputList1(r,Index)
+	
+	Select m
+	    Case 0
+            Dim CC As BClipboard
+            CC.setText(Value)
+	        ToastMessageShow("结果已复制到剪切板。",False)
+	    Case 1
+            getinfo(Value)
+			result=Value
+			Label4_Click
+		Case 2
+		    ExePraise(Index,True)
+		Case 3
+		    ToastMessageShow("",False)
+	End Select		
+End Sub
+
+
+Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int, Width As Int, Height As Int) As Panel
+	Dim p As Panel
+	p.Initialize("")
+	p.Color = Colors.RGB(245,245,245)
+	
+	'Dim b As Button
+	'b.Initialize("button") 'all buttons click events will be handled with Sub Button_Click
+	'b.Text = "Click"
+	'Dim chk As CheckBox
+	'chk.Initialize("")
+	'p.AddView(b, Width-60dip, 2dip, 20dip, Height-4dip) 'view #1
+	'p.AddView(chk, Width-120dip, 2dip, 50dip, Height-4dip) 'view #2
+	Dim lbl As Label
+	lbl.Initialize("")
+	lbl.Gravity = Gravity.LEFT
+	lbl.Text = FirstLineText
+	lbl.TextSize = 18
+	lbl.TextColor = Colors.Black
+	
+	Dim lbl2 As Label
+	lbl2.Initialize("")
+	lbl2.Gravity = Gravity.LEFT
+	lbl2.Text = SecondLineText
+	lbl2.TextSize = 16
+	lbl2.TextColor = Colors.Gray
+	
+	Dim lbl3 As Label
+	lbl3.Initialize("")
+	lbl3.Gravity = Gravity.CENTER_HORIZONTAL
+	lbl3.Text = PraiseTimes
+	lbl3.TextSize = 16
+	lbl3.TextColor = Colors.Gray
+	
+	Dim lbl4 As Label
+	lbl4.Initialize("")
+	lbl4.Gravity = Gravity.CENTER_HORIZONTAL
+	lbl4.Text = CommentTimes
+	lbl4.TextSize = 16
+	lbl4.TextColor = Colors.Gray
+
+	
+	Dim praise As ImageView
+	praise.Initialize("praise")
+	
+	Dim beenpraised=0 As Int '默认没赞过
+	Dim Cursor2 As Cursor
+	Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
+	For I = 0 To Cursor2.RowCount - 1
+	    Cursor2.Position = I
+		If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=0 Then
+	        beenpraised=0
+	    Else If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=1 Then
+	        beenpraised=1
+		End If
+	Next
+	Cursor2.Close
+	
+	If beenpraised=0 Then
+	    praise.Bitmap=LoadBitmap(File.DirAssets,"praise_no.png")
+		praise.Tag=Null
+	Else If beenpraised=1 Then 
+	    praise.Bitmap=LoadBitmap(File.DirAssets,"praise_yes.png")
+		praise.Tag="yes"
+	End If
+	
+	praise.Gravity=Gravity.FILL
+	
+	Dim bookcomment As ImageView
+	bookcomment.Initialize("bookcomment")
+	bookcomment.Bitmap=LoadBitmap(File.DirAssets,"comment.png")
+	bookcomment.Gravity=Gravity.FILL
+	
+	p.AddView(lbl, 5dip, 2dip, Width-72dip, Height-4dip) 'view #0
+    p.AddView(lbl2, 5dip, Height-20dip, Width-72dip, 20dip) 'view #1
+	p.AddView(lbl3, Width-40dip, Height-56-48, 20dip, 20dip) 'view #2
+	p.AddView(praise, Width-40dip, Height-56, 48, 48) 'view #3
+	p.AddView(lbl4, Width-70dip, Height-56-48, 20dip, 20dip) 'view #4
+	p.AddView(bookcomment, Width-70dip, Height-56, 48, 48) 'view #5
+	Return p
+End Sub
+
+'Sub Button_Click
+'	Dim index As Int
+'	index = clv1.GetItemFromView(Sender)
+'	Dim pnl As Panel
+'	pnl = clv1.GetPanel(index)
+'	
+'	Dim lbl As Label
+'	Dim chk As CheckBox
+'	lbl = pnl.GetView(0)
+'	chk = pnl.GetView(2)
+'	lbl.Text = "Clicked!"
+'	Msgbox("Item value: " & clv1.GetValue(index) & CRLF & "Check value: " & chk.Checked, "")
+'End Sub
+
+'Let custom list have auto height.
+Sub autosize(Text As String) As Int
+	Dim example As Label
+	example.Initialize("")
+	example.Gravity = Bit.OR(Gravity.CENTER_VERTICAL, Gravity.LEFT)
+	example.Text = Text
+	example.TextSize = 18
+	example.TextColor = Colors.White
+	Activity.AddView(example,0,0,clv1.AsView.Width-72dip,20dip)
+	example.Visible=False
+	Dim minHeight,ProperHeight As Int
+	minHeight = su.MeasureMultilineTextHeight(example, Text)
+	ProperHeight = Max(50dip, minHeight)
+	Return ProperHeight 
+End Sub
+
+Sub praise_click
+    ExePraise(0,False)
+End Sub
+
+Sub ExePraise(IndexFromMenu As Int,menuclick As Boolean )
+    If menuclick=True Then
+	    Dim pnl As Panel
+	    pnl = clv1.GetPanel(IndexFromMenu)
+	Else
+	    Dim index As Int
+	    index = clv1.GetItemFromView(Sender)
+	    Dim pnl As Panel
+	    pnl = clv1.GetPanel(index)
+	End If
+	
+	Dim lbl2 As Label
+	lbl2 = pnl.GetView(1)
+	
+	Dim lbl3 As Label
+	lbl3 = pnl.GetView(2)
+	
+    Dim praise As ImageView
+	praise=pnl.GetView(3)
+	
+	Log(praise.Tag)
+	If praise.Tag=Null Then
+		'uploadpraise(lbl2.Text)
+        SQL2.ExecNonQuery2("INSERT INTO statics VALUES(?, ?, ?)", Array As Object(lbl2.Text,1,0))
+		lbl3.Text=lbl3.Text+1
+	    praise.Bitmap=LoadBitmap(File.DirAssets,"praise_yes.png")
+		praise.Tag="yes"
+		'ToastMessageShow("赞+1",False)
+		uploadpraise(lbl2.Text)
+	Else
+	    ToastMessageShow("您已赞过。",False)
+	    'praise.Bitmap=LoadBitmap(File.DirAssets,"praise_no.png")
+		'praise.Tag=Null
+	End If
+End Sub
+
+Sub bookcomment_click
+	Dim index As Int
+	index = clv1.GetItemFromView(Sender)
+	Dim pnl As Panel
+	pnl = clv1.GetPanel(index)
+	Dim lbl2 As Label
+	lbl2 = pnl.GetView(1)
+    Dim lbl4 As Label
+	lbl4 = pnl.GetView(4)
+   ToastMessageShow("这是评论"&lbl4.Text,False)
+   book=lbl2.Text
+   StartActivity(comment)
+End Sub
+
+'Toggle Panel's Size
+Sub Button10_Click
+	If Panel2.Height=100%y-42dip-72dip Then
+	    Panel2.Height=100%y-42dip
+		Label4.Visible=False
+		Label5.Visible=False
+		Label6.Visible=False
+		WebView1.Height=Panel2.Height
+        WebView1.Width=Panel2.Width
+		If WebView1.Visible=False Then
+		    clv1.AsView.Height=Panel2.Height
+            clv1.AsView.Width=Panel2.Width
+		End If	
+		Button8.Visible=False
+        Button9.Visible=False
+		Button10.SetBackgroundImage(LoadBitmap(File.DirAssets,"arrowup.png"))
+	Else
+		Panel2.Height=100%y-72dip-42dip
+		Label4.Visible=True
+		Label5.Visible=True
+		Label6.Visible=True
+		WebView1.Height=Panel2.Height-40dip
+        WebView1.Width=Panel2.Width
+		If WebView1.Visible=False Then
+		    clv1.AsView.Height=Panel2.Height-40dip
+            clv1.AsView.Width=Panel2.Width
+		End If
+        Button8.Visible=True
+        Button9.Visible=True
+		Button10.SetBackgroundImage(LoadBitmap(File.DirAssets,"arrowdown.png"))
+	End If
+End Sub
+
+'以下暂不用，改用本地存储
+Sub uploadpraise(isbn As String)
+    'ToastMessageShow("上传中，请等待提示。",False)
+	Dim Reader As TextReader
+    Dim username As String
+	If File.Exists(File.DirInternal,"user") Then
+        Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		username = Reader.ReadLine
+        Reader.Close 
+	Else
+	    username="admin"
+	End If
+	ProgressDialogShow("上传中...")
+    Dim now As Long
+    Dim time As String
+	now = DateTime.now
+    time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
+	Log(time)
+	Dim job4 As HttpJob
+    job4.Initialize("Job4",Me)
+    job4.PostString("http://192.168.42.53:8080/addpraise","username="&username&"&isbn="&isbn&"&praise=1&time="&time)
+End Sub
+
+Sub Button11_Click
+	Dim getlatest As HttpJob
+	getlatest.Initialize("getlatest",Me)
+    getlatest.Download("http://192.168.42.53:8080/get2")
+	ProgressDialogShow("获取数据中...")
 End Sub

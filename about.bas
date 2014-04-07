@@ -17,8 +17,8 @@ Sub Globals
 	'These variables can only be accessed from this module.
 
 	Dim Button1 As Button
-	Dim Label1 As Label
 	Dim Label2 As Label
+	Dim ImageView2 As ImageView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
