@@ -18,13 +18,7 @@ def login():
     print(username,password,isbn,lasttime)
     exist=1#默认插入
     print exist
-    if username =='admin' and password =='admin':
-        params = isbn
-        
-        #f = urllib.urlopen("https://api.douban.com/v2/book/isbn/:"+str(params))
-        #jresult=f.read()
-        #jsonVal = json.loads(jresult)
-        #bookcode=jsonVal["isbn13"]
+    if auth()=='登录成功!':
         
         #判断是否已经存在
         conn = sqlite3.connect('book.db')
@@ -42,6 +36,71 @@ def login():
         return username+'登录成功'
     else :
         return username+'登录失败'
+    
+#用户注册
+@route("/user/new",method="post")
+def newuser():
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    exist=1#默认注册
+    print exist
+    #判断是否已经存在
+    conn = sqlite3.connect('db/users.db')
+    c = conn.cursor()
+    
+    for dbusername in c.execute('select username from users'):
+        print dbusername
+        if str("(u'"+username+"',)") == str(dbusername):
+            exist=0
+            break
+            
+    print exist
+    if exist==0:
+        return '该用户名已注册！'
+    else:
+        c.execute("insert into users values ('"+username+"','"+password+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+        conn = sqlite3.connect("db/"+username+".db")
+        c = conn.cursor()
+        c.execute("create table book (title , price, publisher, isbn, pubdate, lasttime, introduction)")
+        conn.commit()
+        c.close()
+        conn.close()
+        return '注册成功！'
+    
+#用户注册页面
+@route("/user/register")
+def register():
+    return template("register")
+
+#用户登录页面
+@route("/user/index")
+def register():
+    return template("userlogin")
+
+#验证用户
+@route("/user/login",method="post")
+def auth():
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    userexist=0 #默认用户不存在
+    conn = sqlite3.connect('db/users.db')
+    c = conn.cursor()
+    for dbusername in c.execute('select username from users'):        
+        if str("(u'"+username+"',)") == str(dbusername):
+            userexist=1
+            c.execute("select password from users where username='"+username+"'")
+            dbpassword=c.fetchone()
+            print dbpassword
+            
+            if str("(u'"+password+"',)") == str(dbpassword):
+                return '登录成功!'
+            else:
+                return '登录失败!'
+    if userexist==0:
+        return '用户名不存在！'
 
 #用户登录页面的
 @route("/index")
@@ -55,17 +114,29 @@ def get():
     
     return static_file("book.db","./",download="book.db")
 
-#下载页面2
+#获取统计数据
 @route("/get2")
 def get2():
     
     return static_file("count.db",root='db',mimetype="*/*",download="count.db")
 
-#下载页面2
+#获取评论
 @route("/getcomment/<isbn:path>")
 def getcomment(isbn):
     
     return static_file(isbn+"-comment.db",root='db',mimetype="*/*",download=isbn+"-comment.db")
+
+#获取用户信息
+@route("/getuserinfo/<username:path>")
+def getuserinfo(username):
+    
+    return static_file(username+"-profile",root='user',mimetype="*/*",download=username+"-profile")
+
+#获取用户头像
+@route("/getavatar/<username:path>")
+def getavatar(username):
+    
+    return static_file(username+".jpg",root='avatar',mimetype="*/*",download=username+".jpg")
 
 
 
@@ -164,8 +235,8 @@ def server_static(filepath):
 
 #插入
 def insert(isbn,lasttime,bookname,username):
-    params = isbn
-    f = urllib.urlopen("https://api.douban.com/v2/book/isbn/:"+str(params))
+    #params = isbn
+    f = urllib.urlopen("https://api.douban.com/v2/book/isbn/:"+isbn)
     jresult=f.read()
     jsonVal = json.loads(jresult)
     bookcode=jsonVal["isbn13"]
@@ -174,6 +245,12 @@ def insert(isbn,lasttime,bookname,username):
     bookpublisher=jsonVal["publisher"]
     bookpubdate=jsonVal["pubdate"]
     conn = sqlite3.connect('book.db')
+    c = conn.cursor()
+    c.execute("insert into book values ('"+bookname+"','"+bookprice+"','"+bookpublisher+"','"+bookcode+"','"+bookpubdate+"','"+lasttime+"','0')")
+    conn.commit()
+    c.close()
+    conn.close()
+    conn = sqlite3.connect('db/'+username+'.db')
     c = conn.cursor()
     c.execute("insert into book values ('"+bookname+"','"+bookprice+"','"+bookpublisher+"','"+bookcode+"','"+bookpubdate+"','"+lasttime+"','0')")
     conn.commit()
@@ -210,12 +287,23 @@ def createdb(bookcode,lasttime,bookname,username):
         c.close()
         conn.close()
     else:
+        #上传后添加数据
+        exist=1#默认插入
+        #判断是否已经存在
         conn = sqlite3.connect('db/count.db')
         c = conn.cursor()
-        c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"')")
-        conn.commit()
-        c.close()
-        conn.close()
+        for isbncode in c.execute('select isbn from statics'):
+            if str("(u'"+bookcode+"',)") == str(isbncode):
+                exist=0
+                break
+        print exist
+        if exist==1:
+            c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"')")
+            conn.commit()
+            c.close()
+            conn.close()
+        
+
 #点赞
 @route("/praise")
 def praise():
@@ -339,6 +427,56 @@ def addcomment():
     return "评论成功！"
 
 
+#用户信息
+@route("/user/profile")
+def userprofile():
+
+    return template("userprofile")
+
+#存储用户信息-用post保证数据传送完整
+@route("/user/editprofile",method="post")
+def editprofile():
+    username = request.forms.get("username")
+    avatar = request.forms.get("avatar")
+    nickname= request.forms.get("nickname")
+    phone = request.forms.get("phone")
+    address = request.forms.get("address")
+    major = request.forms.get("major")
+    sex = request.forms.get("sex")
+    age = request.forms.get("age")
+    
+    fw=open('./user/'+username+'-profile','w') #打开一个空白文本文件，准备写入
+    fw.write(nickname+'\n')
+    fw.write(phone+'\n')
+    fw.write(address+'\n')
+    fw.write(major+'\n')
+    fw.write(sex+'\n')
+    fw.write(age+'\n')
+    fw.flush()
+    fw.close
+    return "保存成功"
+
+@route('/user/avatar')
+def avatar():
+    return template("upload")
+
+@route('/user/avatarupload', method='POST')
+def do_avatarupload():
+    #username = request.forms.get('username')
+    upload = request.files.get('upload')
+    name, ext = os.path.splitext(upload.filename)
+    if ext not in ('.png','.jpg','.jpeg'):
+        return "File extension not allowed."
+
+    save_path = "./avatar/"
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    file_path = "{path}/{file}".format(path=save_path, file=upload.filename)
+    if os.path.exists(file_path)==True:
+        os.remove(file_path)
+    upload.save(file_path)
+    return "File successfully saved to '{0}'.".format(save_path)
 
 #修改
 def update(isbn,lasttime,bookname, username):
@@ -364,4 +502,4 @@ def find():
 
 
 #默认端口  run(host='localhost', port=8080)
-run(host='192.168.42.53', port=8080)
+run(host='127.0.0.1', port=8080)

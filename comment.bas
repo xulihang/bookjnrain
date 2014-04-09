@@ -10,6 +10,7 @@ Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
     Dim SQL4 As SQL
+	Dim queryuser As String
 End Sub
 
 Sub Globals
@@ -30,7 +31,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("comment")
 	Dim getcomment As HttpJob
 	getcomment.Initialize("getcomment",Me)
-    getcomment.Download("http://192.168.42.53:8080/getcomment/"&Main.book)
+    getcomment.Download("https://bottle-bookjnrain.rhcloud.com/getcomment/"&Main.book)
 	ProgressDialogShow("获取数据中...")
     Log(Main.book)
 End Sub
@@ -89,10 +90,10 @@ Sub createlistview
 	    ProperHeight=autosize(Cursor1.GetString("comment"))+20dip
 		Log(ProperHeight)
 
-		clv1.Add(CreateListItem(Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("who"))
+		clv1.Add(CreateListItem(Cursor1.GetString("comment"),Cursor1.GetString("who"),Cursor1.GetString("time"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("who"))
 	Next
 	Cursor1.Close
-	
+	SQL4.Close
 	clv1.AsView.Visible=True
 End Sub
 
@@ -120,7 +121,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 End Sub
 
 
-Sub CreateListItem(FirstLineText As String, Width As Int, Height As Int) As Panel
+Sub CreateListItem(FirstLineText As String,username As String,time As String, Width As Int, Height As Int) As Panel
 	Dim p As Panel
 	p.Initialize("")
 	p.Color = Colors.RGB(245,245,245)
@@ -139,8 +140,24 @@ Sub CreateListItem(FirstLineText As String, Width As Int, Height As Int) As Pane
 	lbl.TextSize = 18
 	lbl.TextColor = Colors.Black
 	
+	Dim lbl2 As Label
+	lbl2.Initialize("userinfo")
+	lbl2.Gravity = Gravity.LEFT
+	lbl2.Text = username
+	lbl2.TextSize = 16
+	lbl2.TextColor = Colors.Gray
+	
+	Dim lbl3 As Label
+	lbl3.Initialize("")
+	lbl3.Gravity = Gravity.LEFT
+	lbl3.Text = time
+	lbl3.TextSize = 16
+	lbl3.TextColor = Colors.Gray
+	
 	
 	p.AddView(lbl, 5dip, 2dip, Width-72dip, Height-4dip) 'view #0
+	p.AddView(lbl2, 5dip, Height-20dip, Width-144dip, 20dip) 'view #1
+	p.AddView(lbl3, Width-144dip, Height-20dip, 144dip, 20dip) 'view #2
 	Return p
 End Sub
 
@@ -179,5 +196,16 @@ Sub Button1_Click
 	Log(time)
 	Dim job4 As HttpJob
     job4.Initialize("Job4",Me)
-    job4.PostString("http://192.168.42.53:8080/addcomment","username="&username&"&isbn="&Main.book&"&comment="&EditText1.Text&"&time="&time)
+    job4.PostString("https://bottle-bookjnrain.rhcloud.com/addcomment","username="&username&"&isbn="&Main.book&"&comment="&EditText1.Text&"&time="&time)
+End Sub
+
+Sub userinfo_click
+	Dim index As Int
+	index = clv1.GetItemFromView(Sender)
+	Dim pnl As Panel
+	pnl = clv1.GetPanel(index)
+	Dim lbl2 As Label
+	lbl2 = pnl.GetView(1)
+	queryuser=lbl2.Text
+    StartActivity(userinfo)
 End Sub

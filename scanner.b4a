@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=10
+NumberOfModules=12
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -21,11 +21,15 @@ Module9=CustomListView
 ModuleVisible9=1
 Module10=comment
 ModuleVisible10=1
+Module11=userinfo
+ModuleVisible11=1
+Module12=MultipartPost
+ModuleVisible12=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=CustomListView,SlideMenu,ActionItem
-NumberOfFiles=12
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+NumberOfFiles=13
 File1=about.bal
 File2=comment.bal
 File3=comment.png
@@ -37,22 +41,25 @@ File8=profile.bal
 File9=query.bal
 File10=register.bal
 File11=scanner.bal
-File12=web.bal
-NumberOfLibraries=14
+File12=userinfo.bal
+File13=web.bal
+NumberOfLibraries=16
 Library1=animation
 Library2=b4azxing
-Library3=clipboard
-Library4=core
-Library5=encryption
-Library6=httputils2
-Library7=id
-Library8=json
-Library9=phone
-Library10=preferenceactivity
-Library11=reflection
-Library12=rsimageprocessing
-Library13=sql
-Library14=stringutils
+Library3=base64image
+Library4=clipboard
+Library5=core
+Library6=encryption
+Library7=http
+Library8=httputils2
+Library9=id
+Library10=json
+Library11=phone
+Library12=preferenceactivity
+Library13=reflection
+Library14=rsimageprocessing
+Library15=sql
+Library16=stringutils
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -178,12 +185,14 @@ Sub Initilize_scrollview
     Dim Reader As TextReader
     Dim username As String
 	Dim password As String
-	If Button4.IsInitialized=True Then
-		Button4.RemoveView
+	If Button5.IsInitialized=True Then
 		Button5.RemoveView
 	End If
 	If Button7.IsInitialized=True Then
 	    Label7.RemoveView
+		If File.Exists(File.DirInternal,username&"-account") Then
+		    Button4.RemoveView
+		End If
 	    Button7.RemoveView
 		changeprofile.RemoveView
 	End If
@@ -201,14 +210,20 @@ Sub Initilize_scrollview
 	    changeprofile.Text="修改我的资料"
 		ScrollView1.Panel.AddView(Label7,10dip,10dip,ScrollView1.Width-100dip,50dip)
 		ScrollView1.Panel.AddView(Button7,10dip,60dip,ScrollView1.Width-20dip,50dip)
-		ScrollView1.Panel.AddView(changeprofile,10dip,110dip,ScrollView1.Width-20dip,50dip)
+		If File.Exists(File.DirInternal,username&"-account")=False Then
+	        Button4.Initialize("Button4")
+	        Button4.Text="生成云端帐号"
+		    ScrollView1.Panel.AddView(Button4,10dip,110dip,ScrollView1.Width-20dip,50dip)
+			ScrollView1.Panel.AddView(changeprofile,10dip,160dip,ScrollView1.Width-20dip,50dip)
+		Else
+		    ScrollView1.Panel.AddView(changeprofile,10dip,110dip,ScrollView1.Width-20dip,50dip)
+		End If
+		
 	Else
-	    Button4.Initialize("Button4")
-	    Button4.Text="注册"
 	    Button5.Initialize("Button5")
 	    Button5.Text="登录"
-	    ScrollView1.Panel.AddView(Button4,10dip,10dip,ScrollView1.Width-20dip,50dip)
-	    ScrollView1.Panel.AddView(Button5,10dip,60dip,ScrollView1.Width-20dip,50dip)
+	    ScrollView1.Panel.AddView(Button5,10dip,10dip,ScrollView1.Width-20dip,50dip)
+	    'ScrollView1.Panel.AddView(Button5,10dip,60dip,ScrollView1.Width-20dip,50dip)
     End If
 End Sub
 
@@ -348,13 +363,18 @@ End Sub
 Sub upload_Click 
     'ToastMessageShow("上传中，请等待提示。",False)
 	ProgressDialogShow("上传中...")
+	Dim Reader As TextReader
+	Dim username,password As String
+	Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+    username = Reader.ReadLine
+    password = Reader.ReadLine
     Dim now As Long
     Dim time As String
 	now = DateTime.now
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
 	Log(time)
     job1.Initialize("Job1",Me)
-    job1.PostString("http://192.168.42.53:8080/login","username=admin&password=admin&isbn="&result&"&time="&time&"&bookname="&bookname)
+    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&result&"&time="&time&"&bookname="&bookname)
 End Sub
 
 Sub storetodatabase_Click
@@ -515,24 +535,36 @@ Sub HandleSettings
 	'End Select
 End Sub
 
-'Panel2上两个按钮
+'Panel2上三个按钮
 Sub Button9_Click
     If WebView1.Visible=True Then
         WebView1.Visible=False
 	End If
 	createlistview
+	WebView1.SendToBack
 End Sub
 Sub Button8_Click
 	ProgressDialogShow("加载中")
 	WebView1.LoadUrl("https://bottle-bookjnrain.rhcloud.com/query")
 End Sub
+
+Sub Button11_Click
+	Dim getlatest As HttpJob
+	getlatest.Initialize("getlatest",Me)
+    getlatest.Download("https://bottle-bookjnrain.rhcloud.com/get2")
+	ProgressDialogShow("获取数据中...")
+	WebView1.SendToBack
+End Sub
+
 Sub WebView1_PageFinished (Url As String)
 	ProgressDialogHide
 	If WebView1.Visible=False Then
 	    clv1.AsView.Visible=False
         WebView1.Visible=True
 	End If
+	WebView1.BringToFront
 End Sub
+
 
 '以下是Panel2上的ListView
 Sub createlistview
@@ -635,7 +667,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	
 	Dim beenpraised=0 As Int '默认没赞过
 	Dim Cursor2 As Cursor
-	Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
+	Cursor2 = SQL3.ExecQuery("SELECT * FROM statics")
 	For I = 0 To Cursor2.RowCount - 1
 	    Cursor2.Position = I
 		If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=0 Then
@@ -749,7 +781,7 @@ Sub bookcomment_click
 	lbl2 = pnl.GetView(1)
     Dim lbl4 As Label
 	lbl4 = pnl.GetView(4)
-   ToastMessageShow("这是评论"&lbl4.Text,False)
+   ToastMessageShow("这是评论"&lbl2.Text,False)
    book=lbl2.Text
    StartActivity(comment)
 End Sub
@@ -769,6 +801,7 @@ Sub Button10_Click
 		End If	
 		Button8.Visible=False
         Button9.Visible=False
+		Button11.Visible=False
 		Button10.SetBackgroundImage(LoadBitmap(File.DirAssets,"arrowup.png"))
 	Else
 		Panel2.Height=100%y-72dip-42dip
@@ -783,11 +816,13 @@ Sub Button10_Click
 		End If
         Button8.Visible=True
         Button9.Visible=True
+		Button11.Visible=True
 		Button10.SetBackgroundImage(LoadBitmap(File.DirAssets,"arrowdown.png"))
 	End If
 End Sub
 
 '以下暂不用，改用本地存储
+'现已启用
 Sub uploadpraise(isbn As String)
     'ToastMessageShow("上传中，请等待提示。",False)
 	Dim Reader As TextReader
@@ -807,12 +842,6 @@ Sub uploadpraise(isbn As String)
 	Log(time)
 	Dim job4 As HttpJob
     job4.Initialize("Job4",Me)
-    job4.PostString("http://192.168.42.53:8080/addpraise","username="&username&"&isbn="&isbn&"&praise=1&time="&time)
+    job4.PostString("https://bottle-bookjnrain.rhcloud.com/addpraise","username="&username&"&isbn="&isbn&"&praise=1&time="&time)
 End Sub
 
-Sub Button11_Click
-	Dim getlatest As HttpJob
-	getlatest.Initialize("getlatest",Me)
-    getlatest.Download("http://192.168.42.53:8080/get2")
-	ProgressDialogShow("获取数据中...")
-End Sub

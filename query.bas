@@ -108,19 +108,31 @@ Sub ListView1_ItemLongClick (Position As Int, Value As Object)
 		    SQL1.ExecNonQuery("DELETE FROM book WHERE isbn Like '"&Value&"'")
 	        ListView1.RemoveAt(Position)
 	    Case 1
-            upload(Value)
+		    Dim bookname As String
+	        Dim Cursor1 As Cursor
+	        Cursor1 = SQL1.ExecQuery("SELECT title FROM book")
+        	Cursor1.Position = Position
+	        bookname=Cursor1.GetString("title")
+	        Cursor1.Close
+			'ToastMessageShow(bookname,False)
+            upload(Value,bookname)
 	End Select			
     'Msgbox(m,"Result")
 End Sub
 
-Sub upload(Value As String)
-	Dim now As Long
+Sub upload(Value As String,bookname As String)
+    ProgressDialogShow("上传中……")
+	Dim Reader As TextReader
+	Dim username,password As String
+	Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+    username = Reader.ReadLine
+    password = Reader.ReadLine
+    Dim now As Long
     Dim time As String
 	now = DateTime.now
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
 	Log(time)
-	ProgressDialogShow("上传中...")
 	Dim job1 As HttpJob
     job1.Initialize("Job1",Me)
-    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username=admin&password=admin&isbn="&Value&"&time="&time)
+    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&Value&"&time="&time&"&bookname="&bookname)
 End Sub

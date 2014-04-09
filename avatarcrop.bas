@@ -108,7 +108,7 @@ End Sub
 
 Sub rsimage
     resize=IO.createScaledBitmap(cut,128,128,False)
-	IO.writeBitmapToFile(resize,File.DirInternal,"avatar.jpg",60)
+	IO.writeBitmapToFile(resize,File.DirInternal,"avatar.jpg",1)
 	ToastMessageShow("修改成功！。",False)
 	Activity.Finish
 End Sub
