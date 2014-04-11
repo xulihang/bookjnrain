@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=12
+NumberOfModules=13
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -25,11 +25,13 @@ Module11=userinfo
 ModuleVisible11=1
 Module12=MultipartPost
 ModuleVisible12=1
+Module13=search
+ModuleVisible13=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
 UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
-NumberOfFiles=13
+NumberOfFiles=14
 File1=about.bal
 File2=comment.bal
 File3=comment.png
@@ -41,8 +43,9 @@ File8=profile.bal
 File9=query.bal
 File10=register.bal
 File11=scanner.bal
-File12=userinfo.bal
-File13=web.bal
+File12=search.bal
+File13=userinfo.bal
+File14=web.bal
 NumberOfLibraries=16
 Library1=animation
 Library2=b4azxing
@@ -124,6 +127,7 @@ Sub Globals
 	Private su As StringUtils
 	Dim Button10 As Button 'Toggle
 	Dim Button11 As Button 
+	Dim Button12 As Button 'Search
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -169,6 +173,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	'DBload //（调用函数）
 	Button2.Enabled=False
 	Button10.Visible=False
+	Button12.Visible=False
 	Panel2.Visible=False
 	Panel3.Visible=False
     Initilize_sm
@@ -321,7 +326,7 @@ Sub JobDone (job As HttpJob)
 				out=File.OpenOutput(File.DirInternal,"count.db",False)
                 File.Copy2(job.GetInputStream,out)
 				out.Close
-				createlistview
+				createlistview(1)
 		End Select
 	Else
 	    Select job.JobName
@@ -369,12 +374,12 @@ Sub upload_Click
     username = Reader.ReadLine
     password = Reader.ReadLine
     Dim now As Long
-    Dim time As String
+    'Dim time As String
 	now = DateTime.now
-    time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
-	Log(time)
+    'time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
+	'Log(time)
     job1.Initialize("Job1",Me)
-    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&result&"&time="&time&"&bookname="&bookname)
+    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&result&"&time="&now&"&bookname="&bookname)
 End Sub
 
 Sub storetodatabase_Click
@@ -466,6 +471,7 @@ Sub Label6_Click
 	Panel2.Visible=False
 	Panel3.Visible=True
 	Button10.Visible=False
+	Button12.Visible=False
 End Sub
 Sub Label5_Click
     Label5.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_selected.png"))
@@ -475,6 +481,7 @@ Sub Label5_Click
 	Panel2.Visible=True
 	Panel3.Visible=False
 	Button10.Visible=True
+	Button12.Visible=True
 End Sub
 Sub Label4_Click
     Label4.SetBackgroundImage(LoadBitmap(File.DirAssets,"tab_selected.png"))
@@ -484,6 +491,7 @@ Sub Label4_Click
 	Panel2.Visible=False
 	Panel3.Visible=False
 	Button10.Visible=False
+	Button12.Visible=False
 End Sub
 
 
@@ -540,7 +548,7 @@ Sub Button9_Click
     If WebView1.Visible=True Then
         WebView1.Visible=False
 	End If
-	createlistview
+	createlistview(2)
 	WebView1.SendToBack
 End Sub
 Sub Button8_Click
@@ -567,7 +575,7 @@ End Sub
 
 
 '以下是Panel2上的ListView
-Sub createlistview
+Sub createlistview(order As Int)
 	clv1.Initialize(Me, "clv1")
 	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-40dip)
 	
@@ -575,8 +583,19 @@ Sub createlistview
 	    SQL3.Initialize(File.DirInternal, "count.db", False)
 	End If
 	
+	Dim SqlSentence As String 
+	If order=0 Then
+	    SqlSentence="SELECT * FROM statics"
+	Else If order=1 Then
+	    SqlSentence="SELECT * FROM statics Order by comment desc"
+	Else If order=2 Then
+	    SqlSentence="SELECT * FROM statics Order by time desc"
+	Else If order=3 Then
+	    SqlSentence="SELECT * FROM statics WHERE bookname like '%"&search.keyword&"%'"
+	End If
+	
 	Dim Cursor1 As Cursor
-	Cursor1 = SQL3.ExecQuery("SELECT * FROM statics")
+	Cursor1 = SQL3.ExecQuery(SqlSentence)
 	For i = 0 To Cursor1.RowCount - 1
 		Cursor1.Position = i
 
@@ -667,7 +686,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	
 	Dim beenpraised=0 As Int '默认没赞过
 	Dim Cursor2 As Cursor
-	Cursor2 = SQL3.ExecQuery("SELECT * FROM statics")
+	Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
 	For I = 0 To Cursor2.RowCount - 1
 	    Cursor2.Position = I
 		If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=0 Then
@@ -821,6 +840,18 @@ Sub Button10_Click
 	End If
 End Sub
 
+
+'Search
+Sub Button12_Click
+    Dim resultofmsgbox As Int
+    resultofmsgbox=Msgbox2("当前关键词为"&search.keyword,"查询","去输入","","已输入",Null)
+	If resultofmsgbox=DialogResponse.POSITIVE Then
+	    StartActivity(search)
+	Else
+	    createlistview(3)
+	End If
+End Sub
+
 '以下暂不用，改用本地存储
 '现已启用
 Sub uploadpraise(isbn As String)
@@ -836,12 +867,11 @@ Sub uploadpraise(isbn As String)
 	End If
 	ProgressDialogShow("上传中...")
     Dim now As Long
-    Dim time As String
+    'Dim time As String
 	now = DateTime.now
-    time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
-	Log(time)
+    'time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
+	'Log(time)
 	Dim job4 As HttpJob
     job4.Initialize("Job4",Me)
-    job4.PostString("https://bottle-bookjnrain.rhcloud.com/addpraise","username="&username&"&isbn="&isbn&"&praise=1&time="&time)
+    job4.PostString("https://bottle-bookjnrain.rhcloud.com/addpraise","username="&username&"&isbn="&isbn&"&praise=1&time="&now)
 End Sub
-

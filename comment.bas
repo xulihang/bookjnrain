@@ -85,12 +85,15 @@ Sub createlistview
 		Log("************************")
 		Log(Cursor1.GetString("comment"))
 		
-		
+		Dim now As Long
+		Dim time As String
+	    now = Cursor1.GetString("time")
+        time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&" "&DateTime.GetHour(now)&":"&DateTime.GetMinute(now)
 	    Dim ProperHeight As Int
 	    ProperHeight=autosize(Cursor1.GetString("comment"))+20dip
 		Log(ProperHeight)
 
-		clv1.Add(CreateListItem(Cursor1.GetString("comment"),Cursor1.GetString("who"),Cursor1.GetString("time"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("who"))
+		clv1.Add(CreateListItem(Cursor1.GetString("comment"),Cursor1.GetString("who"),time, clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("who"))
 	Next
 	Cursor1.Close
 	SQL4.Close
@@ -190,13 +193,13 @@ Sub Button1_Click
 	End If
 	ProgressDialogShow("上传中...")
     Dim now As Long
-    Dim time As String
+    'Dim time As String
 	now = DateTime.now
-    time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
-	Log(time)
+    'time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
+	'Log(time)
 	Dim job4 As HttpJob
     job4.Initialize("Job4",Me)
-    job4.PostString("https://bottle-bookjnrain.rhcloud.com/addcomment","username="&username&"&isbn="&Main.book&"&comment="&EditText1.Text&"&time="&time)
+    job4.PostString("https://bottle-bookjnrain.rhcloud.com/addcomment","username="&username&"&isbn="&Main.book&"&comment="&EditText1.Text&"&time="&now)
 End Sub
 
 Sub userinfo_click

@@ -264,7 +264,7 @@ def createdb(bookcode,lasttime,bookname,username):
         conn = sqlite3.connect('db/'+bookcode+'-praise.db')
         c = conn.cursor()
         c.execute("CREATE TABLE statics (who, time, praise)")
-        c.execute("insert into statics values ('admin','"+lasttime+"','0')")
+        #c.execute("insert into statics values ('admin','"+lasttime+"','0')")
         conn.commit()
         c.close()
         conn.close()
@@ -273,7 +273,7 @@ def createdb(bookcode,lasttime,bookname,username):
         conn = sqlite3.connect('db/'+bookcode+'-comment.db')
         c = conn.cursor()
         c.execute("CREATE TABLE statics (who, time, comment)")
-        c.execute("insert into statics values ('admin','"+lasttime+"','0')")
+        #c.execute("insert into statics values ('admin','"+lasttime+"','0')")
         conn.commit()
         c.close()
         conn.close()
@@ -281,8 +281,8 @@ def createdb(bookcode,lasttime,bookname,username):
     if os.path.exists('db/count.db')==False:
         conn = sqlite3.connect('db/count.db')
         c = conn.cursor()
-        c.execute("CREATE TABLE statics (isbn, praise, comment,bookname,username)")
-        c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"')")
+        c.execute("CREATE TABLE statics (isbn, praise, comment,bookname,username,time)")
+        c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"','"+lasttime+"')")
         conn.commit()
         c.close()
         conn.close()
@@ -298,7 +298,7 @@ def createdb(bookcode,lasttime,bookname,username):
                 break
         print exist
         if exist==1:
-            c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"')")
+            c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"','"+lasttime+"')")
             conn.commit()
             c.close()
             conn.close()

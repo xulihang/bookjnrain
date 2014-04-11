@@ -128,11 +128,11 @@ Sub upload(Value As String,bookname As String)
     username = Reader.ReadLine
     password = Reader.ReadLine
     Dim now As Long
-    Dim time As String
+    'Dim time As String
 	now = DateTime.now
-    time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
-	Log(time)
+    'time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
+	'Log(time)
 	Dim job1 As HttpJob
     job1.Initialize("Job1",Me)
-    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&Value&"&time="&time&"&bookname="&bookname)
+    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&Value&"&time="&now&"&bookname="&bookname)
 End Sub
