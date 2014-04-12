@@ -110,10 +110,8 @@ Sub Button1_Click
 End Sub
 
 Sub upload_click
-	Dim b As Base64Image
-	b.Initialize
 	Dim code As String
-	code=b.EncodeFromImage(File.DirInternal,"avatar.jpg")
+	code="None"
 	Dim Writer As TextWriter
     Writer.Initialize(File.OpenOutput(File.DirInternal, "base64", False))
     Writer.Write(code)

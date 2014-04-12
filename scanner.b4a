@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=13
+NumberOfModules=15
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -27,42 +27,48 @@ Module12=MultipartPost
 ModuleVisible12=1
 Module13=search
 ModuleVisible13=1
+Module14=timewheelview
+ModuleVisible14=1
+Module15=follows
+ModuleVisible15=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
 UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
-NumberOfFiles=14
+NumberOfFiles=16
 File1=about.bal
 File2=comment.bal
 File3=comment.png
 File4=crop.bal
-File5=login.bal
-File6=praise_no.png
-File7=praise_yes.png
-File8=profile.bal
-File9=query.bal
-File10=register.bal
-File11=scanner.bal
-File12=search.bal
-File13=userinfo.bal
-File14=web.bal
+File5=follows.bal
+File6=login.bal
+File7=praise_no.png
+File8=praise_yes.png
+File9=profile.bal
+File10=query.bal
+File11=register.bal
+File12=scanner.bal
+File13=search.bal
+File14=userinfo.bal
+File15=web.bal
+File16=wheelview.bal
 NumberOfLibraries=16
 Library1=animation
 Library2=b4azxing
-Library3=base64image
-Library4=clipboard
-Library5=core
-Library6=encryption
-Library7=http
-Library8=httputils2
-Library9=id
-Library10=json
-Library11=phone
-Library12=preferenceactivity
-Library13=reflection
-Library14=rsimageprocessing
-Library15=sql
-Library16=stringutils
+Library3=clipboard
+Library4=core
+Library5=encryption
+Library6=http
+Library7=httputils2
+Library8=id
+Library9=json
+Library10=phone
+Library11=preferenceactivity
+Library12=reflection
+Library13=rsimageprocessing
+Library14=sql
+Library15=stringutils
+Library16=wheelview
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -128,6 +134,8 @@ Sub Globals
 	Dim Button10 As Button 'Toggle
 	Dim Button11 As Button 
 	Dim Button12 As Button 'Search
+	Dim Button13 As Button
+	Dim follow As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -190,11 +198,13 @@ Sub Initilize_scrollview
     Dim Reader As TextReader
     Dim username As String
 	Dim password As String
+    Dim num=0 As Int
 	If Button5.IsInitialized=True Then
 		Button5.RemoveView
 	End If
 	If Button7.IsInitialized=True Then
 	    Label7.RemoveView
+		follow.RemoveView
 		If File.Exists(File.DirInternal,username&"-account") Then
 		    Button4.RemoveView
 		End If
@@ -206,9 +216,25 @@ Sub Initilize_scrollview
 		username = Reader.ReadLine
         password = Reader.ReadLine
         Reader.Close 
+		If File.Exists(File.DirInternal,username&"-follow") Then
+            Reader.Initialize(File.OpenInput(File.DirInternal, username&"-follow"))
+            Dim line As String
+            line = Reader.ReadLine
+            Do While line <> Null
+                Log(line)
+				If line<>"" Then
+                    num=num+1
+				End If
+                line = Reader.ReadLine
+            Loop
+            Reader.Close 
+		End If
 	    Label7.Initialize("")
 		Label7.Text=username&"已登录"
 		Label7.TextSize=20
+		follow.Initialize("follow")
+		follow.Text="关注:"&num
+		follow.TextSize=20
 	    Button7.Initialize("Button7")
 	    Button7.Text="注销"
 		changeprofile.Initialize("changeprofile")
@@ -220,8 +246,10 @@ Sub Initilize_scrollview
 	        Button4.Text="生成云端帐号"
 		    ScrollView1.Panel.AddView(Button4,10dip,110dip,ScrollView1.Width-20dip,50dip)
 			ScrollView1.Panel.AddView(changeprofile,10dip,160dip,ScrollView1.Width-20dip,50dip)
+			ScrollView1.Panel.AddView(follow,10dip,220dip,ScrollView1.Width-100dip,50dip)
 		Else
 		    ScrollView1.Panel.AddView(changeprofile,10dip,110dip,ScrollView1.Width-20dip,50dip)
+			ScrollView1.Panel.AddView(follow,10dip,170dip,ScrollView1.Width-100dip,50dip)
 		End If
 		
 	Else
@@ -329,17 +357,9 @@ Sub JobDone (job As HttpJob)
 				createlistview(1)
 		End Select
 	Else
-	    Select job.JobName
-		    Case "Job1","Job2"
-	            ProgressDialogHide
-		        Log("Error: " & job.ErrorMessage)
-		        ToastMessageShow("Error: " & job.ErrorMessage, True)
-			Case "Job3"
-			    ProgressDialogHide
-		        Log("Error: " & job.ErrorMessage)
-			Case "Job4"	
-			
-		End Select 	
+	    ProgressDialogHide
+		Log("Error: " & job.ErrorMessage)
+		ToastMessageShow("Error: " & job.ErrorMessage, True)
 	End If
 	job.Release
 End Sub
@@ -564,6 +584,21 @@ Sub Button11_Click
 	WebView1.SendToBack
 End Sub
 
+Sub Button13_Click
+    Dim resultofmsgbox As Int
+    resultofmsgbox=Msgbox2("当前日期为"&timewheelview.searchtime,"查询","去选择","","已选择",Null)
+	If resultofmsgbox=DialogResponse.POSITIVE Then
+	    StartActivity(timewheelview)
+	Else
+	    ToastMessageShow("此模式下点赞与评论数为0.",False)
+	    Dim getbytime As HttpJob
+	    getbytime.Initialize("getlatest",Me)
+        getbytime.Download("https://bottle-bookjnrain.rhcloud.com/get3/"&timewheelview.searchtime)
+	    ProgressDialogShow("获取数据中...")
+	    WebView1.SendToBack
+	End If
+End Sub
+
 Sub WebView1_PageFinished (Url As String)
 	ProgressDialogHide
 	If WebView1.Visible=False Then
@@ -616,9 +651,10 @@ End Sub
 
 Sub clv1_ItemClick (Index As Int, Value As Object)
 	'Msgbox("Hello","Hello")
+    Dim resultofmsgbox2 As Int
 	Dim r As List 
     r.Initialize 
-    r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","评论"))
+    r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","查看更多信息"))
     Dim m As Int
     Dim x As id 
     m = x.InputList1(r,Index)
@@ -635,7 +671,14 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 		Case 2
 		    ExePraise(Index,True)
 		Case 3
-		    ToastMessageShow("",False)
+            resultofmsgbox2=Msgbox2("选择一个查询网站","详情","豆瓣","","国家图书馆",Null)
+	        If resultofmsgbox2=DialogResponse.POSITIVE Then
+		        ProgressDialogShow("加载中")
+			    WebView1.LoadUrl("http://book.douban.com/isbn/"&Value)
+	        Else
+		        ProgressDialogShow("加载中")
+	            WebView1.LoadUrl("http://opac.nlc.gov.cn/F/S8CD5V7I83KR5M5QRELCMCQ72DICYNM2HJY34Q4BHADY47R7JN-11408?find_base=NLC01&find_base=NLC09&func=find-m&find_code=ISB&request="&Value&"&local_base=&filter_code_1=WLN&filter_request_1=&filter_code_2=WYR&filter_request_2=&filter_code_3=WYR&filter_request_3=&filter_code_4=WFM&filter_request_4=&filter_code_5=WSL&filter_request_5=")
+			End If
 	End Select		
 End Sub
 
@@ -874,4 +917,8 @@ Sub uploadpraise(isbn As String)
 	Dim job4 As HttpJob
     job4.Initialize("Job4",Me)
     job4.PostString("https://bottle-bookjnrain.rhcloud.com/addpraise","username="&username&"&isbn="&isbn&"&praise=1&time="&now)
+End Sub
+
+Sub follow_click
+    StartActivity(follows)
 End Sub

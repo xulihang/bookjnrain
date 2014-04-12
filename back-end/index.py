@@ -4,6 +4,7 @@ from bottle import route, run, template, request, static_file
 import sqlite3
 import json
 import urllib
+import time
 
 #登录
 @route("/login",method="post")
@@ -119,6 +120,12 @@ def get():
 def get2():
     
     return static_file("count.db",root='db',mimetype="*/*",download="count.db")
+
+#获取每日上传数据
+@route("/get3/<date:path>")
+def get3(date):
+    
+    return static_file(date+"-count.db",root='db',mimetype="*/*",download=date+"-count.db")
 
 #获取评论
 @route("/getcomment/<isbn:path>")
@@ -302,7 +309,33 @@ def createdb(bookcode,lasttime,bookname,username):
             conn.commit()
             c.close()
             conn.close()
-        
+    #按日期次数统计数据库,将作为前端加载对象
+    today=time.strftime('%Y%m%d',time.localtime())
+    if os.path.exists('db/'+today+'-count.db')==False:
+        conn = sqlite3.connect('db/'+today+'-count.db')
+        c = conn.cursor()
+        c.execute("CREATE TABLE statics (isbn, praise, comment,bookname,username,time)")
+        c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"','"+lasttime+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+    else:
+        #上传后添加数据
+        exist=1#默认插入
+        #判断是否已经存在
+        conn = sqlite3.connect('db/'+today+'-count.db')
+        c = conn.cursor()
+        for isbncode in c.execute('select isbn from statics'):
+            if str("(u'"+bookcode+"',)") == str(isbncode):
+                exist=0
+                break
+        print exist
+        if exist==1:
+            c.execute("insert into statics values ('"+bookcode+"','0','0','"+bookname+"','"+username+"','"+lasttime+"')")
+            conn.commit()
+            c.close()
+            conn.close()
+
 
 #点赞
 @route("/praise")
@@ -318,7 +351,7 @@ def addpraise():
     time = request.forms.get("time")
     praise = request.forms.get("praise")
     print praise,time
-
+    
     #处理统计数据    
     if os.path.exists('db/count.db')==True:
         if getwhopraise(isbn,username)=="0":
@@ -332,8 +365,6 @@ def addpraise():
             conn.commit()
             c.close()
             conn.close()
-
-
         
     if os.path.exists('db/'+isbn+"-praise.db")==True:
         if getwhopraise(isbn,username)=="0":
@@ -412,8 +443,6 @@ def addcomment():
         conn.commit()
         c.close()
         conn.close()
-
-
         
     if os.path.exists('db/'+isbn+"-comment.db")==True:
         #更新以isbn号为名的评论数据库
