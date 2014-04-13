@@ -186,17 +186,17 @@ Sub uploadavatar_click
 End Sub
 
 Sub hc_ResponseError (Response As HttpResponse, Reason As String, StatusCode As Int, TaskId As Int)
-    Log("error: " & Response & " " & StatusCode)
+    ToastMessageShow("error: " & Response & " " & StatusCode,False)
     If Response <> Null Then
         Log(Response.GetString("UTF8"))
 		ProgressDialogHide
-        Response.Release
+        'Response.Release
     End If
 End Sub
 Sub hc_ResponseSuccess (Response As HttpResponse, TaskId As Int)
     ProgressDialogHide
     'Msgbox(Response.GetString("UTF8"), "")
 	ToastMessageShow("上传成功！",False)
-    Response.Release
+    'Response.Release
 End Sub
 

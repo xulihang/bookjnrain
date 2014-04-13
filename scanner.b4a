@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=15
+NumberOfModules=16
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -31,27 +31,30 @@ Module14=timewheelview
 ModuleVisible14=1
 Module15=follows
 ModuleVisible15=1
+Module16=handinput
+ModuleVisible16=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
-NumberOfFiles=16
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+NumberOfFiles=17
 File1=about.bal
 File2=comment.bal
 File3=comment.png
 File4=crop.bal
 File5=follows.bal
-File6=login.bal
-File7=praise_no.png
-File8=praise_yes.png
-File9=profile.bal
-File10=query.bal
-File11=register.bal
-File12=scanner.bal
-File13=search.bal
-File14=userinfo.bal
-File15=web.bal
-File16=wheelview.bal
+File6=handinput.bal
+File7=login.bal
+File8=praise_no.png
+File9=praise_yes.png
+File10=profile.bal
+File11=query.bal
+File12=register.bal
+File13=scanner.bal
+File14=search.bal
+File15=userinfo.bal
+File16=web.bal
+File17=wheelview.bal
 NumberOfLibraries=16
 Library1=animation
 Library2=b4azxing
@@ -174,6 +177,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.AddMenuItem("在线工具","web")
 	Activity.AddMenuItem("复制到剪贴板","cp")
 	Activity.AddMenuItem("存储到本地","storetodatabase")
+	Activity.AddMenuItem("手工录入","manualinput")
 	Activity.AddMenuItem("查看本地数据","query")
 	Activity.AddMenuItem("上传到服务器","upload")
 	Activity.AddMenuItem("关于","about")
@@ -266,10 +270,11 @@ Sub Initilize_sm
 	sm.AddItem("在线工具", Null, 1)
 	sm.AddItem("复制到剪贴板", Null, 2)
 	sm.AddItem("存储到本地", Null, 3)
-	sm.AddItem("查看本地数据", Null, 4)
-	sm.AddItem("上传到服务器", Null, 5)
-	sm.AddItem("关于", Null, 6)
-	sm.AddItem("退出", Null, 7)
+	sm.AddItem("手工录入", Null, 4)
+	sm.AddItem("查看本地数据", Null, 5)
+	sm.AddItem("上传到服务器", Null, 6)
+	sm.AddItem("关于", Null, 7)
+	sm.AddItem("退出", Null, 8)
 End Sub
 Sub Activity_Resume
     Initilize_sm
@@ -424,6 +429,10 @@ Sub storetodatabase_Click
     End If
 End Sub
 
+Sub manualinput_click
+    StartActivity(handinput)
+End Sub
+
 Sub query_Click
     StartActivity(query)
 End Sub
@@ -447,12 +456,14 @@ Sub SlideMenu_Click(Item As Object)
 		Case 3	
 			storetodatabase_Click
 		Case 4
-		    query_Click
+		    manualinput_click
 		Case 5
-		    upload_Click 
+		    query_Click
 		Case 6
+		    upload_Click 
+		Case 7
 		    about_Click
-	    Case 7
+	    Case 8
 		    ExitApplication
 	End Select
 End Sub
