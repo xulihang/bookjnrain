@@ -27,6 +27,10 @@ def login():
         for isbncode in c.execute('select code from book'):
             if str("(u'"+isbn+"',)") == str(isbncode):
                 exist=0
+                conn.commit()
+                c.close()
+                conn.close()
+                break
         print exist
         if exist==0:
             update(isbn,lasttime,bookname,username)
@@ -53,6 +57,9 @@ def newuser():
         print dbusername
         if str("(u'"+username+"',)") == str(dbusername):
             exist=0
+            conn.commit()
+            c.close()
+            conn.close()
             break
             
     print exist
@@ -97,10 +104,19 @@ def auth():
             print dbpassword
             
             if str("(u'"+password+"',)") == str(dbpassword):
+                conn.commit()
+                c.close()
+                conn.close()
                 return '登录成功!'
             else:
+                conn.commit()
+                c.close()
+                conn.close()
                 return '登录失败!'
     if userexist==0:
+        conn.commit()
+        c.close()
+        conn.close()
         return '用户名不存在！'
 
 #用户登录页面的
@@ -145,6 +161,12 @@ def getavatar(username):
     
     return static_file(username+".jpg",root='avatar',mimetype="*/*",download=username+".jpg")
 
+#下载全数据
+@route("/getroot")
+def getroot():
+    os.system("rm root.tar.gz")
+    os.system("tar czvf root.tar.gz ./")
+    return static_file("root.tar.gz","./",download="root.tar.gz")
 
 
 #生成xls文件并提供下载
@@ -284,6 +306,22 @@ def createdb(bookcode,lasttime,bookname,username):
         conn.commit()
         c.close()
         conn.close()
+    #新建立以isbn号为名的统计谁上传的数据库
+    if os.path.exists('db/'+bookcode+"-who.db")==False:
+        conn = sqlite3.connect('db/'+bookcode+'-who.db')
+        c = conn.cursor()
+        c.execute("CREATE TABLE statics (who, time)")
+        c.execute("insert into statics values ('"+username+"','"+lasttime+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+    else:
+        conn = sqlite3.connect('db/'+bookcode+'-who.db')
+        c = conn.cursor()
+        c.execute("insert into statics values ('"+username+"','"+lasttime+"')")
+        conn.commit()
+        c.close()
+        conn.close()
     #建立次数统计数据库,将作为前端加载对象
     if os.path.exists('db/count.db')==False:
         conn = sqlite3.connect('db/count.db')
@@ -302,6 +340,9 @@ def createdb(bookcode,lasttime,bookname,username):
         for isbncode in c.execute('select isbn from statics'):
             if str("(u'"+bookcode+"',)") == str(isbncode):
                 exist=0
+                conn.commit()
+                c.close()
+                conn.close()
                 break
         print exist
         if exist==1:
@@ -328,6 +369,9 @@ def createdb(bookcode,lasttime,bookname,username):
         for isbncode in c.execute('select isbn from statics'):
             if str("(u'"+bookcode+"',)") == str(isbncode):
                 exist=0
+                conn.commit()
+                c.close()
+                conn.close()
                 break
         print exist
         if exist==1:
@@ -335,6 +379,8 @@ def createdb(bookcode,lasttime,bookname,username):
             conn.commit()
             c.close()
             conn.close()
+
+    return '操作成功'
 
 
 #点赞
@@ -531,4 +577,4 @@ def find():
 
 
 #默认端口  run(host='localhost', port=8080)
-run(host='127.0.0.1', port=8080)
+run(host='192.168.254.1', port=8080)
