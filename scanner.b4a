@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=16
+NumberOfModules=17
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -33,11 +33,13 @@ Module15=follows
 ModuleVisible15=1
 Module16=handinput
 ModuleVisible16=1
+Module17=uploaderlist
+ModuleVisible17=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
 UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
-NumberOfFiles=17
+NumberOfFiles=18
 File1=about.bal
 File2=comment.bal
 File3=comment.png
@@ -52,9 +54,10 @@ File11=query.bal
 File12=register.bal
 File13=scanner.bal
 File14=search.bal
-File15=userinfo.bal
-File16=web.bal
-File17=wheelview.bal
+File15=uploaderlist.bal
+File16=userinfo.bal
+File17=web.bal
+File18=wheelview.bal
 NumberOfLibraries=16
 Library1=animation
 Library2=b4azxing
@@ -139,6 +142,7 @@ Sub Globals
 	Dim Button12 As Button 'Search
 	Dim Button13 As Button
 	Dim follow As Label
+	Dim Spinner1 As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -188,7 +192,13 @@ Sub Activity_Create(FirstTime As Boolean)
 	Button12.Visible=False
 	Panel2.Visible=False
 	Panel3.Visible=False
+	Button9.Visible=False '弃用按钮，改为spinner
+	Button11.Visible=False
+	Button13.Visible=False
     Initilize_sm
+	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看"))
+	Spinner1.BringToFront
+	'Spinner1.Enabled=False
 End Sub
 
 Sub myzx_result(atype As String,Values As String)
@@ -576,11 +586,7 @@ End Sub
 
 'Panel2上三个按钮
 Sub Button9_Click
-    If WebView1.Visible=True Then
-        WebView1.Visible=False
-	End If
 	createlistview(2)
-	WebView1.SendToBack
 End Sub
 Sub Button8_Click
 	ProgressDialogShow("加载中")
@@ -592,7 +598,6 @@ Sub Button11_Click
 	getlatest.Initialize("getlatest",Me)
     getlatest.Download("https://bottle-bookjnrain.rhcloud.com/get2")
 	ProgressDialogShow("获取数据中...")
-	WebView1.SendToBack
 End Sub
 
 Sub Button13_Click
@@ -606,7 +611,6 @@ Sub Button13_Click
 	    getbytime.Initialize("getlatest",Me)
         getbytime.Download("https://bottle-bookjnrain.rhcloud.com/get3/"&timewheelview.searchtime)
 	    ProgressDialogShow("获取数据中...")
-	    WebView1.SendToBack
 	End If
 End Sub
 
@@ -658,6 +662,7 @@ Sub createlistview(order As Int)
 	Cursor1.Close
 	
 	clv1.AsView.Visible=True
+	WebView1.Visible=False
 End Sub
 
 Sub clv1_ItemClick (Index As Int, Value As Object)
@@ -665,7 +670,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
     Dim resultofmsgbox2 As Int
 	Dim r As List 
     r.Initialize 
-    r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","查看更多信息"))
+    r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","查看更多信息","查看上传者"))
     Dim m As Int
     Dim x As id 
     m = x.InputList1(r,Index)
@@ -690,6 +695,9 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 		        ProgressDialogShow("加载中")
 	            WebView1.LoadUrl("http://opac.nlc.gov.cn/F/S8CD5V7I83KR5M5QRELCMCQ72DICYNM2HJY34Q4BHADY47R7JN-11408?find_base=NLC01&find_base=NLC09&func=find-m&find_code=ISB&request="&Value&"&local_base=&filter_code_1=WLN&filter_request_1=&filter_code_2=WYR&filter_request_2=&filter_code_3=WYR&filter_request_3=&filter_code_4=WFM&filter_request_4=&filter_code_5=WSL&filter_request_5=")
 			End If
+		Case 4
+		    book=Value
+		    StartActivity(uploaderlist)
 	End Select		
 End Sub
 
@@ -873,8 +881,9 @@ Sub Button10_Click
             clv1.AsView.Width=Panel2.Width
 		End If	
 		Button8.Visible=False
-        Button9.Visible=False
-		Button11.Visible=False
+        'Button9.Visible=False
+		'Button11.Visible=False
+		Spinner1.Visible=False
 		Button10.SetBackgroundImage(LoadBitmap(File.DirAssets,"arrowup.png"))
 	Else
 		Panel2.Height=100%y-72dip-42dip
@@ -887,9 +896,10 @@ Sub Button10_Click
 		    clv1.AsView.Height=Panel2.Height-40dip
             clv1.AsView.Width=Panel2.Width
 		End If
+		Spinner1.Visible=True
         Button8.Visible=True
-        Button9.Visible=True
-		Button11.Visible=True
+        'Button9.Visible=True
+		'Button11.Visible=True
 		Button10.SetBackgroundImage(LoadBitmap(File.DirAssets,"arrowdown.png"))
 	End If
 End Sub
@@ -932,4 +942,14 @@ End Sub
 
 Sub follow_click
     StartActivity(follows)
+End Sub
+Sub Spinner1_ItemClick (Position As Int, Value As Object)
+	Select Position
+	    Case 0
+		    Button11_Click
+		Case 1
+		    Button9_Click
+		Case 2
+		    Button13_Click
+	End Select
 End Sub

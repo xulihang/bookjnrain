@@ -67,7 +67,7 @@ Sub JobDone (job As HttpJob)
 				'print the result to the logs
 				ProgressDialogHide
 				Log(job.GetString)
-				ToastMessageShow("上传成功！",False)
+				ToastMessageShow(job.GetString,False)
 		End Select
 	Else
 	    ProgressDialogHide
