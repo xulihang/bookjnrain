@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=17
+NumberOfModules=18
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -35,6 +35,8 @@ Module16=handinput
 ModuleVisible16=1
 Module17=uploaderlist
 ModuleVisible17=1
+Module18=ImageDownloader
+ModuleVisible18=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
@@ -560,21 +562,26 @@ Sub SetDefaults
 	'defaults are only set on the first run.
 	manager.SetBoolean("check1", True)
 	manager.SetBoolean("check2", True)
+	manager.SetBoolean("check3", True)
 End Sub
 
 Sub CreatePreferenceScreen
 	screen.Initialize("设置", "")
 	'create two categories
-	Dim cat1, cat2 As PreferenceCategory
+	Dim cat1, cat2, cat3 As PreferenceCategory
 	cat1.Initialize("扫描")
 	cat1.AddCheckBox("check1", "查书后自动存储", "手工存储可确保存储成功。", True)
 	'cat1.AddEditText("edit1", "EditText1", "This is EditText1", "")
 	
 	cat2.Initialize("账户")
 	cat2.AddCheckBox("check2", "退出时清除登录记录。", "", True)
+	
+	cat3.Initialize("查询")
+	cat3.AddCheckBox("check3", "显示图书封面", "一张图片约6KB.", True)
 	'add the categories to the main screen
 	screen.AddPreferenceCategory(cat1)
 	screen.AddPreferenceCategory(cat2)
+	screen.AddPreferenceCategory(cat3)
 End Sub
 
 Sub HandleSettings
@@ -741,10 +748,14 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	lbl4.Text = CommentTimes
 	lbl4.TextSize = 16
 	lbl4.TextColor = Colors.Gray
-
-	
+		
 	Dim praise As ImageView
 	praise.Initialize("praise")
+	
+	Dim cover As ImageView
+    cover.Initialize("")
+	cover.Gravity=Gravity.FILL
+	cover.Visible=False
 	
 	Dim beenpraised=0 As Int '默认没赞过
 	Dim Cursor2 As Cursor
@@ -774,12 +785,27 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	bookcomment.Bitmap=LoadBitmap(File.DirAssets,"comment.png")
 	bookcomment.Gravity=Gravity.FILL
 	
-	p.AddView(lbl, 5dip, 2dip, Width-72dip, Height-4dip) 'view #0
-    p.AddView(lbl2, 5dip, Height-20dip, Width-72dip, 20dip) 'view #1
+	Dim n As Int
+	If manager.GetBoolean("check3")=True Then
+	    cover.Visible=True
+	    n=54dip
+	    Dim links As Map
+	    links.Initialize
+	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getimage/"&SecondLineText)
+	    CallSubDelayed2(ImageDownloader, "Download", links)
+	Else
+	    If cover.Visible=True Then
+		    cover.RemoveView
+		End If
+	    n=0
+	End If
+	p.AddView(lbl, 5dip+n, 2dip, Width-72dip-n, Height-4dip) 'view #0
+    p.AddView(lbl2, 5dip+n, Height-20dip, Width-72dip, 20dip) 'view #1
 	p.AddView(lbl3, Width-40dip, Height-56-48, 20dip, 20dip) 'view #2
 	p.AddView(praise, Width-40dip, Height-56, 48, 48) 'view #3
 	p.AddView(lbl4, Width-70dip, Height-56-48, 20dip, 20dip) 'view #4
 	p.AddView(bookcomment, Width-70dip, Height-56, 48, 48) 'view #5
+	p.AddView(cover, 5dip, 2dip, 54dip, 63dip) 'view #6
 	Return p
 End Sub
 
@@ -805,7 +831,13 @@ Sub autosize(Text As String) As Int
 	example.Text = Text
 	example.TextSize = 18
 	example.TextColor = Colors.White
-	Activity.AddView(example,0,0,clv1.AsView.Width-72dip,20dip)
+	Dim n As Int
+	If manager.GetBoolean("check3")=True Then
+	    n=54dip
+	Else
+	    n=0
+	End If
+	Activity.AddView(example,0,0,clv1.AsView.Width-72dip-n,20dip)
 	example.Visible=False
 	Dim minHeight,ProperHeight As Int
 	minHeight = su.MeasureMultilineTextHeight(example, Text)

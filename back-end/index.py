@@ -571,6 +571,16 @@ def find():
     for isbncode in c.execute('select code from book'):
         print isbncode
 
+#得到图片
+@route("/getimage/<isbn:path>")
+def getimage(isbn):
+    f = urllib.urlopen("https://api.douban.com/v2/book/isbn/:"+isbn)
+    jresult=f.read()
+    jsonVal = json.loads(jresult)
+    link=jsonVal["image"]  
+    data = urllib.urlretrieve(link,"./images/"+isbn+".jpg")
+    return static_file(isbn+".jpg",root='images',mimetype="*/*",download=isbn+".jpg")
+
 #@route('/hello/:name')
 #def index(name='World'):
 #    return '<b>Hello %s!</b>' % name
