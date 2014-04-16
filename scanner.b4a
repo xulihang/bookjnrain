@@ -40,7 +40,7 @@ ModuleVisible18=1
 Package=org.scanner.jnrain
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=18
 File1=about.bal
 File2=comment.bal
@@ -145,6 +145,7 @@ Sub Globals
 	Dim Button13 As Button
 	Dim follow As Label
 	Dim Spinner1 As Spinner
+	Dim page2=1 As Int
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -371,7 +372,7 @@ Sub JobDone (job As HttpJob)
 				out=File.OpenOutput(File.DirInternal,"count.db",False)
                 File.Copy2(job.GetInputStream,out)
 				out.Close
-				createlistview(1)
+				createlistview(1,1)
 		End Select
 	Else
 	    ProgressDialogHide
@@ -593,7 +594,7 @@ End Sub
 
 'Panel2上三个按钮
 Sub Button9_Click
-	createlistview(2)
+	createlistview(2,1)
 End Sub
 Sub Button8_Click
 	ProgressDialogShow("加载中")
@@ -632,9 +633,15 @@ End Sub
 
 
 '以下是Panel2上的ListView
-Sub createlistview(order As Int)
+Sub createlistview(order As Int,page As Int)
 	clv1.Initialize(Me, "clv1")
-	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-40dip)
+	Dim forward As Button
+	forward.Initialize("forward")
+	Dim backward As Button
+	backward.Initialize("backward")
+	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-60dip)
+	Panel2.AddView(backward, 0, Panel2.Height-20dip, Panel2.Width/2, 20dip)
+	Panel2.AddView(forward, Panel2.Width/2, Panel2.Height-20dip, Panel2.Width/2, 20dip)
 	
 	If SQL3.IsInitialized = False Then
 	    SQL3.Initialize(File.DirInternal, "count.db", False)
@@ -653,9 +660,23 @@ Sub createlistview(order As Int)
 	
 	Dim Cursor1 As Cursor
 	Cursor1 = SQL3.ExecQuery(SqlSentence)
-	For i = 0 To Cursor1.RowCount - 1
-		Cursor1.Position = i
+	Log(page)
 
+    Dim itemnumber As Int
+	itemnumber=10
+    Dim start As Int
+	If page>=2 Then
+	    start=(page-1)*10+1
+	Else
+	    start=1
+	End If
+
+	For i = -1 To -2+itemnumber
+	    If i+start > Cursor1.RowCount-1 Then
+		    ToastMessageShow("到最后了",False)
+		    Exit
+		End If
+		Cursor1.Position = i+start
 		Log("************************")
 		Log(Cursor1.GetString("bookname"))
 		
@@ -667,7 +688,6 @@ Sub createlistview(order As Int)
 		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("isbn"))
 	Next
 	Cursor1.Close
-	
 	clv1.AsView.Visible=True
 	WebView1.Visible=False
 End Sub
@@ -810,17 +830,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 End Sub
 
 'Sub Button_Click
-'	Dim index As Int
-'	index = clv1.GetItemFromView(Sender)
-'	Dim pnl As Panel
-'	pnl = clv1.GetPanel(index)
-'	
-'	Dim lbl As Label
-'	Dim chk As CheckBox
-'	lbl = pnl.GetView(0)
-'	chk = pnl.GetView(2)
-'	lbl.Text = "Clicked!"
-'	Msgbox("Item value: " & clv1.GetValue(index) & CRLF & "Check value: " & chk.Checked, "")
+'    createlistview(1,2)
 'End Sub
 
 'Let custom list have auto height.
@@ -944,7 +954,7 @@ Sub Button12_Click
 	If resultofmsgbox=DialogResponse.POSITIVE Then
 	    StartActivity(search)
 	Else
-	    createlistview(3)
+	    createlistview(3,1)
 	End If
 End Sub
 
@@ -984,4 +994,20 @@ Sub Spinner1_ItemClick (Position As Int, Value As Object)
 		Case 2
 		    Button13_Click
 	End Select
+End Sub
+
+Sub backward_click
+    If page2=1 Then
+	    Msgbox("已经是第一页了","书房")
+	Else
+        page2=page2-1
+	    'Log(page2)
+        createlistview(1,page2)
+	End If
+End Sub
+
+Sub forward_click
+    page2=page2+1
+	Log(page2)
+    createlistview(1,page2)
 End Sub
