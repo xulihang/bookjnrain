@@ -161,6 +161,12 @@ def getavatar(username):
     
     return static_file(username+".jpg",root='avatar',mimetype="*/*",download=username+".jpg")
 
+#获取用户上传历史
+@route("/getuserhistory/<username:path>")
+def getuserinfo(username):
+    
+    return static_file(username+".db",root='db',mimetype="*/*",download=username+".db")
+
 #下载全数据
 @route("/getroot")
 def getroot():
