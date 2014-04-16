@@ -37,10 +37,10 @@ Module17=uploaderlist
 ModuleVisible17=1
 Module18=ImageDownloader
 ModuleVisible18=1
-Package=org.scanner.jnrain
+Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
 NumberOfFiles=18
 File1=about.bal
 File2=comment.bal
@@ -146,6 +146,7 @@ Sub Globals
 	Dim follow As Label
 	Dim Spinner1 As Spinner
 	Dim page2=1 As Int
+	Dim queryorder=1 As Int
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -564,6 +565,7 @@ Sub SetDefaults
 	manager.SetBoolean("check1", True)
 	manager.SetBoolean("check2", True)
 	manager.SetBoolean("check3", True)
+	manager.SetString("list1","5")
 End Sub
 
 Sub CreatePreferenceScreen
@@ -579,6 +581,8 @@ Sub CreatePreferenceScreen
 	
 	cat3.Initialize("查询")
 	cat3.AddCheckBox("check3", "显示图书封面", "一张图片约6KB.", True)
+	cat3.AddList("list1", "每页显示项目数", "设置每页显示几本书", "", _
+        Array As String("2","5", "10", "15", "20", "30"))
 	'add the categories to the main screen
 	screen.AddPreferenceCategory(cat1)
 	screen.AddPreferenceCategory(cat2)
@@ -594,6 +598,8 @@ End Sub
 
 'Panel2上三个按钮
 Sub Button9_Click
+    queryorder=2 '按时间
+	page2=1
 	createlistview(2,1)
 End Sub
 Sub Button8_Click
@@ -602,6 +608,8 @@ Sub Button8_Click
 End Sub
 
 Sub Button11_Click
+    queryorder=1 '按热度
+	page2=1
 	Dim getlatest As HttpJob
 	getlatest.Initialize("getlatest",Me)
     getlatest.Download("https://bottle-bookjnrain.rhcloud.com/get2")
@@ -614,6 +622,8 @@ Sub Button13_Click
 	If resultofmsgbox=DialogResponse.POSITIVE Then
 	    StartActivity(timewheelview)
 	Else
+	    queryorder=0
+		page2=1
 	    ToastMessageShow("此模式下点赞与评论数为0.",False)
 	    Dim getbytime As HttpJob
 	    getbytime.Initialize("getlatest",Me)
@@ -635,13 +645,8 @@ End Sub
 '以下是Panel2上的ListView
 Sub createlistview(order As Int,page As Int)
 	clv1.Initialize(Me, "clv1")
-	Dim forward As Button
-	forward.Initialize("forward")
-	Dim backward As Button
-	backward.Initialize("backward")
-	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-60dip)
-	Panel2.AddView(backward, 0, Panel2.Height-20dip, Panel2.Width/2, 20dip)
-	Panel2.AddView(forward, Panel2.Width/2, Panel2.Height-20dip, Panel2.Width/2, 20dip)
+
+	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-40dip)
 	
 	If SQL3.IsInitialized = False Then
 	    SQL3.Initialize(File.DirInternal, "count.db", False)
@@ -662,21 +667,18 @@ Sub createlistview(order As Int,page As Int)
 	Cursor1 = SQL3.ExecQuery(SqlSentence)
 	Log(page)
 
-    Dim itemnumber As Int
-	itemnumber=10
-    Dim start As Int
-	If page>=2 Then
-	    start=(page-1)*10+1
-	Else
-	    start=1
-	End If
-
-	For i = -1 To -2+itemnumber
-	    If i+start > Cursor1.RowCount-1 Then
+    Dim ifend As Int
+    ifend=0 '默认不是最后一项
+    Dim addheight As Int
+	addheight=0
+	Dim itemnumbers As Int
+	itemnumbers=manager.GetString("list1")
+	For i = 0 To page*itemnumbers-1
+	    If i > Cursor1.RowCount-1 Then
 		    ToastMessageShow("到最后了",False)
 		    Exit
 		End If
-		Cursor1.Position = i+start
+		Cursor1.Position = i
 		Log("************************")
 		Log(Cursor1.GetString("bookname"))
 		
@@ -684,8 +686,11 @@ Sub createlistview(order As Int,page As Int)
 	    Dim ProperHeight As Int
 	    ProperHeight=autosize(Cursor1.GetString("bookname"))+20dip
 		Log(ProperHeight)
-
-		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("isbn"))
+        If i=page*itemnumbers-1 Then
+		    ifend=1
+			addheight=40dip
+		End If
+		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"),ifend,addheight, clv1.AsView.Width, ProperHeight), ProperHeight+addheight, Cursor1.GetString("isbn"))
 	Next
 	Cursor1.Close
 	clv1.AsView.Visible=True
@@ -729,7 +734,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 End Sub
 
 
-Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int, Width As Int, Height As Int) As Panel
+Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int,IfEnd As Int,addheight As Int, Width As Int, Height As Int) As Panel
 	Dim p As Panel
 	p.Initialize("")
 	p.Color = Colors.RGB(245,245,245)
@@ -777,18 +782,34 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	cover.Gravity=Gravity.FILL
 	cover.Visible=False
 	
+	
 	Dim beenpraised=0 As Int '默认没赞过
-	Dim Cursor2 As Cursor
-	Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
-	For I = 0 To Cursor2.RowCount - 1
-	    Cursor2.Position = I
-		If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=0 Then
-	        beenpraised=0
-	    Else If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=1 Then
-	        beenpraised=1
+	
+	If File.Exists(File.DirInternal,"user") Then '判断是否登录以加载用户资料
+	    Dim Reader As TextReader
+        Dim username As String
+        Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		username = Reader.ReadLine
+		If File.Exists(File.DirInternal,username&"-praise.db") Then
+	        Dim Cursor2 As Cursor
+	        Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
+	        For I = 0 To Cursor2.RowCount - 1
+	            Cursor2.Position = I
+		        If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=0 Then
+	                beenpraised=0
+	            Else If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=1 Then
+	                beenpraised=1
+		        End If
+	        Next
+	        Cursor2.Close
+		Else
+		    ToastMessageShow("登录后请重启一次，默认已点赞",False)
+			beenpraised=1
 		End If
-	Next
-	Cursor2.Close
+	Else
+	    ToastMessageShow("您未登录，默认已点赞",False)
+		beenpraised=1
+	End If
 	
 	If beenpraised=0 Then
 	    praise.Bitmap=LoadBitmap(File.DirAssets,"praise_no.png")
@@ -819,6 +840,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 		End If
 	    n=0
 	End If
+	
 	p.AddView(lbl, 5dip+n, 2dip, Width-72dip-n, Height-4dip) 'view #0
     p.AddView(lbl2, 5dip+n, Height-20dip, Width-72dip, 20dip) 'view #1
 	p.AddView(lbl3, Width-40dip, Height-56-48, 20dip, 20dip) 'view #2
@@ -826,6 +848,15 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	p.AddView(lbl4, Width-70dip, Height-56-48, 20dip, 20dip) 'view #4
 	p.AddView(bookcomment, Width-70dip, Height-56, 48, 48) 'view #5
 	p.AddView(cover, 5dip, 2dip, 54dip, 63dip) 'view #6
+	If IfEnd=1 Then
+	    Dim more As Label
+	    more.Initialize("more")
+		more.Text="点击加载更多"
+		more.Gravity=Bit.OR(Gravity.CENTER_HORIZONTAL,Gravity.CENTER_VERTICAL)
+		more.TextSize=18
+		more.TextColor=Colors.Gray
+		p.AddView(more, 0dip, Height, Width, addheight) 'view #7
+	End If
 	Return p
 End Sub
 
@@ -929,6 +960,7 @@ Sub Button10_Click
 		Button10.SetBackgroundImage(LoadBitmap(File.DirAssets,"arrowup.png"))
 	Else
 		Panel2.Height=100%y-72dip-42dip
+		Panel2.SendToBack
 		Label4.Visible=True
 		Label5.Visible=True
 		Label6.Visible=True
@@ -954,6 +986,8 @@ Sub Button12_Click
 	If resultofmsgbox=DialogResponse.POSITIVE Then
 	    StartActivity(search)
 	Else
+	    page2=1
+	    queryorder=3
 	    createlistview(3,1)
 	End If
 End Sub
@@ -996,18 +1030,7 @@ Sub Spinner1_ItemClick (Position As Int, Value As Object)
 	End Select
 End Sub
 
-Sub backward_click
-    If page2=1 Then
-	    Msgbox("已经是第一页了","书房")
-	Else
-        page2=page2-1
-	    'Log(page2)
-        createlistview(1,page2)
-	End If
-End Sub
-
-Sub forward_click
+Sub more_click
     page2=page2+1
-	Log(page2)
-    createlistview(1,page2)
+    createlistview(queryorder,page2)
 End Sub
