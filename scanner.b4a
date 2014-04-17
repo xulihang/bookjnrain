@@ -41,7 +41,7 @@ Module19=userhistory
 ModuleVisible19=1
 Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
 UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
 NumberOfFiles=18
 File1=about.bal
@@ -157,9 +157,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		CreatePreferenceScreen
 		If manager.GetAll.Size = 0 Then SetDefaults
 	End If
-	If File.Exists(File.DirInternal,"mybook.db") Then
-		ToastMessageShow("数据库已存在",False)
-    Else
+	If File.Exists(File.DirInternal,"mybook.db")=False Then
 	    SQL1.Initialize(File.DirInternal, "mybook.db", True)
 		SQL1.ExecNonQuery("CREATE TABLE book (title , price, publisher, isbn, pubdate, lasttime, introduction)")
 	End If
@@ -176,11 +174,11 @@ Sub Activity_Create(FirstTime As Boolean)
 		If File.Exists(File.DirInternal,username&"-praise.db")=False Then
 	        SQL2.Initialize(File.DirInternal, username&"-praise.db", True)
 		    SQL2.ExecNonQuery("CREATE TABLE statics (isbn,praise,comment)")
-	    End If
-	
-	    If SQL2.IsInitialized = False Then
-	        SQL2.Initialize(File.DirInternal, username&"-praise.db", False)
-	    End If
+	    Else
+	        If SQL2.IsInitialized = False Then
+	            SQL2.Initialize(File.DirInternal, username&"-praise.db", False)
+	        End If
+		End If
 	End If
 	
 	Activity.LoadLayout("scanner")
@@ -646,10 +644,14 @@ End Sub
 
 '以下是Panel2上的ListView
 Sub createlistview(order As Int,page As Int)
+    If clv1.IsInitialized=True Then
+	    clv1.AsView.RemoveView
+	End If
+	
 	clv1.Initialize(Me, "clv1")
 
 	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-40dip)
-	
+
 	If SQL3.IsInitialized = False Then
 	    SQL3.Initialize(File.DirInternal, "count.db", False)
 	End If
@@ -669,10 +671,6 @@ Sub createlistview(order As Int,page As Int)
 	Cursor1 = SQL3.ExecQuery(SqlSentence)
 	Log(page)
 
-    Dim ifend As Int
-    ifend=0 '默认不是最后一项
-    Dim addheight As Int
-	addheight=0
 	Dim itemnumbers As Int
 	itemnumbers=manager.GetString("list1")
 	For i = 0 To page*itemnumbers-1
@@ -688,11 +686,11 @@ Sub createlistview(order As Int,page As Int)
 	    Dim ProperHeight As Int
 	    ProperHeight=autosize(Cursor1.GetString("bookname"))+20dip
 		Log(ProperHeight)
-        If i=page*itemnumbers-1 Then
-		    ifend=1
-			addheight=40dip
+
+		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("isbn"))
+		If i=page*itemnumbers-1 Then
+		    clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		End If
-		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"),ifend,addheight, clv1.AsView.Width, ProperHeight), ProperHeight+addheight, Cursor1.GetString("isbn"))
 	Next
 	Cursor1.Close
 	clv1.AsView.Visible=True
@@ -701,42 +699,46 @@ End Sub
 
 Sub clv1_ItemClick (Index As Int, Value As Object)
 	'Msgbox("Hello","Hello")
-    Dim resultofmsgbox2 As Int
-	Dim r As List 
-    r.Initialize 
-    r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","查看更多信息","查看上传者"))
-    Dim m As Int
-    Dim x As id 
-    m = x.InputList1(r,Index)
+	If Value=0 Then
+	    more_click
+	Else
+        Dim resultofmsgbox2 As Int
+	    Dim r As List 
+        r.Initialize 
+        r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","查看更多信息","查看上传者"))
+        Dim m As Int
+        Dim x As id 
+        m = x.InputList1(r,Index)
 	
-	Select m
-	    Case 0
-            Dim CC As BClipboard
-            CC.setText(Value)
-	        ToastMessageShow("结果已复制到剪切板。",False)
-	    Case 1
-            getinfo(Value)
-			result=Value
-			Label4_Click
-		Case 2
-		    ExePraise(Index,True)
-		Case 3
-            resultofmsgbox2=Msgbox2("选择一个查询网站","详情","豆瓣","","国家图书馆",Null)
-	        If resultofmsgbox2=DialogResponse.POSITIVE Then
-		        ProgressDialogShow("加载中")
-			    WebView1.LoadUrl("http://book.douban.com/isbn/"&Value)
-	        Else
-		        ProgressDialogShow("加载中")
-	            WebView1.LoadUrl("http://opac.nlc.gov.cn/F/S8CD5V7I83KR5M5QRELCMCQ72DICYNM2HJY34Q4BHADY47R7JN-11408?find_base=NLC01&find_base=NLC09&func=find-m&find_code=ISB&request="&Value&"&local_base=&filter_code_1=WLN&filter_request_1=&filter_code_2=WYR&filter_request_2=&filter_code_3=WYR&filter_request_3=&filter_code_4=WFM&filter_request_4=&filter_code_5=WSL&filter_request_5=")
-			End If
-		Case 4
-		    book=Value
-		    StartActivity(uploaderlist)
-	End Select		
+    	Select m
+	        Case 0
+                Dim CC As BClipboard
+                CC.setText(Value)
+	            ToastMessageShow("结果已复制到剪切板。",False)
+	        Case 1
+                getinfo(Value)
+			    result=Value
+			    Label4_Click
+		    Case 2
+		        ExePraise(Index,True)
+		    Case 3
+                resultofmsgbox2=Msgbox2("选择一个查询网站","详情","豆瓣","","谷歌",Null)
+	            If resultofmsgbox2=DialogResponse.POSITIVE Then
+		            ProgressDialogShow("加载中")
+			        WebView1.LoadUrl("http://book.douban.com/isbn/"&Value)
+	            Else
+		            ProgressDialogShow("加载中")
+	                WebView1.LoadUrl("http://books.google.com.hk/books?vid=ISBN"&Value)
+			    End If
+		    Case 4
+		        book=Value
+		        StartActivity(uploaderlist)
+	    End Select		
+	End If
 End Sub
 
 
-Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int,IfEnd As Int,addheight As Int, Width As Int, Height As Int) As Panel
+Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int, Width As Int, Height As Int) As Panel
 	Dim p As Panel
 	p.Initialize("")
 	p.Color = Colors.RGB(245,245,245)
@@ -793,6 +795,9 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
         Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
 		username = Reader.ReadLine
 		If File.Exists(File.DirInternal,username&"-praise.db") Then
+		    If SQL2.IsInitialized = False Then
+	            SQL2.Initialize(File.DirInternal, username&"-praise.db", False)
+	        End If
 	        Dim Cursor2 As Cursor
 	        Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
 	        For I = 0 To Cursor2.RowCount - 1
@@ -850,15 +855,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	p.AddView(lbl4, Width-70dip, Height-56-48, 20dip, 20dip) 'view #4
 	p.AddView(bookcomment, Width-70dip, Height-56, 48, 48) 'view #5
 	p.AddView(cover, 5dip, 2dip, 54dip, 63dip) 'view #6
-	If IfEnd=1 Then
-	    Dim more As Label
-	    more.Initialize("more")
-		more.Text="点击加载更多"
-		more.Gravity=Bit.OR(Gravity.CENTER_HORIZONTAL,Gravity.CENTER_VERTICAL)
-		more.TextSize=18
-		more.TextColor=Colors.Gray
-		p.AddView(more, 0dip, Height, Width, addheight) 'view #7
-	End If
+
 	Return p
 End Sub
 
@@ -1032,7 +1029,67 @@ Sub Spinner1_ItemClick (Position As Int, Value As Object)
 	End Select
 End Sub
 
+Sub morelistitem(Width As Int, Height As Int) As Panel
+	Dim p As Panel
+	p.Initialize("")
+	p.Color = Colors.RGB(245,245,245)
+	Dim more As Label
+	more.Initialize("more")
+	more.Text="点击加载更多"
+	more.Gravity=Bit.OR(Gravity.CENTER_HORIZONTAL,Gravity.CENTER_VERTICAL)
+	more.TextSize=18
+	more.TextColor=Colors.Gray
+	p.AddView(more, 0dip, 0dip, Width, 40dip) 'view #0
+	Return p
+End Sub
+
 Sub more_click
+    Log(Panel2.NumberOfViews)
     page2=page2+1
-    createlistview(queryorder,page2)
+	'clv1.AsView.RemoveView
+	clv1.RemoveAt(clv1.GetSize-1)
+    addlistview(queryorder,page2-1)
+End Sub
+
+Sub addlistview(order As Int,page As Int)
+	If SQL3.IsInitialized = False Then
+	    SQL3.Initialize(File.DirInternal, "count.db", False)
+	End If
+	
+	Dim SqlSentence As String 
+	If order=0 Then
+	    SqlSentence="SELECT * FROM statics"
+	Else If order=1 Then
+	    SqlSentence="SELECT * FROM statics Order by comment desc"
+	Else If order=2 Then
+	    SqlSentence="SELECT * FROM statics Order by time desc"
+	Else If order=3 Then
+	    SqlSentence="SELECT * FROM statics WHERE bookname like '%"&search.keyword&"%'"
+	End If
+	
+	Dim Cursor1 As Cursor
+	Cursor1 = SQL3.ExecQuery(SqlSentence)
+
+	Dim itemnumbers As Int
+	itemnumbers=manager.GetString("list1")
+	Log("itemnumbers:"&itemnumbers)
+
+	For i = 0 To itemnumbers-1
+	    If i+itemnumbers*page > Cursor1.RowCount-1 Then
+		    ToastMessageShow("到最后了",False)
+		    Exit
+		End If
+		Cursor1.Position = i+itemnumbers*page
+		
+	    Dim ProperHeight As Int
+	    ProperHeight=autosize(Cursor1.GetString("bookname"))+20dip
+		Log(ProperHeight)
+		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("isbn"))
+		If i=itemnumbers-1 Then
+		    clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
+		End If
+	Next
+	Cursor1.Close
+	clv1.AsView.Visible=True
+	WebView1.Visible=False
 End Sub

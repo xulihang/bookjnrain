@@ -43,6 +43,8 @@ Sub Activity_Create(FirstTime As Boolean)
         hc.Initialize("hc")
     End If
 	Activity.LoadLayout("profile")
+	Activity.AddMenuItem("同步信息到本地","sync")
+	Activity.AddMenuItem("同步头像到本地","syncavatar")
 	Activity.AddMenuItem("上传到服务器","upload")
 	Activity.AddMenuItem("上传头像","uploadavatar")
 	Dim Reader As TextReader
@@ -138,6 +140,36 @@ Sub JobDone (job As HttpJob)
 			Case "Job2"
 			    ProgressDialogHide
 				ToastMessageShow("上传成功！",False)
+			Case "Job3"
+			    ProgressDialogHide
+				Dim out As OutputStream
+				out=File.OpenOutput(File.DirInternal,username&"-profile",False)
+                File.Copy2(job.GetInputStream,out)
+				out.Close
+				
+                Dim Reader As TextReader
+	            Dim nickname,PhoneNumber,location,major,gender,age As String
+                Reader.Initialize(File.OpenInput(File.DirInternal,username&"-profile"))
+	            nickname = Reader.ReadLine
+                PhoneNumber = Reader.ReadLine
+	            location = Reader.ReadLine
+	            major = Reader.ReadLine
+                gender = Reader.ReadLine
+	            age = Reader.ReadLine
+                Reader.Close 
+	            EditText1.Text=nickname
+	            EditText2.Text=PhoneNumber
+	            EditText3.Text=location
+	            EditText4.Text=major
+	            EditText5.Text=gender
+	            EditText6.Text=age
+			Case "Job4"
+			    ProgressDialogHide
+				Dim out As OutputStream
+				out=File.OpenOutput(File.DirInternal,"avatar.jpg",False)
+                File.Copy2(job.GetInputStream,out)
+				out.Close
+				ImageView2.Bitmap = LoadBitmap(File.DirInternal,"avatar.jpg")
 		End Select
 	Else
 	    ProgressDialogHide
@@ -198,5 +230,23 @@ Sub hc_ResponseSuccess (Response As HttpResponse, TaskId As Int)
     'Msgbox(Response.GetString("UTF8"), "")
 	ToastMessageShow("上传成功！",False)
     'Response.Release
+End Sub
+
+Sub sync_click
+    ProgressDialogShow("同步中……")
+    Dim URL As String
+	Dim job3 As HttpJob
+	URL="https://bottle-bookjnrain.rhcloud.com/getuserinfo/"&username
+    job3.Initialize("Job3",Me)
+    job3.Download(URL)
+End Sub
+
+Sub syncavatar_click
+    ProgressDialogShow("同步中……")
+    Dim URL As String
+	Dim job4 As HttpJob
+	URL="https://bottle-bookjnrain.rhcloud.com/getavatar/"&username
+    job4.Initialize("Job4",Me)
+    job4.Download(URL)
 End Sub
 
