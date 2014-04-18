@@ -587,6 +587,62 @@ def getimage(isbn):
     data = urllib.urlretrieve(link,"./images/"+isbn+".jpg")
     return static_file(isbn+".jpg",root='images',mimetype="*/*",download=isbn+".jpg")
 
+#得到json
+@route('/getjson', method='POST')    
+def getjson():
+    itemnumber = request.forms.get("itemnumber")
+    page = request.forms.get("page")
+    queryorder= request.forms.get("queryorder")
+    keyword= request.forms.get("keyword")
+    itemnumber=int(itemnumber)
+    page=int(page)
+    queryorder=int(queryorder)
+    result=[]
+    conn = sqlite3.connect('db/count.db')
+    c = conn.cursor()
+    SqlSentence="SELECT * FROM statics"
+    if queryorder == 0:
+        SqlSentence="SELECT * FROM statics"
+    elif queryorder == 1:
+	SqlSentence="SELECT * FROM statics Order by comment desc"
+    elif queryorder == 2:
+	SqlSentence="SELECT * FROM statics Order by time desc"
+    elif queryorder == 3:
+	SqlSentence="SELECT * FROM statics WHERE bookname like '%"+keyword+"%'"
+    
+    i=0
+    j=0
+    for row in c.execute(SqlSentence):
+        if i==(page-1)*itemnumber+j and j<itemnumber:
+            j=j+1
+            isbn=row[0]
+            praise=row[1]
+            comment=row[2]
+            bookname=row[3]
+            username=row[4]
+            time=row[5]
+            single={"isbn":str(isbn),
+                   "praise":str(praise),
+                   "comment":str(comment),
+                   "bookname":str(bookname.encode("utf-8")),
+                   "username":str(username),
+                    "time":str(time)}
+            result.append(single)
+        if j==itemnumber:
+            break
+        i=i+1
+    #print result
+    out=json.dumps(result, ensure_ascii=False) 
+    #print i
+    return str(out)
+
+#获取json的发送界面
+@route("/choosejson")
+def choosejson():
+
+    return template("getjson")
+
+
 #@route('/hello/:name')
 #def index(name='World'):
 #    return '<b>Hello %s!</b>' % name
