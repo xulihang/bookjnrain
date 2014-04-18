@@ -42,7 +42,7 @@ ModuleVisible19=1
 Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=18
 File1=about.bal
 File2=comment.bal
@@ -368,12 +368,13 @@ Sub JobDone (job As HttpJob)
 				ProgressDialogHide
 				'Log(job.GetString)
 				'Log(job.GetInputStream)
-				'File.WriteString(File.DirInternal,"count.db",job.GetString)
-				Dim out As OutputStream
-				out=File.OpenOutput(File.DirInternal,"count.db",False)
-                File.Copy2(job.GetInputStream,out)
-				out.Close
-				createlistview(1,1)
+				createlistview(job.GetString)
+			Case "loadmore"  
+				'最新上传
+				ProgressDialogHide
+				'Log(job.GetString)
+				'Log(job.GetInputStream)
+				addlistview(job.GetString)
 		End Select
 	Else
 	    ProgressDialogHide
@@ -600,7 +601,10 @@ End Sub
 Sub Button9_Click
     queryorder=2 '按时间
 	page2=1
-	createlistview(2,1)
+	Dim getlatest As HttpJob
+	getlatest.Initialize("getlatest",Me)
+	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
+	ProgressDialogShow("获取数据中...")
 End Sub
 Sub Button8_Click
 	ProgressDialogShow("加载中")
@@ -612,7 +616,7 @@ Sub Button11_Click
 	page2=1
 	Dim getlatest As HttpJob
 	getlatest.Initialize("getlatest",Me)
-    getlatest.Download("https://bottle-bookjnrain.rhcloud.com/get2")
+	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
 	ProgressDialogShow("获取数据中...")
 End Sub
 
@@ -643,7 +647,7 @@ End Sub
 
 
 '以下是Panel2上的ListView
-Sub createlistview(order As Int,page As Int)
+Sub createlistview(jsonresult As String)
     If clv1.IsInitialized=True Then
 	    clv1.AsView.RemoveView
 	End If
@@ -651,48 +655,26 @@ Sub createlistview(order As Int,page As Int)
 	clv1.Initialize(Me, "clv1")
 
 	Panel2.AddView(clv1.AsView, 0, 0, Panel2.Width, Panel2.Height-40dip)
+    Dim JSON As JSONParser
+    'JSON.Initialize(File.ReadString(File.DirAssets, "out.json")) 'Read the text from a file.
+	JSON.Initialize(jsonresult)
+    Dim list1 As List
+    list1 = JSON.NextArray
 
-	If SQL3.IsInitialized = False Then
-	    SQL3.Initialize(File.DirInternal, "count.db", False)
-	End If
-	
-	Dim SqlSentence As String 
-	If order=0 Then
-	    SqlSentence="SELECT * FROM statics"
-	Else If order=1 Then
-	    SqlSentence="SELECT * FROM statics Order by comment desc"
-	Else If order=2 Then
-	    SqlSentence="SELECT * FROM statics Order by time desc"
-	Else If order=3 Then
-	    SqlSentence="SELECT * FROM statics WHERE bookname like '%"&search.keyword&"%'"
-	End If
-	
-	Dim Cursor1 As Cursor
-	Cursor1 = SQL3.ExecQuery(SqlSentence)
-	Log(page)
-
-	Dim itemnumbers As Int
-	itemnumbers=manager.GetString("list1")
-	For i = 0 To page*itemnumbers-1
-	    If i > Cursor1.RowCount-1 Then
-		    ToastMessageShow("到最后了",False)
-		    Exit
-		End If
-		Cursor1.Position = i
-		Log("************************")
-		Log(Cursor1.GetString("bookname"))
+	For i =0 To list1.Size-1
+	    Dim map1 As Map
+        map1 = list1.Get(i)
 		
-		
-	    Dim ProperHeight As Int
-	    ProperHeight=autosize(Cursor1.GetString("bookname"))+20dip
+		Dim ProperHeight As Int
+	    ProperHeight=autosize(map1.Get("bookname"))+20dip
 		Log(ProperHeight)
-
-		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("isbn"))
-		If i=page*itemnumbers-1 Then
+		
+		clv1.Add(CreateListItem(map1.Get("bookname"),map1.Get("isbn"),map1.Get("praise"),map1.Get("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.Get("isbn"))
+		If i=list1.Size-1 Then
 		    clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		End If
 	Next
-	Cursor1.Close
+
 	clv1.AsView.Visible=True
 	WebView1.Visible=False
 End Sub
@@ -934,9 +916,9 @@ Sub bookcomment_click
 	lbl2 = pnl.GetView(1)
     Dim lbl4 As Label
 	lbl4 = pnl.GetView(4)
-   ToastMessageShow("这是评论"&lbl2.Text,False)
-   book=lbl2.Text
-   StartActivity(comment)
+    ToastMessageShow("这是评论"&lbl2.Text,False)
+    book=lbl2.Text
+    StartActivity(comment)
 End Sub
 
 'Toggle Panel's Size
@@ -987,7 +969,10 @@ Sub Button12_Click
 	Else
 	    page2=1
 	    queryorder=3
-	    createlistview(3,1)
+	    Dim getlatest As HttpJob
+	    getlatest.Initialize("getlatest",Me)
+	    getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
+	    ProgressDialogShow("获取数据中...")
 	End If
 End Sub
 
@@ -1048,48 +1033,37 @@ Sub more_click
     page2=page2+1
 	'clv1.AsView.RemoveView
 	clv1.RemoveAt(clv1.GetSize-1)
-    addlistview(queryorder,page2-1)
+	ProgressDialogShow("加载中")
+	Dim loadmore As HttpJob
+	loadmore.Initialize("loadmore",Me)
+	loadmore.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
+    'addlistview(queryorder,page2-1)
 End Sub
 
-Sub addlistview(order As Int,page As Int)
-	If SQL3.IsInitialized = False Then
-	    SQL3.Initialize(File.DirInternal, "count.db", False)
+Sub addlistview(jsonresult As String)
+    Dim JSON As JSONParser
+    'JSON.Initialize(File.ReadString(File.DirAssets, "out.json")) 'Read the text from a file.
+	JSON.Initialize(jsonresult)
+    Dim list1 As List
+    list1 = JSON.NextArray
+	If list1.Size=0 Then
+		ToastMessageShow("没有了",False)
 	End If
-	
-	Dim SqlSentence As String 
-	If order=0 Then
-	    SqlSentence="SELECT * FROM statics"
-	Else If order=1 Then
-	    SqlSentence="SELECT * FROM statics Order by comment desc"
-	Else If order=2 Then
-	    SqlSentence="SELECT * FROM statics Order by time desc"
-	Else If order=3 Then
-	    SqlSentence="SELECT * FROM statics WHERE bookname like '%"&search.keyword&"%'"
-	End If
-	
-	Dim Cursor1 As Cursor
-	Cursor1 = SQL3.ExecQuery(SqlSentence)
-
-	Dim itemnumbers As Int
-	itemnumbers=manager.GetString("list1")
-	Log("itemnumbers:"&itemnumbers)
-
-	For i = 0 To itemnumbers-1
-	    If i+itemnumbers*page > Cursor1.RowCount-1 Then
-		    ToastMessageShow("到最后了",False)
-		    Exit
-		End If
-		Cursor1.Position = i+itemnumbers*page
+	Log("size:"&list1.Size)
+	For i =0 To list1.Size-1
+	    Dim map1 As Map
+        map1 = list1.Get(i)
 		
-	    Dim ProperHeight As Int
-	    ProperHeight=autosize(Cursor1.GetString("bookname"))+20dip
+		Dim ProperHeight As Int
+	    ProperHeight=autosize(map1.Get("bookname"))+20dip
 		Log(ProperHeight)
-		clv1.Add(CreateListItem(Cursor1.GetString("bookname"),Cursor1.GetString("isbn"),Cursor1.GetString("praise"),Cursor1.GetString("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("isbn"))
-		If i=itemnumbers-1 Then
+		
+		clv1.Add(CreateListItem(map1.Get("bookname"),map1.Get("isbn"),map1.Get("praise"),map1.Get("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.Get("isbn"))
+		If i=list1.Size-1 Then
 		    clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		End If
 	Next
-	Cursor1.Close
+	
 	clv1.AsView.Visible=True
 	WebView1.Visible=False
 End Sub
