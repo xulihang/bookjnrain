@@ -631,6 +631,9 @@ def getjson():
         if j==itemnumber:
             break
         i=i+1
+    conn.commit()
+    c.close()
+    conn.close()
     #print result
     out=json.dumps(result, ensure_ascii=False) 
     #print i
@@ -641,6 +644,56 @@ def getjson():
 def choosejson():
 
     return template("getjson")
+
+#得到按天查询json
+@route('/getdailyjson', method='POST')    
+def getdailyjson():
+    itemnumber = request.forms.get("itemnumber")
+    page = request.forms.get("page")
+    date = request.forms.get("date")
+    itemnumber=int(itemnumber)
+    page=int(page)
+    result=[]
+    dbpath='db/'+date+'-count.db'
+    conn = sqlite3.connect(dbpath)
+    c = conn.cursor()
+    SqlSentence="SELECT * FROM statics"
+
+    i=0
+    j=0
+    for row in c.execute(SqlSentence):
+        if i==(page-1)*itemnumber+j and j<itemnumber:
+            j=j+1
+            isbn=row[0]
+            praise=row[1]
+            comment=row[2]
+            bookname=row[3]
+            username=row[4]
+            time=row[5]
+            single={"isbn":str(isbn),
+                   "praise":str(praise),
+                   "comment":str(comment),
+                   "bookname":str(bookname.encode("utf-8")),
+                   "username":str(username),
+                    "time":str(time)}
+            result.append(single)
+        if j==itemnumber:
+            break
+        i=i+1
+    conn.commit()
+    c.close()
+    conn.close()
+    #print result
+    out=json.dumps(result, ensure_ascii=False) 
+    #print i
+    return str(out)
+
+#获取按天查询的json的发送界面
+@route("/choosedailyjson")
+def choosedailyjson():
+
+    return template("getdailyjson")
+
 
 
 #@route('/hello/:name')

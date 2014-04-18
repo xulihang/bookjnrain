@@ -97,7 +97,6 @@ Sub Process_Globals
 	Dim result=1 As String
 	Dim SQL1 As SQL
 	Dim SQL2 As SQL
-	Dim SQL3 As SQL
 	Dim manager As PreferenceManager
 	Dim screen As PreferenceScreen
 	Public book As Long
@@ -626,12 +625,12 @@ Sub Button13_Click
 	If resultofmsgbox=DialogResponse.POSITIVE Then
 	    StartActivity(timewheelview)
 	Else
-	    queryorder=0
+	    queryorder=4
 		page2=1
 	    ToastMessageShow("此模式下点赞与评论数为0.",False)
 	    Dim getbytime As HttpJob
 	    getbytime.Initialize("getlatest",Me)
-        getbytime.Download("https://bottle-bookjnrain.rhcloud.com/get3/"&timewheelview.searchtime)
+        getbytime.PostString("https://bottle-bookjnrain.rhcloud.com/getdailyjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&date="&timewheelview.searchtime)
 	    ProgressDialogShow("获取数据中...")
 	End If
 End Sub
@@ -1034,9 +1033,17 @@ Sub more_click
 	'clv1.AsView.RemoveView
 	clv1.RemoveAt(clv1.GetSize-1)
 	ProgressDialogShow("加载中")
+	Dim URL,Param As String
+	If queryorder=4 Then 
+	    URL="https://bottle-bookjnrain.rhcloud.com/getdailyjson"
+	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&date="&timewheelview.searchtime
+	Else
+	    URL="https://bottle-bookjnrain.rhcloud.com/getjson"
+	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword
+	End If
 	Dim loadmore As HttpJob
 	loadmore.Initialize("loadmore",Me)
-	loadmore.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
+	loadmore.PostString(URL,Param)
     'addlistview(queryorder,page2-1)
 End Sub
 
