@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=19
+NumberOfModules=22
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -39,29 +39,37 @@ Module18=ImageDownloader
 ModuleVisible18=1
 Module19=userhistory
 ModuleVisible19=1
+Module20=idlebook
+ModuleVisible20=1
+Module21=askforbook
+ModuleVisible21=1
+Module22=askedbook
+ModuleVisible22=1
 Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
-NumberOfFiles=18
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+NumberOfFiles=20
 File1=about.bal
-File2=comment.bal
-File3=comment.png
-File4=crop.bal
-File5=follows.bal
-File6=handinput.bal
-File7=login.bal
-File8=praise_no.png
-File9=praise_yes.png
-File10=profile.bal
-File11=query.bal
-File12=register.bal
-File13=scanner.bal
-File14=search.bal
-File15=uploaderlist.bal
-File16=userinfo.bal
-File17=web.bal
-File18=wheelview.bal
+File2=askforbook.bal
+File3=comment.bal
+File4=comment.png
+File5=crop.bal
+File6=follows.bal
+File7=handinput.bal
+File8=idlebook.bal
+File9=login.bal
+File10=praise_no.png
+File11=praise_yes.png
+File12=profile.bal
+File13=query.bal
+File14=register.bal
+File15=scanner.bal
+File16=search.bal
+File17=uploaderlist.bal
+File18=userinfo.bal
+File19=web.bal
+File20=wheelview.bal
 NumberOfLibraries=16
 Library1=animation
 Library2=b4azxing
@@ -148,6 +156,7 @@ Sub Globals
 	Dim Spinner1 As Spinner
 	Dim page2=1 As Int
 	Dim queryorder=1 As Int
+	Dim searchtype=0 As Int
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -199,7 +208,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Button11.Visible=False
 	Button13.Visible=False
     Initilize_sm
-	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看"))
+	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看","查看闲置的书","公布闲置的书","查看求书列表","我要求书"))
 	Spinner1.BringToFront
 	'Spinner1.Enabled=False
 End Sub
@@ -367,13 +376,13 @@ Sub JobDone (job As HttpJob)
 				ProgressDialogHide
 				'Log(job.GetString)
 				'Log(job.GetInputStream)
-				createlistview(job.GetString)
+				createlistview(job.GetString) 
 			Case "loadmore"  
-				'最新上传
 				ProgressDialogHide
-				'Log(job.GetString)
-				'Log(job.GetInputStream)
 				addlistview(job.GetString)
+			Case "endpub"  
+				ProgressDialogHide
+				ToastMessageShow(job.GetString,False)
 		End Select
 	Else
 	    ProgressDialogHide
@@ -563,9 +572,11 @@ End Sub
 Sub SetDefaults
 	'defaults are only set on the first run.
 	manager.SetBoolean("check1", True)
-	manager.SetBoolean("check2", True)
-	manager.SetBoolean("check3", True)
+	manager.SetBoolean("check2", False)
+	'manager.SetBoolean("check3", True)
+	manager.SetBoolean("check4", True)
 	manager.SetString("list1","5")
+	manager.SetString("list2","图书封面")
 End Sub
 
 Sub CreatePreferenceScreen
@@ -580,9 +591,12 @@ Sub CreatePreferenceScreen
 	cat2.AddCheckBox("check2", "退出时清除登录记录。", "", True)
 	
 	cat3.Initialize("查询")
-	cat3.AddCheckBox("check3", "显示图书封面", "一张图片约6KB.", True)
+	'cat3.AddCheckBox("check3", "显示图书封面", "一张图片约6KB.", True)
+	cat3.AddCheckBox("check4", "显示不再闲置的图书", "显示状态为结束的书.", True)
 	cat3.AddList("list1", "每页显示项目数", "设置每页显示几本书", "", _
         Array As String("2","5", "10", "15", "20", "30"))
+	cat3.AddList("list2", "显示图片", "设置显示图书封面还是用户头像或不显示", "", _
+        Array As String("不显示","图书封面","用户头像"))
 	'add the categories to the main screen
 	screen.AddPreferenceCategory(cat1)
 	screen.AddPreferenceCategory(cat2)
@@ -600,9 +614,10 @@ End Sub
 Sub Button9_Click
     queryorder=2 '按时间
 	page2=1
+	searchtype=0
 	Dim getlatest As HttpJob
 	getlatest.Initialize("getlatest",Me)
-	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
+	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype=0")
 	ProgressDialogShow("获取数据中...")
 End Sub
 Sub Button8_Click
@@ -613,9 +628,10 @@ End Sub
 Sub Button11_Click
     queryorder=1 '按热度
 	page2=1
+	searchtype=0
 	Dim getlatest As HttpJob
 	getlatest.Initialize("getlatest",Me)
-	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
+	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype=0")
 	ProgressDialogShow("获取数据中...")
 End Sub
 
@@ -627,6 +643,7 @@ Sub Button13_Click
 	Else
 	    queryorder=4
 		page2=1
+		searchtype=0
 	    ToastMessageShow("此模式下点赞与评论数为0.",False)
 	    Dim getbytime As HttpJob
 	    getbytime.Initialize("getlatest",Me)
@@ -659,21 +676,46 @@ Sub createlistview(jsonresult As String)
 	JSON.Initialize(jsonresult)
     Dim list1 As List
     list1 = JSON.NextArray
-
-	For i =0 To list1.Size-1
-	    Dim map1 As Map
-        map1 = list1.Get(i)
+	If list1.Size=0 Then
+		ToastMessageShow("没有了",False)
+	End If
+	Log("size:"&list1.Size)
+	If searchtype=0 Then
+	    For i =0 To list1.Size-1
+	        Dim map1 As Map
+            map1 = list1.get(i)
 		
-		Dim ProperHeight As Int
-	    ProperHeight=autosize(map1.Get("bookname"))+20dip
-		Log(ProperHeight)
+		    Dim ProperHeight As Int
+	        ProperHeight=autosize(map1.get("bookname"))+20dip
+		    Log(ProperHeight)
 		
-		clv1.Add(CreateListItem(map1.Get("bookname"),map1.Get("isbn"),map1.Get("praise"),map1.Get("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.Get("isbn"))
-		If i=list1.Size-1 Then
-		    clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
-		End If
-	Next
+		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
+		    If i=list1.Size-1 Then
+		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
+		    End If
+	    Next
+	Else If searchtype=1 Then
+		For i =0 To list1.Size-1
+	        Dim map1 As Map
+            map1 = list1.get(i)
+		
+		    Dim ProperHeight As Int
+	        ProperHeight=autosize(map1.get("detail"))+60dip
+		    Log(ProperHeight)
 
+			If map1.get("finished")="1" Then
+		        If manager.GetBoolean("check4")=True Then
+		            clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
+		        End If
+			End If
+			If map1.get("finished")="0" Then
+			    clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
+		    End If
+			If i=list1.Size-1 Then
+		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
+		    End If
+	    Next
+	End If
 	clv1.AsView.Visible=True
 	WebView1.Visible=False
 End Sub
@@ -682,6 +724,62 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 	'Msgbox("Hello","Hello")
 	If Value=0 Then
 	    more_click
+	Else If Value=1 Then
+	    Dim resultofmsgbox2 As Int
+	    Dim r As List 
+        r.Initialize 
+        r.AddAll(Array As String("复制ISBN号","查看基本信息","查看更多信息","查看上传者"))
+		Dim pnl As Panel
+	    pnl = clv1.GetPanel(Index)
+	    Dim lbl2 As Label
+	    lbl2 = pnl.GetView(1)
+		Dim lbl6 As Label
+	    lbl6 = pnl.GetView(5)
+		Dim Reader As TextReader
+        Dim username,password As String
+	    If File.Exists(File.DirInternal,"user") Then
+            Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		    username = Reader.ReadLine
+			password=  Reader.ReadLine
+            Reader.Close 
+		End If
+		
+		If username=lbl6.Text Then
+		    r.Add("修改状态为结束")
+		End If
+		
+        Dim m As Int
+        Dim x As id 
+        m = x.InputList1(r,Index)
+	    
+    	Select m
+	        Case 0
+                Dim CC As BClipboard
+                CC.setText(lbl2.Text)
+	            ToastMessageShow("结果已复制到剪切板。",False)
+	        Case 1
+                getinfo(lbl2.Text)
+			    result=lbl2.Text
+			    Label4_Click
+		    Case 2
+                resultofmsgbox2=Msgbox2("选择一个查询网站","详情","豆瓣","","谷歌",Null)
+	            If resultofmsgbox2=DialogResponse.POSITIVE Then
+		            ProgressDialogShow("加载中")
+			        WebView1.LoadUrl("http://book.douban.com/isbn/"&lbl2.Text)
+	            Else
+		            ProgressDialogShow("加载中")
+	                WebView1.LoadUrl("http://books.google.com.hk/books?vid=ISBN"&lbl2.Text)
+			    End If
+		    Case 3
+		        comment.queryuser=lbl6.Text
+                StartActivity(userinfo)
+			Case 4
+			    ProgressDialogShow("修改中")
+			    Dim endpub As HttpJob
+				endpub.Initialize("endpub",Me)
+				endpub.PostString("https://bottle-bookjnrain.rhcloud.com/endpublish","username="&username&"&password="&password&"&isbn="&lbl2.Text)
+	    End Select	
+
 	Else
         Dim resultofmsgbox2 As Int
 	    Dim r As List 
@@ -719,7 +817,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 End Sub
 
 
-Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int, Width As Int, Height As Int) As Panel
+Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int,uploader As String, Width As Int, Height As Int) As Panel
 	Dim p As Panel
 	p.Initialize("")
 	p.Color = Colors.RGB(245,245,245)
@@ -815,14 +913,24 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	bookcomment.Gravity=Gravity.FILL
 	
 	Dim n As Int
-	If manager.GetBoolean("check3")=True Then
+	Dim y As Int
+	If manager.GetString("list2")="图书封面" Then
 	    cover.Visible=True
 	    n=54dip
+		y=63dip
 	    Dim links As Map
 	    links.Initialize
 	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getimage/"&SecondLineText)
 	    CallSubDelayed2(ImageDownloader, "Download", links)
-	Else
+	Else If manager.GetString("list2")="用户头像" Then
+		cover.Visible=True
+	    n=54dip
+		y=54dip
+	    Dim links As Map
+	    links.Initialize
+	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getavatar/"&uploader)
+	    CallSubDelayed2(ImageDownloader, "Download", links)
+	Else If manager.GetString("list2")="不显示" Then
 	    If cover.Visible=True Then
 		    cover.RemoveView
 		End If
@@ -835,7 +943,105 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	p.AddView(praise, Width-40dip, Height-56, 48, 48) 'view #3
 	p.AddView(lbl4, Width-70dip, Height-56-48, 20dip, 20dip) 'view #4
 	p.AddView(bookcomment, Width-70dip, Height-56, 48, 48) 'view #5
-	p.AddView(cover, 5dip, 2dip, 54dip, 63dip) 'view #6
+	p.AddView(cover, 5dip, 2dip, 54dip, y) 'view #6
+
+	Return p
+End Sub
+
+Sub CreateListItem2(booksname As String, isbn As String, price As Int, detail As String, purpose As Int,pubtime As String,uploader As String ,finished As Int, Width As Int, Height As Int) As Panel
+	Dim p As Panel
+	p.Initialize("")
+	p.Color = Colors.RGB(245,245,245)
+	
+	Dim lbl As Label
+	lbl.Initialize("")
+	lbl.Gravity = Gravity.LEFT
+	lbl.Text = booksname
+	lbl.TextSize = 18
+	lbl.TextColor = Colors.Black
+	
+	Dim lbl2 As Label
+	lbl2.Initialize("")
+	lbl2.Gravity = Gravity.LEFT
+	lbl2.Text = isbn
+	lbl2.TextSize = 16
+	lbl2.TextColor = Colors.Gray
+	
+	Dim lbl3 As Label
+	lbl3.Initialize("")
+	lbl3.Gravity = Gravity.CENTER_HORIZONTAL
+	lbl3.Text = "价格:"&price
+	lbl3.TextSize = 16
+	lbl3.TextColor = Colors.Red
+	
+	Dim lbl4 As Label
+	lbl4.Initialize("")
+	lbl4.Gravity = Gravity.LEFT
+	lbl4.Text = detail
+	lbl4.TextSize = 15
+	lbl4.TextColor = Colors.Gray
+	
+	Dim PurposeString As String 
+	If purpose=0 Then
+	   PurposeString="状态:出售"
+	Else
+	   PurposeString="状态:出借"
+	End If
+	If finished=1 Then
+	   PurposeString="状态:结束"
+	End If
+	
+	Dim lbl5 As Label
+	lbl5.Initialize("")
+	lbl5.Gravity = Gravity.LEFT
+	lbl5.Text = PurposeString
+	lbl5.TextSize = 16
+	lbl5.TextColor = Colors.Red
+	
+	Dim lbl6 As Label
+	lbl6.Initialize("")
+	lbl6.Gravity = Gravity.LEFT
+	lbl6.Text = uploader
+	lbl6.TextSize = 12
+	lbl6.TextColor = Colors.Gray
+		
+	Dim cover As ImageView
+    cover.Initialize("")
+	cover.Gravity=Gravity.FILL
+	cover.Visible=False
+	
+	Dim n As Int
+	Dim y As Int
+	If manager.GetString("list2")="图书封面" Then
+	    cover.Visible=True
+	    n=54dip
+		y=63dip
+	    Dim links As Map
+	    links.Initialize
+	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getimage/"&isbn)
+	    CallSubDelayed2(ImageDownloader, "Download", links)
+	Else If manager.GetString("list2")="用户头像" Then
+		cover.Visible=True
+	    n=54dip
+		y=54dip
+	    Dim links As Map
+	    links.Initialize
+	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getavatar/"&uploader)
+	    CallSubDelayed2(ImageDownloader, "Download", links)
+	Else If manager.GetString("list2")="不显示" Then
+	    If cover.Visible=True Then
+		    cover.RemoveView
+		End If
+	    n=0
+	End If
+	
+	p.AddView(lbl, 5dip+n, 2dip, Width-80dip-n, 40dip) 'view #0
+    p.AddView(lbl2, 5dip+n, Height-20dip, Width-160dip-n, 20dip) 'view #1
+	p.AddView(lbl3, Width-80dip,Height-20dip, 80dip, 20dip) 'view #2
+	p.AddView(lbl4, 5dip+n, 40dip,Width, Height-60dip) 'view #3
+	p.AddView(lbl5, Width-160dip, Height-20dip, 80dip, 20dip) 'view #4
+	p.AddView(lbl6, Width-80dip,5dip, 80dip, 40dip) 'view #5
+	p.AddView(cover, 5dip, 2dip, 54dip, y) 'view #6
 
 	Return p
 End Sub
@@ -853,7 +1059,7 @@ Sub autosize(Text As String) As Int
 	example.TextSize = 18
 	example.TextColor = Colors.White
 	Dim n As Int
-	If manager.GetBoolean("check3")=True Then
+	If manager.GetString("list2")<>"不显示" Then
 	    n=54dip
 	Else
 	    n=0
@@ -970,7 +1176,7 @@ Sub Button12_Click
 	    queryorder=3
 	    Dim getlatest As HttpJob
 	    getlatest.Initialize("getlatest",Me)
-	    getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword)
+	    getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype="&searchtype)
 	    ProgressDialogShow("获取数据中...")
 	End If
 End Sub
@@ -1010,9 +1216,30 @@ Sub Spinner1_ItemClick (Position As Int, Value As Object)
 		    Button9_Click
 		Case 2
 		    Button13_Click
+		Case 3
+		    getidlebook
+		Case 4
+		    pubidlebook
+		Case 5
+		    StartActivity(askedbook)
+		Case 6
+		    StartActivity(askforbook)
 	End Select
 End Sub
 
+Sub getidlebook
+    ProgressDialogShow("加载中")
+	page2=1
+	queryorder=0
+    searchtype=1
+	Dim getidle As HttpJob
+	getidle.Initialize("getlatest",Me)
+	getidle.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype="&searchtype)
+End Sub
+
+Sub pubidlebook
+    StartActivity(idlebook)
+End Sub
 Sub morelistitem(Width As Int, Height As Int) As Panel
 	Dim p As Panel
 	p.Initialize("")
@@ -1039,7 +1266,7 @@ Sub more_click
 	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&date="&timewheelview.searchtime
 	Else
 	    URL="https://bottle-bookjnrain.rhcloud.com/getjson"
-	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword
+	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype="&searchtype
 	End If
 	Dim loadmore As HttpJob
 	loadmore.Initialize("loadmore",Me)
@@ -1057,20 +1284,41 @@ Sub addlistview(jsonresult As String)
 		ToastMessageShow("没有了",False)
 	End If
 	Log("size:"&list1.Size)
-	For i =0 To list1.Size-1
-	    Dim map1 As Map
-        map1 = list1.Get(i)
+	If searchtype=0 Then
+	    For i =0 To list1.Size-1
+	        Dim map1 As Map
+            map1 = list1.get(i)
 		
-		Dim ProperHeight As Int
-	    ProperHeight=autosize(map1.Get("bookname"))+20dip
-		Log(ProperHeight)
+		    Dim ProperHeight As Int
+	        ProperHeight=autosize(map1.get("bookname"))+20dip
+		    Log(ProperHeight)
 		
-		clv1.Add(CreateListItem(map1.Get("bookname"),map1.Get("isbn"),map1.Get("praise"),map1.Get("comment"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.Get("isbn"))
-		If i=list1.Size-1 Then
-		    clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
-		End If
-	Next
-	
+		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
+		    If i=list1.Size-1 Then
+		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
+		    End If
+	    Next
+	Else If searchtype=1 Then
+		For i =0 To list1.Size-1
+	        Dim map1 As Map
+            map1 = list1.get(i)
+		
+		    Dim ProperHeight As Int
+	        ProperHeight=autosize(map1.get("detail"))+60dip
+		    Log(ProperHeight)
+		    If map1.get("finished")="1" Then
+		        If manager.GetBoolean("check4")=True Then
+		            clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
+		        End If
+			End If
+			If map1.get("finished")="0" Then
+			    clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
+		    End If
+		    If i=list1.Size-1 Then
+		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
+		    End If
+	    Next
+	End If
 	clv1.AsView.Visible=True
 	WebView1.Visible=False
 End Sub

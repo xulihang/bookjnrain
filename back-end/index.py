@@ -149,6 +149,12 @@ def getcomment(isbn):
     
     return static_file(isbn+"-comment.db",root='db',mimetype="*/*",download=isbn+"-comment.db")
 
+#获取求书列表
+@route("/getaskbook")
+def getaskbook():
+    
+    return static_file("askbook.db",root='db',mimetype="*/*",download="askbook.db")
+
 #获取用户信息
 @route("/getuserinfo/<username:path>")
 def getuserinfo(username):
@@ -594,11 +600,19 @@ def getjson():
     page = request.forms.get("page")
     queryorder= request.forms.get("queryorder")
     keyword= request.forms.get("keyword")
+    searchtype= request.forms.get("searchtype")
     itemnumber=int(itemnumber)
     page=int(page)
     queryorder=int(queryorder)
+    searchtype=int(searchtype)
     result=[]
-    conn = sqlite3.connect('db/count.db')
+    dbpath='db/count.db'
+    if searchtype == 0:
+        dbpath='db/count.db'
+    elif searchtype == 1:
+        dbpath='db/idle.db'
+        
+    conn = sqlite3.connect(dbpath)
     c = conn.cursor()
     SqlSentence="SELECT * FROM statics"
     if queryorder == 0:
@@ -612,25 +626,53 @@ def getjson():
     
     i=0
     j=0
-    for row in c.execute(SqlSentence):
-        if i==(page-1)*itemnumber+j and j<itemnumber:
-            j=j+1
-            isbn=row[0]
-            praise=row[1]
-            comment=row[2]
-            bookname=row[3]
-            username=row[4]
-            time=row[5]
-            single={"isbn":str(isbn),
-                   "praise":str(praise),
-                   "comment":str(comment),
-                   "bookname":str(bookname.encode("utf-8")),
-                   "username":str(username),
-                    "time":str(time)}
-            result.append(single)
-        if j==itemnumber:
-            break
-        i=i+1
+    #查上传过的书 
+    if searchtype==0:
+        for row in c.execute(SqlSentence):
+            if i==(page-1)*itemnumber+j and j<itemnumber:
+                j=j+1
+                isbn=row[0]
+                praise=row[1]
+                comment=row[2]
+                bookname=row[3]
+                username=row[4]
+                time=row[5]
+                single={"isbn":str(isbn),
+                       "praise":str(praise),
+                       "comment":str(comment),
+                       "bookname":str(bookname.encode("utf-8")),
+                       "username":str(username),
+                        "time":str(time)}
+                result.append(single)
+            if j==itemnumber:
+                break
+            i=i+1
+    #查闲置书
+    elif searchtype==1:    
+        for row in c.execute(SqlSentence):
+            if i==(page-1)*itemnumber+j and j<itemnumber:
+                j=j+1
+                bookname=row[0]
+                isbn=row[1]
+                purpose=row[2]
+                price=row[3]
+                detail=row[4]
+                username=row[5]
+                pubtime=row[6]
+                finished=row[7]
+                single={"bookname":str(bookname.encode("utf-8")),
+                       "isbn":str(isbn),
+                       "purpose":str(purpose),
+                       "price":str(price),
+                       "detail":str(detail.encode("utf-8")),
+                       "username":str(username),
+                       "pubtime":str(pubtime),
+                       "finished":str(finished)}
+                result.append(single)
+            if j==itemnumber:
+                break
+            i=i+1
+        
     conn.commit()
     c.close()
     conn.close()
@@ -694,7 +736,130 @@ def choosedailyjson():
 
     return template("getdailyjson")
 
+#处理空闲书列表
+@route('/idlepublish', method='POST')
+def idlepublish():
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    bookname = request.forms.get("bookname")
+    isbn = request.forms.get("isbn")
+    purpose = request.forms.get("purpose")
+    price = request.forms.get("price")
+    detail = request.forms.get("detail")
+    pubtime = request.forms.get("pubtime")
+    if auth()=='登录成功!':
+        if os.path.exists('db/idle.db')==False:
+            conn = sqlite3.connect('db/idle.db')
+            c = conn.cursor()
+            c.execute("CREATE TABLE statics (bookname, isbn, purpose, price, detail, username, pubtime, finished)")
+            c.execute("insert into statics values ('"+bookname+"','"+isbn+"','"+purpose+"','"+price+"','"+detail+"','"+username+"','"+pubtime+"','0')")
+            conn.commit()
+            c.close()
+            conn.close()
+        else:
+            #上传后添加数据
+            exist=1#默认插入
+            #判断是否已经存在
+            conn = sqlite3.connect('db/idle.db')
+            c = conn.cursor()
+            c.execute("insert into statics values ('"+bookname+"','"+isbn+"','"+purpose+"','"+price+"','"+detail+"','"+username+"','"+pubtime+"','0')")
+            conn.commit()
+            c.close()
+            conn.close()
 
+        return '操作成功'
+    else:
+        return '登录失败'
+
+#空闲书发布界面
+@route("/idlebook")
+def idlebook():
+
+    return template("idlebook")
+
+
+#借让完成
+@route('/endpublish', method='POST')
+def endpublish():
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    isbn = request.forms.get("isbn")
+    if auth()=='登录成功!':
+        if os.path.exists('db/idle.db')==True:
+            conn = sqlite3.connect('db/idle.db')
+            c = conn.cursor()
+            c.execute("update statics set finished='1' where isbn Like "+isbn+" and username Like "+username)
+            conn.commit()
+            c.close()
+            conn.close()
+        return '操作成功'
+    else:
+        return '登录失败'
+
+#处理借让完成情况
+@route("/notidle")
+def notidle():
+
+    return template("notidle")
+
+#处理求书列表
+@route('/askforbook', method='POST')
+def askforbook():
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    bookname = request.forms.get("bookname")
+    detail = request.forms.get("detail")
+    if auth()=='登录成功!':
+        if os.path.exists('db/askbook.db')==False:
+            conn = sqlite3.connect('db/askbook.db')
+            c = conn.cursor()
+            c.execute("CREATE TABLE statics (bookname, detail, username, pubtime, finished)")
+            c.execute("insert into statics values ('"+bookname+"','"+detail+"','"+username+"','"+pubtime+"','0')")
+            conn.commit()
+            c.close()
+            conn.close()
+        else:
+            #上传后添加数据
+            exist=1#默认插入
+            #判断是否已经存在
+            conn = sqlite3.connect('db/askbook.db')
+            c = conn.cursor()
+            c.execute("insert into statics values ('"+bookname+"','"+detail+"','"+username+"','"+pubtime+"','0')")
+            conn.commit()
+            c.close()
+            conn.close()
+
+        return '操作成功'
+    else:
+        return '登录失败'
+
+#求书界面
+@route("/askbook")
+def askbook():
+
+    return template("askbook")
+
+#删除求书记录
+@route("/deleteaskbook/", method="POST")
+def deleteaskbook():
+    username = request.forms.get("username")
+    pubtime = request.forms.get("pubtime")
+    if os.path.exists('db/askbook.db')==True:
+        conn = sqlite3.connect('db/askbook.db')
+        c = conn.cursor()
+        c.execute("delete from statics where pubtime Like "+pubtime+" and username Like "+username+"")
+        conn.commit()
+        c.close()
+        conn.close()
+        return "操作成功"
+    else:
+        return "数据不存在"
+    
+#删除求书界面
+@route("/deleteaskbookpage")
+def deleteaskbookpage():
+
+    return template("deleteaskbook")
 
 #@route('/hello/:name')
 #def index(name='World'):
