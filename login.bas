@@ -30,7 +30,7 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("login")
-    EditText3.Enabled=False
+    EditText3.Visible=False
 
 End Sub
 
@@ -53,7 +53,7 @@ Sub JobDone (job As HttpJob)
 				Log(job.GetString)
 				If job.GetString.Contains("<title>e江南</title>")=True OR job.GetString.Contains("<title>江南大学</title>")=True Then
 				    ToastMessageShow("登录失败,请加输验证码。",False)
-					EditText3.Enabled=True
+					EditText3.Visible=True
 					job2.Initialize("Job2", Me)
                     job2.Download("http://e.jiangnan.edu.cn/valcode.jpg")
 				Else 
@@ -69,7 +69,7 @@ Sub JobDone (job As HttpJob)
 			    Dim ValCode As ImageView
 				ValCode.Initialize("")
 				ValCode.Bitmap=job2.GetBitmap
-				Activity.AddView(ValCode,EditText2.Left,EditText2.Top+100dip,60dip,20dip)
+				Activity.AddView(ValCode,EditText3.Left,EditText3.Top-40dip,60dip,20dip)
 		End Select
 	Else
 	    ProgressDialogHide

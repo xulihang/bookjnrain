@@ -121,6 +121,7 @@ Sub Globals
 	Dim bookprice As String
 	Dim bookpublisher As String
 	Dim booksummary As String
+	Dim author As String
 	Dim Button2 As Button
 	Dim ImageView1 As ImageView
 	Dim Label3 As Label
@@ -167,7 +168,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	End If
 	If File.Exists(File.DirInternal,"mybook.db")=False Then
 	    SQL1.Initialize(File.DirInternal, "mybook.db", True)
-		SQL1.ExecNonQuery("CREATE TABLE book (title , price, publisher, isbn, pubdate, lasttime, introduction)")
+		SQL1.ExecNonQuery("CREATE TABLE book (title , price, author ,publisher, isbn, pubdate, lasttime, introduction)")
 	End If
 	
 	If SQL1.IsInitialized = False Then
@@ -342,7 +343,8 @@ Sub LoadJSONDATA(sJSONDATA As String)
     bookpublisher= map1.GetValueAt(9)
     bookpubdate= map1.GetValueAt(4)  '根据index
 	booksummary= map1.get("summary") '根据Key的名称
-    Label2.Text="条码："&result&CRLF&"书名："&bookname&CRLF&"价格："&bookprice&CRLF&"出版社："&bookpublisher&CRLF&"出版年份："&bookpubdate
+	author= map1.get("author")
+    Label2.Text="条码："&result&CRLF&"书名："&bookname&CRLF&"作者："&author&CRLF&"价格："&bookprice&CRLF&"出版社："&bookpublisher&CRLF&"出版年份："&bookpubdate
 	If manager.GetBoolean("check1")=True Then
 	    storetodatabase_Click
 	End If
@@ -447,7 +449,7 @@ Sub storetodatabase_Click
 	Next
 	Cursor1.Close
 	If exist=0 Then
-        SQL1.ExecNonQuery2("INSERT INTO book VALUES(?, ?, ?, ?, ?, ?, ?)", Array As Object(bookname, bookprice, bookpublisher, result, bookpubdate, time, booksummary  ))
+        SQL1.ExecNonQuery2("INSERT INTO book VALUES(?, ?, ?, ?, ?, ?, ?, ?)", Array As Object(bookname, bookprice, author, bookpublisher, result, bookpubdate, time, booksummary  ))
 		ToastMessageShow("已存储",False)
     End If
 End Sub

@@ -20,6 +20,11 @@ Sub Globals
 	Dim ListView1 As ListView
 	Dim ImageView1 As ImageView
 	Dim Label1 As Label
+	Dim Button2 As Button
+	Dim EditText1 As EditText
+	Dim Panel1 As Panel
+	Dim Spinner1 As Spinner
+	Dim according="title" As String
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -44,6 +49,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		Log(Cursor1.GetString("title"))
 	Next
 	Cursor1.Close
+	Spinner1.AddAll(Array As String("书名","作者","ISBN","出版社"))
 End Sub
 
 Sub Activity_Resume
@@ -135,4 +141,49 @@ Sub upload(Value As String,bookname As String)
 	Dim job1 As HttpJob
     job1.Initialize("Job1",Me)
     job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&Value&"&time="&now&"&bookname="&bookname)
+End Sub
+
+Sub Button2_Click
+	If EditText1.Visible=False Then
+	    EditText1.Visible=True
+		Spinner1.Visible=True
+		Button1.Visible=False
+		Label1.Visible=False
+		ListView1.Enabled=False
+        Panel1.Visible=True
+	Else
+	    If EditText1.Text="" Then
+	        Msgbox("请输入关键词","")
+	    Else
+	        EditText1.Visible=False
+		    Spinner1.Visible=False
+	        Button1.Visible=True
+		    Label1.Visible=True
+		    ListView1.Enabled=True
+		    Panel1.Visible=False
+		    ListView1.Clear
+		    Dim Cursor1 As Cursor
+	        Cursor1 = SQL1.ExecQuery("SELECT * FROM book WHERE "&according&" like '%"&EditText1.Text&"%'")
+	        For i = 0 To Cursor1.RowCount - 1
+		        Cursor1.Position = i
+		        ListView1.AddTwoLines2(Cursor1.GetString("title"),Cursor1.GetString("lasttime")&Cursor1.GetString("publisher")&Cursor1.GetString("price"),Cursor1.GetString("isbn"))
+	        Next
+	        Cursor1.Close
+		    If ListView1.Size=0 Then
+			    ToastMessageShow("没有你要的书。",False)
+		    End If
+	    End If
+	End If
+End Sub
+Sub Spinner1_ItemClick (Position As Int, Value As Object)
+	Select Value
+	    Case "书名"
+		    according="title"
+		Case "作者"
+		    according="author"
+		Case "ISBN"
+		    according="isbn"
+		Case "出版社"
+		    according="publisher"
+	End Select
 End Sub
