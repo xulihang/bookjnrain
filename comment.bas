@@ -24,6 +24,7 @@ Sub Globals
 	Dim clv1 As CustomListView
 	Dim Panel2 As Panel
 	Dim su As StringUtils
+	Dim ime1 As IME
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -34,6 +35,10 @@ Sub Activity_Create(FirstTime As Boolean)
     getcomment.Download("https://bottle-bookjnrain.rhcloud.com/getcomment/"&Main.book)
 	ProgressDialogShow("获取数据中...")
     Log(Main.book)
+	ime1.Initialize("IME")
+    ime1.AddHeightChangedEvent
+	'IME_HeightChanged(100%y, 0) 
+	ime1.AddHandleActionEvent(EditText1)
 End Sub
 
 Sub Activity_Resume
@@ -97,6 +102,7 @@ Sub createlistview
 	Next
 	Cursor1.Close
 	SQL4.Close
+	Panel2.Visible=True
 	clv1.AsView.Visible=True
 End Sub
 
@@ -211,4 +217,10 @@ Sub userinfo_click
 	lbl2 = pnl.GetView(1)
 	queryuser=lbl2.Text
     StartActivity(userinfo)
+End Sub
+
+Sub IME_HeightChanged(NewHeight As Int, OldHeight As Int)
+    EditText1.Top = NewHeight - EditText1.Height
+	Button1.Top = NewHeight - Button1.Height
+    Panel2.Height = EditText1.Top - Panel2.Top
 End Sub

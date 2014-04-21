@@ -47,7 +47,7 @@ Module22=askedbook
 ModuleVisible22=1
 Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
 UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
 NumberOfFiles=20
 File1=about.bal
@@ -70,7 +70,7 @@ File17=uploaderlist.bal
 File18=userinfo.bal
 File19=web.bal
 File20=wheelview.bal
-NumberOfLibraries=16
+NumberOfLibraries=17
 Library1=animation
 Library2=b4azxing
 Library3=clipboard
@@ -79,14 +79,15 @@ Library5=encryption
 Library6=http
 Library7=httputils2
 Library8=id
-Library9=json
-Library10=phone
-Library11=preferenceactivity
-Library12=reflection
-Library13=rsimageprocessing
-Library14=sql
-Library15=stringutils
-Library16=wheelview
+Library9=ime
+Library10=json
+Library11=phone
+Library12=preferenceactivity
+Library13=reflection
+Library14=rsimageprocessing
+Library15=sql
+Library16=stringutils
+Library17=wheelview
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -107,7 +108,7 @@ Sub Process_Globals
 	Dim SQL2 As SQL
 	Dim manager As PreferenceManager
 	Dim screen As PreferenceScreen
-	Public book As Long
+	Public book As String
 End Sub
 
 Sub Globals
