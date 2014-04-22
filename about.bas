@@ -19,12 +19,12 @@ Sub Globals
 	Dim Button1 As Button
 	Dim Label2 As Label
 	Dim ImageView2 As ImageView
+	Dim Button2 As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("about")
-
 End Sub
 
 Sub Activity_Resume
@@ -35,8 +35,33 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-
+Sub JobDone (job As HttpJob)
+	Log("JobName = " & job.JobName & ", Success = " & job.Success)
+	If job.Success = True Then
+		Select job.JobName
+			Case "getver"
+				'print the result to the logs
+				ProgressDialogHide
+				If job.GetString<90 Then
+					ToastMessageShow("已是最新版",False)
+				Else
+				    ToastMessageShow("发现新版本",False)
+				End If
+		End Select
+	Else
+	    ProgressDialogHide
+		Log("Error: " & job.ErrorMessage)
+		ToastMessageShow("Error: " & job.ErrorMessage, True)
+	End If
+	job.Release
+End Sub
 
 Sub Button1_Click
 	Activity.Finish
+End Sub
+Sub Button2_Click
+    ProgressDialogShow("检查中")
+    Dim getver As HttpJob
+	getver.Initialize("getver",Me)
+	getver.Download("https://bottle-bookjnrain.rhcloud.com/getver")
 End Sub
