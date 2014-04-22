@@ -787,7 +787,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
         Dim resultofmsgbox2 As Int
 	    Dim r As List 
         r.Initialize 
-        r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","查看更多信息","查看上传者"))
+        r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","查看更多信息","查看上传者","在图书馆的信息"))
         Dim m As Int
         Dim x As id 
         m = x.InputList1(r,Index)
@@ -815,6 +815,14 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 		    Case 4
 		        book=Value
 		        StartActivity(uploaderlist)
+			Case 5
+				Dim pnl As Panel
+	            pnl = clv1.GetPanel(Index)
+	            Dim lbl1 As Label
+	            lbl1 = pnl.GetView(0)
+			    Dim encodedUrl As String
+	            encodedUrl = su.EncodeUrl(lbl1.Text, "UTF8")
+				WebView1.LoadUrl("http://202.195.144.48:8080/search?kw="&encodedUrl&"&xc=6&searchtype=title")
 	    End Select		
 	End If
 End Sub
