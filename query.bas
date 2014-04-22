@@ -150,20 +150,21 @@ Sub ListView1_ItemLongClick (Position As Int, Value As Object)
 End Sub
 
 Sub upload(Value As String,bookname As String)
-    ProgressDialogShow("上传中……")
-	Dim Reader As TextReader
-	Dim username,password As String
-	Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
-    username = Reader.ReadLine
-    password = Reader.ReadLine
-    Dim now As Long
-    'Dim time As String
-	now = DateTime.now
-    'time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
-	'Log(time)
-	Dim job1 As HttpJob
-    job1.Initialize("Job1",Me)
-    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&Value&"&time="&now&"&bookname="&bookname)
+    If File.Exists(File.DirInternal,"user") Then
+        ProgressDialogShow("上传中……")
+	    Dim Reader As TextReader
+	    Dim username,password As String
+	    Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+        username = Reader.ReadLine
+        password = Reader.ReadLine
+        Dim now As Long
+	    now = DateTime.now
+	    Dim job1 As HttpJob
+        job1.Initialize("Job1",Me)
+        job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&Value&"&time="&now&"&bookname="&bookname)
+	Else
+	    ToastMessageShow("请先登录并生成云端帐号",False)
+	End If
 End Sub
 
 Sub Button2_Click

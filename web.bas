@@ -27,7 +27,8 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("web")
-
+    ToastMessageShow("暂不使用",False)
+	Activity.Finish
 End Sub
 
 Sub Activity_Resume

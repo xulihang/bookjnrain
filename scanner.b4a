@@ -50,7 +50,7 @@ ModuleVisible23=1
 Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=20
 File1=about.bal
 File2=askforbook.bal
@@ -361,7 +361,7 @@ Sub JobDone (job As HttpJob)
 				'print the result to the logs
 				ProgressDialogHide
 				Log(job.GetString)
-				ToastMessageShow("上传成功！",False)
+				ToastMessageShow(job.GetString,False)
 			Case "Job2"
 			    ProgressDialogHide
 			    Dim jresult As String
@@ -409,7 +409,8 @@ Sub about_Click
 End Sub
 
 Sub web_Click
-    StartActivity(web)
+    'StartActivity(web)
+	Label5_Click
 End Sub
 
 Sub cp_Click
@@ -420,19 +421,20 @@ End Sub
 
 Sub upload_Click 
     'ToastMessageShow("上传中，请等待提示。",False)
-	ProgressDialogShow("上传中...")
-	Dim Reader As TextReader
-	Dim username,password As String
-	Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
-    username = Reader.ReadLine
-    password = Reader.ReadLine
-    Dim now As Long
-    'Dim time As String
-	now = DateTime.now
-    'time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
-	'Log(time)
-    job1.Initialize("Job1",Me)
-    job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&result&"&time="&now&"&bookname="&bookname)
+	If File.Exists(File.DirInternal,"user") Then
+	    Dim Reader As TextReader
+	    Dim username,password As String
+	    Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+        username = Reader.ReadLine
+        password = Reader.ReadLine
+		Dim now As Long
+	    now = DateTime.now
+		ProgressDialogShow("上传中...")
+        job1.Initialize("Job1",Me)
+        job1.PostString("https://bottle-bookjnrain.rhcloud.com/login","username="&username&"&password="&password&"&isbn="&result&"&time="&now&"&bookname="&bookname)
+	Else
+	    ToastMessageShow("请先登录并生成云端帐号",False)
+	End If
 End Sub
 
 Sub storetodatabase_Click
@@ -981,7 +983,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	Return p
 End Sub
 
-Sub CreateListItem2(booksname As String, isbn As String, price As Int, detail As String, purpose As Int,pubtime As String,uploader As String ,finished As Int, Width As Int, Height As Int) As Panel
+Sub CreateListItem2(booksname As String, isbn As String, price As String, detail As String, purpose As Int,pubtime As String,uploader As String ,finished As Int, Width As Int, Height As Int) As Panel
 	Dim p As Panel
 	p.Initialize("")
 	p.Color = Colors.RGB(245,245,245)

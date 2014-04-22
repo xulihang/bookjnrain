@@ -153,6 +153,7 @@ Sub CreateListItem(FirstLineText As String,username As String,time As String, Wi
 	lbl2.Initialize("userinfo")
 	lbl2.Gravity = Gravity.LEFT
 	lbl2.Text = username
+	lbl2.Tag = username
 	lbl2.TextSize = 16
 	lbl2.TextColor = Colors.Gray
 	
@@ -163,10 +164,24 @@ Sub CreateListItem(FirstLineText As String,username As String,time As String, Wi
 	lbl3.TextSize = 16
 	lbl3.TextColor = Colors.Gray
 	
+	Dim cover As ImageView
+    cover.Initialize("")
+	cover.Gravity=Gravity.FILL
+	'获取用户昵称
+	Dim links2 As Map
+	links2.Initialize
+	links2.Put(lbl2, "https://bottle-bookjnrain.rhcloud.com/getusernickname/"&username)
+	CallSubDelayed2(nicknameloader, "Download", links2)
+	'获取用户头像
+	Dim links As Map
+	links.Initialize
+	links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getavatar/"&username)
 	
-	p.AddView(lbl, 5dip, 2dip, Width-72dip, Height-4dip) 'view #0
-	p.AddView(lbl2, 5dip, Height-20dip, Width-144dip, 20dip) 'view #1
+	CallSubDelayed2(ImageDownloader, "Download", links)
+	p.AddView(lbl, Height+5dip, 2dip, Width-72dip, Height-4dip) 'view #0
+	p.AddView(lbl2, Height+5dip, Height-20dip, Width-144dip, 20dip) 'view #1
 	p.AddView(lbl3, Width-144dip, Height-20dip, 144dip, 20dip) 'view #2
+	p.AddView(cover, 5dip, 5dip, Height-10dip, Height-10dip) 'view #2
 	Return p
 End Sub
 
@@ -215,7 +230,7 @@ Sub userinfo_click
 	pnl = clv1.GetPanel(index)
 	Dim lbl2 As Label
 	lbl2 = pnl.GetView(1)
-	queryuser=lbl2.Text
+	queryuser=lbl2.Tag
     StartActivity(userinfo)
 End Sub
 

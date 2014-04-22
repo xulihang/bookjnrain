@@ -32,7 +32,7 @@ Sub Download (nickname As Map)
 		Dim link As String = nickname.GetValueAt(i)
 		If cache.ContainsKey(link) Then
 			Dim iv As Label = nickname.GetKeyAt(i)
-			iv.Text="上传者:"&cache.Get(link)
+			iv.Text="用户:"&cache.Get(link)
 		Else If ongoingTasks.ContainsKey(link) = False Then
 			ongoingTasks.Put(link, "")
 			Dim j As HttpJob
@@ -53,7 +53,7 @@ Sub JobDone(Job As HttpJob)
 				Dim link As String = tasks.GetValueAt(i)
 				If link = Job.JobName Then
 					Dim lbl As Label = tasks.GetKeyAt(i)
-					lbl.Text="上传者:"&name
+					lbl.Text="用户:"&name
 				End If
 			Next
 		End If

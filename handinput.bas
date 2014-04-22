@@ -35,6 +35,8 @@ Sub Globals
 	Dim Label7 As Label
 	Dim Label8 As Label
 	Dim Button3 As Button
+	Dim EditText8 As EditText
+	Dim Label9 As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -73,7 +75,7 @@ Sub Button1_Click
 	Next
 	Cursor1.Close
 	If exist=0 Then
-        Main.SQL1.ExecNonQuery2("INSERT INTO book VALUES(?, ?, ?, ?, ?, ?, ?)", Array As Object(EditText1.Text, EditText2.Text, EditText3.Text, EditText4.Text, EditText5.Text, EditText6.Text, EditText7.Text  ))
+        Main.SQL1.ExecNonQuery2("INSERT INTO book VALUES(?, ?, ?, ?, ?, ?, ?, ?)", Array As Object(EditText1.Text, EditText2.Text, EditText8.Text, EditText3.Text, EditText4.Text, EditText5.Text, EditText6.Text, EditText7.Text  ))
 		ToastMessageShow("已存储",False)
     End If
 End Sub
@@ -93,6 +95,7 @@ Sub LoadJSONDATA(sJSONDATA As String)
     EditText3.Text= map1.GetValueAt(9)
     EditText5.Text= map1.GetValueAt(4)  '根据index
 	EditText7.Text= map1.get("summary") '根据Key的名称
+	EditText8.text= map1.get("author")
 End Sub
 
 Sub JobDone (job As HttpJob)

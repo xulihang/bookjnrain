@@ -670,7 +670,7 @@ def getjson():
                 single={"bookname":str(bookname.encode("utf-8")),
                        "isbn":str(isbn),
                        "purpose":str(purpose),
-                       "price":str(price),
+                       "price":str(price.encode("utf-8")),
                        "detail":str(detail.encode("utf-8")),
                        "username":str(username),
                        "pubtime":str(pubtime),

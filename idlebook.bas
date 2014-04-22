@@ -77,6 +77,7 @@ Sub Button1_Click
 	Dim job4 As HttpJob
     job4.Initialize("Job4",Me)
     job4.PostString("https://bottle-bookjnrain.rhcloud.com/idlepublish","username="&username&"&password="&password&"&bookname="&EditText1.Text&"&isbn="&EditText2.Text&"&price="&EditText3.Text&"&detail="&EditText4.Text&"&purpose="&purpose&"&pubtime="&now)
+	Log("username="&username&"&password="&password&"&bookname="&EditText1.Text&"&isbn="&EditText2.Text&"&price="&EditText3.Text&"&detail="&EditText4.Text&"&purpose="&purpose&"&pubtime="&now)
 End Sub
 
 
