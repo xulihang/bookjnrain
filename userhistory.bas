@@ -20,6 +20,7 @@ Sub Globals
 	Dim ListView1 As ListView
 	Dim ImageView1 As ImageView
 	Dim Label1 As Label
+	Dim Button2 As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -94,4 +95,8 @@ Sub ListView1_ItemClick (Position As Int, Value As Object)
     Dim CC As BClipboard
     CC.setText(Value)
 	ToastMessageShow("ISBN已复制到剪切板。",False)
+End Sub
+
+Sub Button2_Click
+	Msgbox("暂不支持","")
 End Sub

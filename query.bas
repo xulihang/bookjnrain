@@ -25,6 +25,7 @@ Sub Globals
 	Dim Panel1 As Panel
 	Dim Spinner1 As Spinner
 	Dim according="title" As String
+	Dim WebView1 As WebView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -61,7 +62,12 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub Button1_Click
-    Activity.Finish
+    If WebView1.Visible=True Then
+	    WebView1.Visible=False
+		ListView1.Visible=True
+	Else
+        Activity.Finish
+	End If
 End Sub
 
 
@@ -104,24 +110,38 @@ Sub ListView1_ItemLongClick (Position As Int, Value As Object)
 	
     Dim r As List 
     r.Initialize 
-    r.AddAll(Array As String("删除该记录","上传"))
+    r.AddAll(Array As String("删除该记录","上传","查看更多信息","在图书馆的信息"))
     Dim m As Int
     Dim x As id 
     m = x.InputList1(r,"我的图书")
-	
+	Dim bookname As String
+	Dim Cursor1 As Cursor
+    Cursor1 = SQL1.ExecQuery("SELECT title FROM book")
+    Cursor1.Position = Position
+	bookname=Cursor1.GetString("title")
+	Cursor1.Close
+	Dim resultofmsgbox2 As Int
 	Select m
 	    Case 0
 		    SQL1.ExecNonQuery("DELETE FROM book WHERE isbn Like '"&Value&"'")
 	        ListView1.RemoveAt(Position)
 	    Case 1
-		    Dim bookname As String
-	        Dim Cursor1 As Cursor
-	        Cursor1 = SQL1.ExecQuery("SELECT title FROM book")
-        	Cursor1.Position = Position
-	        bookname=Cursor1.GetString("title")
-	        Cursor1.Close
 			'ToastMessageShow(bookname,False)
             upload(Value,bookname)
+		Case 2
+		    resultofmsgbox2=Msgbox2("选择一个查询网站","详情","豆瓣","","谷歌",Null)
+	        If resultofmsgbox2=DialogResponse.POSITIVE Then
+		        ProgressDialogShow("加载中")
+			    WebView1.LoadUrl("http://book.douban.com/isbn/"&Value)
+	        Else
+		        ProgressDialogShow("加载中")
+	            WebView1.LoadUrl("http://books.google.com.hk/books?vid=ISBN"&Value)
+			End If
+		Case 3
+		    Dim su As StringUtils
+		    Dim encodedUrl As String
+            encodedUrl = su.EncodeUrl(bookname, "UTF8")
+		    WebView1.LoadUrl("http://202.195.144.48:8080/search?kw="&encodedUrl&"&xc=6&searchtype=title")
 	End Select			
     'Msgbox(m,"Result")
 End Sub
@@ -186,4 +206,9 @@ Sub Spinner1_ItemClick (Position As Int, Value As Object)
 		Case "出版社"
 		    according="publisher"
 	End Select
+End Sub
+Sub WebView1_PageFinished (Url As String)
+	WebView1.Visible=True
+	ListView1.Visible=False
+	ProgressDialogHide
 End Sub
