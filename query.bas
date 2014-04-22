@@ -31,6 +31,8 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("query")
+    Activity.AddMenuItem("生成csv","gencsv")
+
 	Dim Label2 As Label
 	Dim Label3 As Label
     Label2 = ListView1.TwoLinesLayout.Label
@@ -43,6 +45,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	Dim Cursor1 As Cursor
 	Cursor1 = SQL1.ExecQuery("SELECT * FROM book")
+	Dim row(Cursor1.RowCount - 1) As String
 	For i = 0 To Cursor1.RowCount - 1
 		Cursor1.Position = i
 		ListView1.AddTwoLines2(Cursor1.GetString("title"),Cursor1.GetString("lasttime")&Cursor1.GetString("publisher")&Cursor1.GetString("price"),Cursor1.GetString("isbn"))
@@ -211,4 +214,27 @@ Sub WebView1_PageFinished (Url As String)
 	WebView1.Visible=True
 	ListView1.Visible=False
 	ProgressDialogHide
+End Sub
+
+Sub gencsv_click
+    Dim headers As String
+	headers="书名,价格,作者,出版社,ISBN,出版日期,扫描时间,备注,"
+	Dim csvwriter As TextWriter
+	csvwriter.Initialize2(File.OpenOutput(File.DirRootExternal,"book.csv",False),"GBK")
+	csvwriter.WriteLine(headers)
+	Dim Cursor1 As Cursor
+	Cursor1 = SQL1.ExecQuery("SELECT * FROM book")
+	For i = 0 To Cursor1.RowCount - 1
+		Cursor1.Position = i
+		Dim author As String
+		author=Cursor1.GetString("author")
+		author=author.SubString2(1,author.Length-1) '把[]去掉
+		csvwriter.WriteLine(Cursor1.GetString("title") &","& Cursor1.GetString("price")&","&author&","&Cursor1.GetString("publisher")&","&Cursor1.GetString("isbn")&","&Cursor1.GetString("pubdate")&","& Cursor1.GetString("lasttime")&",")
+		Log("************************")
+		Log(Cursor1.GetString("title"))
+	Next
+	Cursor1.Close
+    csvwriter.Flush
+	csvwriter.Close
+	ToastMessageShow("csv已保存到存储卡下的book.csv",False)
 End Sub
