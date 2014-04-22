@@ -161,6 +161,13 @@ def getuserinfo(username):
     
     return static_file(username+"-profile",root='user',mimetype="*/*",download=username+"-profile")
 
+#获取用户名称
+@route("/getusernickname/<username:path>")
+def getusernickname(username):
+    fh = open('./user/'+username+'-profile')
+    name=fh.readline()   
+    return name
+
 #获取用户头像
 @route("/getavatar/<username:path>")
 def getavatar(username):

@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=22
+NumberOfModules=23
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -45,6 +45,8 @@ Module21=askforbook
 ModuleVisible21=1
 Module22=askedbook
 ModuleVisible22=1
+Module23=nicknameloader
+ModuleVisible23=1
 Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
@@ -689,7 +691,7 @@ Sub createlistview(jsonresult As String)
             map1 = list1.get(i)
 		
 		    Dim ProperHeight As Int
-	        ProperHeight=autosize(map1.get("bookname"))+20dip
+	        ProperHeight=autosize(map1.get("bookname"))+20dip+20dip
 		    Log(ProperHeight)
 		
 		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
@@ -873,6 +875,13 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	lbl4.Text = CommentTimes
 	lbl4.TextSize = 16
 	lbl4.TextColor = Colors.Gray
+	
+	Dim lbl5 As Label
+	lbl5.Initialize("")
+	lbl5.Gravity = Gravity.LEFT
+	lbl5.Text = uploader
+	lbl5.TextSize = 16
+	lbl5.TextColor = Colors.Gray
 		
 	Dim praise As ImageView
 	praise.Initialize("praise")
@@ -954,13 +963,20 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	    n=0
 	End If
 	
+	'获取用户昵称
+	Dim links2 As Map
+	links2.Initialize
+	links2.Put(lbl5, "https://bottle-bookjnrain.rhcloud.com/getusernickname/"&uploader)
+	CallSubDelayed2(nicknameloader, "Download", links2)
+	
 	p.AddView(lbl, 5dip+n, 2dip, Width-72dip-n, Height-4dip) 'view #0
     p.AddView(lbl2, 5dip+n, Height-20dip, Width-72dip, 20dip) 'view #1
 	p.AddView(lbl3, Width-40dip, Height-56-48, 20dip, 20dip) 'view #2
 	p.AddView(praise, Width-40dip, Height-56, 48, 48) 'view #3
 	p.AddView(lbl4, Width-70dip, Height-56-48, 20dip, 20dip) 'view #4
 	p.AddView(bookcomment, Width-70dip, Height-56, 48, 48) 'view #5
-	p.AddView(cover, 5dip, 2dip, 54dip, y) 'view #6
+	p.AddView(lbl5, 5dip+n, Height-40dip, Width-72dip, 20dip) 'view #6
+	p.AddView(cover, 5dip, 2dip, 54dip, y) 'view #7
 
 	Return p
 End Sub
@@ -1017,7 +1033,7 @@ Sub CreateListItem2(booksname As String, isbn As String, price As Int, detail As
 	
 	Dim lbl6 As Label
 	lbl6.Initialize("")
-	lbl6.Gravity = Gravity.LEFT
+	lbl6.Gravity = Gravity.RIGHT
 	lbl6.Text = uploader
 	lbl6.TextSize = 12
 	lbl6.TextColor = Colors.Gray
@@ -1307,7 +1323,7 @@ Sub addlistview(jsonresult As String)
             map1 = list1.get(i)
 		
 		    Dim ProperHeight As Int
-	        ProperHeight=autosize(map1.get("bookname"))+20dip
+	        ProperHeight=autosize(map1.get("bookname"))+20dip+20dip
 		    Log(ProperHeight)
 		
 		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
