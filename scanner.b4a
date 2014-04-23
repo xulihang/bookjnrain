@@ -51,7 +51,7 @@ Module24=codetool
 ModuleVisible24=1
 Module25=commenthistory
 ModuleVisible25=1
-Package=org.jnrain.scanner
+Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
 UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
@@ -100,7 +100,7 @@ Library18=wheelview
 #Region Module Attributes
 	#FullScreen: False
 	#IncludeTitle: False
-	#ApplicationLabel: 听雨扫描器
+	#ApplicationLabel: 听雨书房
 	#VersionCode: 1
 	#VersionName: 
 	#SupportedOrientations: unspecified
@@ -300,7 +300,7 @@ Sub Initilize_scrollview
 		If File.Exists(File.DirInternal,username&"-account")=False Then
 	        Button4.Text="生成云端帐号"
 		Else
-	        Button4.Text="修改本地保存的密码"
+	        Button4.Text="修改本地密码"
 		End If
 		ScrollView1.Panel.AddView(Button4,10dip,110dip,ScrollView1.Width-20dip,50dip)
 		ScrollView1.Panel.AddView(changeprofile,10dip,160dip,ScrollView1.Width-20dip,50dip)

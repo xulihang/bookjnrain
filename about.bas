@@ -45,7 +45,14 @@ Sub JobDone (job As HttpJob)
 				If job.GetString<90 Then
 					ToastMessageShow("已是最新版",False)
 				Else
-				    ToastMessageShow("发现新版本",False)
+				    Dim result As Int
+				    result=Msgbox2("发现新版本","","更新","","以后再说",Null)
+					If result=DialogResponse.POSITIVE Then
+					    ToastMessageShow("将用系统浏览器下载",False)
+	                    Dim Intent1 As Intent
+                        Intent1.Initialize2("https://raw2.github.com/xulihang/xulihang.github.io/master/apk/bookjnrain.apk", 0)
+                        StartActivity(Intent1) 
+				    End If
 				End If
 		End Select
 	Else
