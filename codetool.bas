@@ -99,6 +99,6 @@ Sub myzx_result(atype As String,Values As String)
     If Values.SubString2(0,2)="关注" Then
 	    Log(Values.SubString(2))
 		comment.queryuser=Values.SubString(2)
-		Startactivity(userinfo)
+		StartActivity(userinfo)
 	End If
 End Sub

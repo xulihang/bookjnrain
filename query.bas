@@ -230,7 +230,9 @@ Sub gencsv_click
 		Dim author As String
 		author=Cursor1.GetString("author")
 		author=author.SubString2(1,author.Length-1) '把[]去掉
-		csvwriter.WriteLine(Cursor1.GetString("title") &","& Cursor1.GetString("price")&","&author&","&Cursor1.GetString("publisher")&","&Cursor1.GetString("isbn")&","&Cursor1.GetString("pubdate")&","& Cursor1.GetString("lasttime")&",")
+		Dim line As String
+		line=Cursor1.GetString("title").Replace(",","，") &","& Cursor1.GetString("price")&","&author.Replace(",","，")&","&Cursor1.GetString("publisher").Replace(",","，")&","&Cursor1.GetString("isbn")&","&Cursor1.GetString("pubdate")&","& Cursor1.GetString("lasttime")&","
+		csvwriter.WriteLine(line)
 		Log("************************")
 		Log(Cursor1.GetString("title"))
 	Next
