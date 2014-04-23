@@ -10,6 +10,7 @@ Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
     Dim SQL4 As SQL
+	Dim SQL1 As SQL
 	Dim queryuser As String
 End Sub
 
@@ -64,6 +65,7 @@ Sub JobDone (job As HttpJob)
 			Case "Job4"
 			    ProgressDialogHide
 				ToastMessageShow("评论成功!",False)
+                storecomment
 		End Select
 	Else
 	    ProgressDialogHide
@@ -167,6 +169,7 @@ Sub CreateListItem(FirstLineText As String,username As String,time As String, Wi
 	Dim cover As ImageView
     cover.Initialize("")
 	cover.Gravity=Gravity.FILL
+	cover.Bitmap=LoadBitmap(File.DirAssets,"default_avatar.png")
 	'获取用户昵称
 	Dim links2 As Map
 	links2.Initialize
@@ -210,7 +213,8 @@ Sub Button1_Click
 		username = Reader.ReadLine
         Reader.Close 
 	Else
-	    username="admin"
+	    ToastMessageShow("将会以匿名发布",False)
+		username="guest"
 	End If
 	ProgressDialogShow("上传中...")
     Dim now As Long
@@ -238,4 +242,21 @@ Sub IME_HeightChanged(NewHeight As Int, OldHeight As Int)
     EditText1.Top = NewHeight - EditText1.Height
 	Button1.Top = NewHeight - Button1.Height
     Panel2.Height = EditText1.Top - Panel2.Top
+End Sub
+
+Sub storecomment
+	If File.Exists(File.DirInternal,"comment.db")=False Then
+	    SQL1.Initialize(File.DirInternal, "comment.db", True)
+		SQL1.ExecNonQuery("CREATE TABLE book (title , isbn, time, comment)")
+	End If
+	
+	If SQL1.IsInitialized = False Then
+	    SQL1.Initialize(File.DirInternal, "comment.db", False)
+	End If
+    Dim now As Long
+    Dim time As String
+	now = DateTime.now
+    time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
+    SQL1.ExecNonQuery2("INSERT INTO book VALUES(?, ?, ?, ?)", Array As Object(Main.booktitle, Main.book, time, EditText1.Text))
+	'ToastMessageShow("已存储",False)
 End Sub

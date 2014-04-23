@@ -33,6 +33,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
 	EditText1.Text = Reader.ReadLine
 	EditText1.Enabled=False
+	Reader.Close
 End Sub
 
 Sub Activity_Resume
@@ -76,6 +77,10 @@ Sub Button1_Click
 	Dim write As TextWriter
 	write.Initialize(File.OpenOutput(File.DirInternal,EditText1.Text&"-account",False))
 	write.WriteLine(0)
+	write.Close
+	write.Initialize(File.OpenOutput(File.DirInternal,"user",False))
+	write.WriteLine(EditText1.Text)
+	write.WriteLine(EditText2.Text)
 	write.Close
 End Sub
 Sub Label1_Click

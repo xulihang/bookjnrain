@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>本地二维码生成</title>
+    <script src="./qrcode_files/jquery.min.js"></script>
+    <script src="./qrcode_files/jquery.qrcode.min.js"></script>
+</head>
+<body>
+    <div id="qrcodeTable"><canvas height="256" width="256"></canvas></div>
+    <script>
+	$('#qrcodeTable').html('').qrcode({
+                render: "canvas",
+                text: "请输入:"
+            });
+  $("canvas").width($(window).width()*0.9);
+
+function getedittext(){
+	var nn=B4A.CallSub('GetNewDataItem');
+	$('#qrcodeTable').html('').qrcode({
+                render: "canvas",
+                text: nn
+            });
+  $("canvas").width($(window).width()*0.9);
+	B4A.CallSub('ShowToast', nn);
+}
+
+
+    </script>
+
+</body></html>

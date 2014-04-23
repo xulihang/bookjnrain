@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=23
+NumberOfModules=25
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -47,11 +47,15 @@ Module22=askedbook
 ModuleVisible22=1
 Module23=nicknameloader
 ModuleVisible23=1
+Module24=codetool
+ModuleVisible24=1
+Module25=commenthistory
+ModuleVisible25=1
 Package=org.jnrain.scanner
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
-NumberOfFiles=20
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+NumberOfFiles=21
 File1=about.bal
 File2=askforbook.bal
 File3=comment.bal
@@ -64,15 +68,16 @@ File9=login.bal
 File10=praise_no.png
 File11=praise_yes.png
 File12=profile.bal
-File13=query.bal
-File14=register.bal
-File15=scanner.bal
-File16=search.bal
-File17=uploaderlist.bal
-File18=userinfo.bal
-File19=web.bal
-File20=wheelview.bal
-NumberOfLibraries=17
+File13=qrcode.bal
+File14=query.bal
+File15=register.bal
+File16=scanner.bal
+File17=search.bal
+File18=uploaderlist.bal
+File19=userinfo.bal
+File20=web.bal
+File21=wheelview.bal
+NumberOfLibraries=18
 Library1=animation
 Library2=b4azxing
 Library3=clipboard
@@ -82,14 +87,15 @@ Library6=http
 Library7=httputils2
 Library8=id
 Library9=ime
-Library10=json
-Library11=phone
-Library12=preferenceactivity
-Library13=reflection
-Library14=rsimageprocessing
-Library15=sql
-Library16=stringutils
-Library17=wheelview
+Library10=jsinterface
+Library11=json
+Library12=phone
+Library13=preferenceactivity
+Library14=reflection
+Library15=rsimageprocessing
+Library16=sql
+Library17=stringutils
+Library18=wheelview
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -110,7 +116,8 @@ Sub Process_Globals
 	Dim SQL2 As SQL
 	Dim manager As PreferenceManager
 	Dim screen As PreferenceScreen
-	Public book As String
+	Dim book As String
+	Dim booktitle As String
 End Sub
 
 Sub Globals
@@ -157,6 +164,8 @@ Sub Globals
 	Dim Button12 As Button 'Search
 	Dim Button13 As Button
 	Dim follow As Label
+	Dim qrcodeTool As Button
+	Dim commenthis As Label
 	Dim Spinner1 As Spinner
 	Dim page2=1 As Int
 	Dim queryorder=1 As Int
@@ -237,9 +246,13 @@ Sub Initilize_scrollview
 		follow.RemoveView
 		If File.Exists(File.DirInternal,username&"-account") Then
 		    Button4.RemoveView
+		Else If Button4.IsInitialized Then
+		    Button4.RemoveView
 		End If
 	    Button7.RemoveView
 		changeprofile.RemoveView
+		qrcodeTool.RemoveView
+		commenthis.RemoveView
 	End If
 	If File.Exists(File.DirInternal,"user") Then
         Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
@@ -259,27 +272,47 @@ Sub Initilize_scrollview
             Loop
             Reader.Close 
 		End If
-	    Label7.Initialize("")
+		commenthis.Initialize("commenthis")
+		commenthis.Text="评论数:0"
+		commenthis.TextSize=20
+		If File.Exists(File.DirInternal,"comment.db") Then
+			If comment.SQL1.IsInitialized = False Then
+	            comment.SQL1.Initialize(File.DirInternal, "comment.db", False)
+	        End If
+		    Dim Cursor1 As Cursor
+	        Cursor1 = comment.SQL1.ExecQuery("SELECT * FROM book")
+	        commenthis.Text="评论数:"&(Cursor1.RowCount)
+	        Cursor1.Close
+	        comment.SQL1.Close
+		End If	
+		Label7.Initialize("")
 		Label7.Text=username&"已登录"
 		Label7.TextSize=20
 		follow.Initialize("follow")
 		follow.Text="关注:"&num
 		follow.TextSize=20
+		qrcodeTool.Initialize("qrcodeTool")
+		qrcodeTool.Text="二维码工具"
 	    Button7.Initialize("Button7")
 	    Button7.Text="注销"
 		changeprofile.Initialize("changeprofile")
 	    changeprofile.Text="修改我的资料"
 		ScrollView1.Panel.AddView(Label7,10dip,10dip,ScrollView1.Width-100dip,50dip)
 		ScrollView1.Panel.AddView(Button7,10dip,60dip,ScrollView1.Width-20dip,50dip)
+	
 		If File.Exists(File.DirInternal,username&"-account")=False Then
 	        Button4.Initialize("Button4")
 	        Button4.Text="生成云端帐号"
 		    ScrollView1.Panel.AddView(Button4,10dip,110dip,ScrollView1.Width-20dip,50dip)
 			ScrollView1.Panel.AddView(changeprofile,10dip,160dip,ScrollView1.Width-20dip,50dip)
-			ScrollView1.Panel.AddView(follow,10dip,220dip,ScrollView1.Width-100dip,50dip)
+			ScrollView1.Panel.AddView(qrcodeTool,10dip,220dip,ScrollView1.Width-20dip,50dip)
+			ScrollView1.Panel.AddView(follow,10dip,270dip,ScrollView1.Width-100dip,40dip)
+			ScrollView1.Panel.AddView(commenthis,10dip,310dip,ScrollView1.Width-100dip,40dip)
 		Else
 		    ScrollView1.Panel.AddView(changeprofile,10dip,110dip,ScrollView1.Width-20dip,50dip)
-			ScrollView1.Panel.AddView(follow,10dip,170dip,ScrollView1.Width-100dip,50dip)
+			ScrollView1.Panel.AddView(qrcodeTool,10dip,160dip,ScrollView1.Width-20dip,50dip)
+			ScrollView1.Panel.AddView(follow,10dip,230dip,ScrollView1.Width-100dip,40dip)
+			ScrollView1.Panel.AddView(commenthis,10dip,270dip,ScrollView1.Width-100dip,40dip)
 		End If
 		
 	Else
@@ -555,7 +588,9 @@ Sub Label4_Click
 	Button12.Visible=False
 End Sub
 
-
+Sub qrcodeTool_click
+    StartActivity(codetool)
+End Sub
 Sub changeprofile_Click
     StartActivity(profile)
 End Sub
@@ -838,7 +873,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 End Sub
 
 
-Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,CommentTimes As Int,uploader As String, Width As Int, Height As Int) As Panel
+Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTimes As Int,commenttimes As Int,uploader As String, Width As Int, Height As Int) As Panel
 	Dim p As Panel
 	p.Initialize("")
 	p.Color = Colors.RGB(245,245,245)
@@ -874,7 +909,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	Dim lbl4 As Label
 	lbl4.Initialize("")
 	lbl4.Gravity = Gravity.CENTER_HORIZONTAL
-	lbl4.Text = CommentTimes
+	lbl4.Text = commenttimes
 	lbl4.TextSize = 16
 	lbl4.TextColor = Colors.Gray
 	
@@ -1154,10 +1189,11 @@ Sub bookcomment_click
 	pnl = clv1.GetPanel(index)
 	Dim lbl2 As Label
 	lbl2 = pnl.GetView(1)
-    Dim lbl4 As Label
-	lbl4 = pnl.GetView(4)
+    Dim lbl As Label
+	lbl = pnl.GetView(0)
     ToastMessageShow("这是评论"&lbl2.Text,False)
     book=lbl2.Text
+	booktitle=lbl.Text
     StartActivity(comment)
 End Sub
 
@@ -1243,6 +1279,12 @@ End Sub
 Sub follow_click
     StartActivity(follows)
 End Sub
+
+Sub commenthis_click
+    StartActivity(commenthistory)
+End Sub
+
+
 Sub Spinner1_ItemClick (Position As Int, Value As Object)
 	Select Position
 	    Case 0
