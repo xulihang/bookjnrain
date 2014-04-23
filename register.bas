@@ -34,6 +34,11 @@ Sub Activity_Create(FirstTime As Boolean)
 	EditText1.Text = Reader.ReadLine
 	EditText1.Enabled=False
 	Reader.Close
+	If File.Exists(File.DirInternal,EditText1.Text&"-account")=True Then
+	    Label2.Text="修改本地密码"
+		Button1.Text="修改"
+		Label3.Text="因为注销会清除密码，所以再次登录若与e江南密码不同，需要更改。"
+	End If
 End Sub
 
 Sub Activity_Resume
@@ -70,10 +75,15 @@ Sub Button1_Click
 	'Dim out As String
 	'out=b.DecodeStoS(password,"UTF8")
 	'ToastMessageShow(out,False)
-	ProgressDialogShow("注册中")
-	Dim job1 As HttpJob
-	job1.Initialize("Job1",Me)
-    job1.PostString("https://bottle-bookjnrain.rhcloud.com/user/new","username="&EditText1.Text&"&password="&EditText2.Text)
+
+	If File.Exists(File.DirInternal,EditText1.Text&"-account")=False Then
+	    ProgressDialogShow("注册中")
+	    Dim job1 As HttpJob
+	    job1.Initialize("Job1",Me)
+        job1.PostString("https://bottle-bookjnrain.rhcloud.com/user/new","username="&EditText1.Text&"&password="&EditText2.Text)
+	Else
+	    ToastMessageShow("修改成功",False)
+	End If
 	Dim write As TextWriter
 	write.Initialize(File.OpenOutput(File.DirInternal,EditText1.Text&"-account",False))
 	write.WriteLine(0)
@@ -85,5 +95,5 @@ Sub Button1_Click
 End Sub
 Sub Label1_Click
 	'StartActivity(login)
-	Activity.Finish
+	Msgbox("已有账户仍点注册。","")
 End Sub

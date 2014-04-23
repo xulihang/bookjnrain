@@ -244,11 +244,7 @@ Sub Initilize_scrollview
 	If Button7.IsInitialized=True Then
 	    Label7.RemoveView
 		follow.RemoveView
-		If File.Exists(File.DirInternal,username&"-account") Then
-		    Button4.RemoveView
-		Else If Button4.IsInitialized Then
-		    Button4.RemoveView
-		End If
+        Button4.RemoveView
 	    Button7.RemoveView
 		changeprofile.RemoveView
 		qrcodeTool.RemoveView
@@ -273,7 +269,7 @@ Sub Initilize_scrollview
             Reader.Close 
 		End If
 		commenthis.Initialize("commenthis")
-		commenthis.Text="评论数:0"
+		commenthis.Text="评论:0"
 		commenthis.TextSize=20
 		If File.Exists(File.DirInternal,"comment.db") Then
 			If comment.SQL1.IsInitialized = False Then
@@ -281,7 +277,7 @@ Sub Initilize_scrollview
 	        End If
 		    Dim Cursor1 As Cursor
 	        Cursor1 = comment.SQL1.ExecQuery("SELECT * FROM book")
-	        commenthis.Text="评论数:"&(Cursor1.RowCount)
+	        commenthis.Text="评论:"&(Cursor1.RowCount)
 	        Cursor1.Close
 	        comment.SQL1.Close
 		End If	
@@ -297,24 +293,20 @@ Sub Initilize_scrollview
 	    Button7.Text="注销"
 		changeprofile.Initialize("changeprofile")
 	    changeprofile.Text="修改我的资料"
+		Button4.Initialize("Button4")
 		ScrollView1.Panel.AddView(Label7,10dip,10dip,ScrollView1.Width-100dip,50dip)
 		ScrollView1.Panel.AddView(Button7,10dip,60dip,ScrollView1.Width-20dip,50dip)
 	
 		If File.Exists(File.DirInternal,username&"-account")=False Then
-	        Button4.Initialize("Button4")
 	        Button4.Text="生成云端帐号"
-		    ScrollView1.Panel.AddView(Button4,10dip,110dip,ScrollView1.Width-20dip,50dip)
-			ScrollView1.Panel.AddView(changeprofile,10dip,160dip,ScrollView1.Width-20dip,50dip)
-			ScrollView1.Panel.AddView(qrcodeTool,10dip,220dip,ScrollView1.Width-20dip,50dip)
-			ScrollView1.Panel.AddView(follow,10dip,270dip,ScrollView1.Width-100dip,40dip)
-			ScrollView1.Panel.AddView(commenthis,10dip,310dip,ScrollView1.Width-100dip,40dip)
 		Else
-		    ScrollView1.Panel.AddView(changeprofile,10dip,110dip,ScrollView1.Width-20dip,50dip)
-			ScrollView1.Panel.AddView(qrcodeTool,10dip,160dip,ScrollView1.Width-20dip,50dip)
-			ScrollView1.Panel.AddView(follow,10dip,230dip,ScrollView1.Width-100dip,40dip)
-			ScrollView1.Panel.AddView(commenthis,10dip,270dip,ScrollView1.Width-100dip,40dip)
+	        Button4.Text="修改本地保存的密码"
 		End If
-		
+		ScrollView1.Panel.AddView(Button4,10dip,110dip,ScrollView1.Width-20dip,50dip)
+		ScrollView1.Panel.AddView(changeprofile,10dip,160dip,ScrollView1.Width-20dip,50dip)
+		ScrollView1.Panel.AddView(qrcodeTool,10dip,210dip,ScrollView1.Width-20dip,50dip)
+		ScrollView1.Panel.AddView(follow,10dip,260dip,ScrollView1.Width-100dip,40dip)
+		ScrollView1.Panel.AddView(commenthis,10dip,310dip,ScrollView1.Width-100dip,40dip)
 	Else
 	    Button5.Initialize("Button5")
 	    Button5.Text="登录"
