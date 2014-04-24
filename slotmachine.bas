@@ -26,6 +26,9 @@ Sub Globals
 	Dim Label2 As Label
 	Dim Label3 As Label
 	Dim Timer1 As Timer
+	Dim Label4 As Label
+	Dim Label5 As Label
+	Dim Label6 As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -34,6 +37,8 @@ Sub Activity_Create(FirstTime As Boolean)
     init_wheels
 	Label2.Left=wv2.Left
 	Label2.top=wv2.top
+	Label6.Left=wv2.Left
+	Label6.top=wv2.top
     wv1.Enabled=False
 	wv2.Enabled=False
 	wv3.Enabled=False
@@ -125,30 +130,44 @@ End Sub
 
 Sub great
     ToastMessageShow("Great!",False)
-    Dim a As Animation
+    Dim a,a2 As Animation
 	Log(Label3.Top)
 	a.InitializeTranslate("a",0,0,Label3.left-Label2.Left,Label3.top-Label2.Top)
     Label2.Text=EditText1.Text*2
 	Label2.Tag=a
 	a.Duration = 1000
 	a.Start(Label2)
+	a2.InitializeTranslate("a2",0,0,Label5.left-Label6.Left,Label5.top-Label6.Top)
+    Label6.Text=EditText1.Text*2
+	Label6.Tag=a2
+	a2.Duration = 1000
+	a2.Start(Label6)
 	Sleep(1000)
 	Label3.Text=Label3.Text+EditText1.Text*2
+	Label5.Text=Label5.Text+EditText1.Text*2
 	Label2.Text=""
+	Label6.Text=""
 End Sub
 
 Sub congra
     ToastMessageShow("Congratulations!",False)
-    Dim a As Animation
+    Dim a ,a2 As Animation
 	Log(Label3.Top)
 	a.InitializeTranslate("a",0,0,Label3.left-Label2.Left,Label3.top-Label2.Top)
-    Label2.Text=EditText1.Text*2
+    Label2.Text=EditText1.Text*10
 	Label2.Tag=a
 	a.Duration = 1000
 	a.Start(Label2)
+	a2.InitializeTranslate("a2",0,0,Label5.left-Label6.Left,Label5.top-Label6.Top)
+    Label6.Text=EditText1.Text*10
+	Label6.Tag=a2
+	a2.Duration = 1000
+	a2.Start(Label6)
 	Sleep(1000)
 	Label3.Text=Label3.Text+EditText1.Text*10
+	Label5.Text=Label5.Text+EditText1.Text*10
 	Label2.Text=""
+	Label6.Text=""
 End Sub
 
 Sub Sleep(ms As Long)

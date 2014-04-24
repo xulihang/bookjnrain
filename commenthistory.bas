@@ -26,6 +26,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("uploaderlist")
 	Label1.Text="我的评论"
+	If File.Exists(File.DirInternal,"comment.db")=False Then
+	    ToastMessageShow("评论数为零。",False)
+		Activity.Finish
+	End If
     creatlistview
 End Sub
 
