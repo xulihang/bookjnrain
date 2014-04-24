@@ -32,20 +32,23 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("query")
     Activity.AddMenuItem("生成csv","gencsv")
-
+	If File.Exists(File.DirInternal,"mybook.db")=False Then
+	    Msgbox("请先进行存储","")
+		Activity.Finish
+	End If
 	Dim Label2 As Label
 	Dim Label3 As Label
     Label2 = ListView1.TwoLinesLayout.Label
 	Label3 = ListView1.TwoLinesLayout.SecondLabel
     Label2.TextSize = 14
 	Label3.TextColor= Colors.Black
+
 	If SQL1.IsInitialized = False Then
 	    SQL1.Initialize(File.DirInternal, "mybook.db", False)
 	End If
 	
 	Dim Cursor1 As Cursor
 	Cursor1 = SQL1.ExecQuery("SELECT * FROM book")
-	Dim row(Cursor1.RowCount - 1) As String
 	For i = 0 To Cursor1.RowCount - 1
 		Cursor1.Position = i
 		ListView1.AddTwoLines2(Cursor1.GetString("title"),Cursor1.GetString("lasttime")&Cursor1.GetString("publisher")&Cursor1.GetString("price"),Cursor1.GetString("isbn"))

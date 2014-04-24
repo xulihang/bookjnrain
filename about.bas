@@ -20,6 +20,7 @@ Sub Globals
 	Dim Label2 As Label
 	Dim ImageView2 As ImageView
 	Dim Button2 As Button
+	Dim caidan=0 As Int
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -71,4 +72,21 @@ Sub Button2_Click
     Dim getver As HttpJob
 	getver.Initialize("getver",Me)
 	getver.Download("https://bottle-bookjnrain.rhcloud.com/getver")
+End Sub
+Sub ImageView2_Click
+	caidan=caidan+1
+	If caidan=1 Then
+	    ToastMessageShow("",False)
+	End If
+	If caidan=5 Then
+	    Dim a1 As Animation
+		a1.InitializeRotateCenter("", 0, 90, ImageView2)
+        ImageView2.Tag = a1
+        a1.Duration = 1000
+        a1.RepeatCount = 3
+        a1.RepeatMode = a1.REPEAT_REVERSE
+		a1.Start(ImageView2)
+		caidan=0
+		ToastMessageShow("6L+Z5piv5Liq5b2p6JuL",False)
+    End If
 End Sub
