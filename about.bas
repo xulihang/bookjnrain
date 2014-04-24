@@ -21,6 +21,8 @@ Sub Globals
 	Dim ImageView2 As ImageView
 	Dim Button2 As Button
 	Dim caidan=0 As Int
+	Dim caidan2=0 As Int
+	Dim Label1 As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -89,4 +91,14 @@ Sub ImageView2_Click
 		caidan=0
 		ToastMessageShow("6L+Z5piv5Liq5b2p6JuL",False)
     End If
+End Sub
+Sub Label2_Click
+	caidan2=caidan2+1
+	If caidan2=2 Then
+	    ToastMessageShow("",False)
+	End If
+	If caidan2=5 Then
+		caidan2=0
+		StartActivity(slotmachine)
+    End If	
 End Sub
