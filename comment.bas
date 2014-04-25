@@ -112,7 +112,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 	'Msgbox("Hello","Hello")
 	Dim r As List 
     r.Initialize 
-    r.AddAll(Array As String("复制ISBN号","查看基本信息","赞","评论"))
+    r.AddAll(Array As String("复制用户名"))
     Dim m As Int
     Dim x As id 
     m = x.InputList1(r,Index)
@@ -122,12 +122,6 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
             Dim CC As BClipboard
             CC.setText(Value)
 	        ToastMessageShow("结果已复制到剪切板。",False)
-	    Case 1
-		
-		Case 2
-
-		Case 3
-		    ToastMessageShow("",False)
 	End Select		
 End Sub
 

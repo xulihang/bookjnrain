@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=26
+NumberOfModules=28
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -53,52 +53,59 @@ Module25=commenthistory
 ModuleVisible25=1
 Module26=slotmachine
 ModuleVisible26=1
+Module27=pubmood
+ModuleVisible27=1
+Module28=everydaymood
+ModuleVisible28=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
-NumberOfFiles=22
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+NumberOfFiles=24
 File1=about.bal
 File2=askforbook.bal
 File3=comment.bal
 File4=comment.png
 File5=crop.bal
-File6=follows.bal
-File7=handinput.bal
-File8=idlebook.bal
-File9=login.bal
-File10=praise_no.png
-File11=praise_yes.png
-File12=profile.bal
-File13=qrcode.bal
-File14=query.bal
-File15=register.bal
-File16=scanner.bal
-File17=search.bal
-File18=uploaderlist.bal
-File19=userinfo.bal
-File20=web.bal
-File21=wheelview.bal
-File22=wv.bal
-NumberOfLibraries=18
+File6=everydaymood.bal
+File7=follows.bal
+File8=handinput.bal
+File9=idlebook.bal
+File10=login.bal
+File11=praise_no.png
+File12=praise_yes.png
+File13=profile.bal
+File14=pubmood.bal
+File15=qrcode.bal
+File16=query.bal
+File17=register.bal
+File18=scanner.bal
+File19=search.bal
+File20=uploaderlist.bal
+File21=userinfo.bal
+File22=web.bal
+File23=wheelview.bal
+File24=wv.bal
+NumberOfLibraries=19
 Library1=animation
 Library2=b4azxing
 Library3=clipboard
 Library4=core
 Library5=encryption
-Library6=http
-Library7=httputils2
-Library8=id
-Library9=ime
-Library10=jsinterface
-Library11=json
-Library12=phone
-Library13=preferenceactivity
-Library14=reflection
-Library15=rsimageprocessing
-Library16=sql
-Library17=stringutils
-Library18=wheelview
+Library6=gifdecoder
+Library7=http
+Library8=httputils2
+Library9=id
+Library10=ime
+Library11=jsinterface
+Library12=json
+Library13=phone
+Library14=preferenceactivity
+Library15=reflection
+Library16=rsimageprocessing
+Library17=sql
+Library18=stringutils
+Library19=wheelview
 @EndOfDesignText@
 #Region Module Attributes
 	#FullScreen: False
@@ -224,7 +231,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Button11.Visible=False
 	Button13.Visible=False
     Initilize_sm
-	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看","查看闲置的书","公布闲置的书","查看求书列表","我要求书"))
+	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看","查看闲置的书","公布闲置的书","查看求书列表","我要求书","每日心情"))
 	Spinner1.BringToFront
 	'Spinner1.Enabled=False
 End Sub
@@ -1296,6 +1303,8 @@ Sub Spinner1_ItemClick (Position As Int, Value As Object)
 		    StartActivity(askedbook)
 		Case 6
 		    StartActivity(askforbook)
+		Case 7
+		    StartActivity(everydaymood)
 	End Select
 End Sub
 

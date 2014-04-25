@@ -359,6 +359,7 @@ def createdb(bookcode,lasttime,bookname,username):
         for isbncode in c.execute('select isbn from statics'):
             if str("(u'"+bookcode+"',)") == str(isbncode):
                 exist=0
+                c.execute("update statics set time='"+lasttime+"' where isbn Like "+bookcode)
                 conn.commit()
                 c.close()
                 conn.close()
@@ -868,10 +869,99 @@ def deleteaskbookpage():
 
     return template("deleteaskbook")
 
+#处理心情
+@route("/everydaymood", method="POST")
+def everydaymood():
+    username = request.forms.get("username")
+    pubtime = request.forms.get("pubtime")
+    mood = request.forms.get("mood")
+    words = request.forms.get("words")
+    date = request.forms.get("date")
+    if os.path.exists('db/mood.db')==False:
+        conn = sqlite3.connect('db/mood.db')
+        c = conn.cursor()
+        c.execute("CREATE TABLE statics (username, time, mood, words, date)")
+        c.execute("insert into statics values ('"+username+"','"+pubtime+"','"+mood+"','"+words+"','"+date+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+        return "发布成功"
+    else:
+        exist=1#默认插入
+        #判断是否已经存在
+        conn = sqlite3.connect('db/mood.db')
+        c = conn.cursor()
+        for who in c.execute('select username from statics where date like '+date):
+            if str("(u'"+username+"',)") == str(who):
+                exist=0
+                conn.commit()
+                c.close()
+                conn.close()
+                break
+        if exist==1:
+            conn = sqlite3.connect('db/mood.db')
+            c = conn.cursor()
+            c.execute("insert into statics values ('"+username+"','"+pubtime+"','"+mood+"','"+words+"','"+date+"')")
+            conn.commit()
+            c.close()
+            conn.close()
+            return "发布成功"
+        else:
+            return "你今天已经发布过了。"
+    
+#发布心情
+@route("/pubmood")
+def pubmood():
+
+    return template("pubmood")
+
+#得到心情json
+@route('/getmoodjson', method='POST')    
+def getmoodjson():
+    itemnumber = request.forms.get("itemnumber")
+    page = request.forms.get("page")
+    itemnumber=int(itemnumber)
+    page=int(page)
+    result=[]
+    dbpath='db/mood.db'
+    conn = sqlite3.connect(dbpath)
+    c = conn.cursor()
+    SqlSentence="SELECT * FROM statics Order By time desc"
+
+    i=0
+    j=0
+    for row in c.execute(SqlSentence):
+        if i==(page-1)*itemnumber+j and j<itemnumber:
+            j=j+1
+            username=row[0]
+            time=row[1]
+            mood=row[2]
+            words=row[3]
+            single={"username":str(username.encode("utf-8")),
+                   "time":str(time.encode("utf-8")),
+                   "mood":str(mood.encode("utf-8")),
+                   "words":str(words.encode("utf-8"))}
+            result.append(single)
+        if j==itemnumber:
+            break
+        i=i+1
+    conn.commit()
+    c.close()
+    conn.close()
+    out=json.dumps(result, ensure_ascii=False) 
+    return str(out)
+
+#获取按天查询的json的发送界面
+@route("/moodjson")
+def moodjson():
+
+    return template("moodjson")
+
+
 #@route('/hello/:name')
 #def index(name='World'):
 #    return '<b>Hello %s!</b>' % name
 
 
 #默认端口  run(host='localhost', port=8080)
-run(host='192.168.254.1', port=8080)
+run(host='127.0.0.1', port=8080)

@@ -90,6 +90,11 @@ Sub ImageView2_Click
 		a1.Start(ImageView2)
 		caidan=0
 		ToastMessageShow("6L+Z5piv5Liq5b2p6JuL",False)
+		Dim MP As MediaPlayer 'should be done in Sub Process_Globals
+        MP.Initialize2("MP")
+		MP.Stop 
+        MP.Load(File.DirAssets, "wuqu.mid")
+        MP.Play 
     End If
 End Sub
 Sub Label2_Click
