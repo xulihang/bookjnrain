@@ -60,7 +60,7 @@ ModuleVisible28=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
 NumberOfFiles=24
 File1=about.bal
 File2=askforbook.bal
@@ -326,16 +326,17 @@ Sub Initilize_scrollview
 End Sub
 
 Sub Initilize_sm
+    Dim arrow As Bitmap
+	arrow=LoadBitmap(File.DirAssets,"right_arrow.png")
 	sm.Initialize(Activity, Me, "SlideMenu", 42dip, 180dip)
-
-	sm.AddItem("在线工具", Null, 1)
-	sm.AddItem("复制到剪贴板", Null, 2)
-	sm.AddItem("存储到本地", Null, 3)
-	sm.AddItem("手工录入", Null, 4)
-	sm.AddItem("查看本地数据", Null, 5)
-	sm.AddItem("上传到服务器", Null, 6)
-	sm.AddItem("关于", Null, 7)
-	sm.AddItem("退出", Null, 8)
+	sm.AddItem("在线工具", arrow, 1)
+	sm.AddItem("复制到剪贴板", arrow, 2)
+	sm.AddItem("存储到本地", arrow, 3)
+	sm.AddItem("手工录入", arrow, 4)
+	sm.AddItem("查看本地数据", arrow, 5)
+	sm.AddItem("上传到服务器", arrow, 6)
+	sm.AddItem("关于", arrow, 7)
+	sm.AddItem("退出", arrow, 8)
 End Sub
 Sub Activity_Resume
     Initilize_sm

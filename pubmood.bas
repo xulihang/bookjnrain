@@ -94,19 +94,19 @@ Sub Button1_Click
 		username = Reader.ReadLine
 		password = Reader.ReadLine
         Reader.Close 
+		ProgressDialogShow("上传中...")
+        Dim now As Long
+	    now = DateTime.now
+	    Dim date As String
+	    date=DateTime.GetYear(now)&DateTime.GetMonth(now)&DateTime.GetDayOfMonth(now)
+	    Log(date)
+	    Dim job1 As HttpJob
+	    job1.Initialize("Job1",Me)
+	    job1.PostString("https://bottle-bookjnrain.rhcloud.com/everydaymood","username="&username&"&mood="&mood&"&words="&EditText1.Text&"&pubtime="&now&"&date="&date)
 	Else
 		Msgbox("请先登录！","")
 		Activity.Finish
 	End If
-	ProgressDialogShow("上传中...")
-    Dim now As Long
-	now = DateTime.now
-	Dim date As String
-	date=DateTime.GetYear(now)&DateTime.GetMonth(now)&DateTime.GetDayOfMonth(now)
-	Log(date)
-	Dim job1 As HttpJob
-	job1.Initialize("Job1",Me)
-	job1.PostString("https://bottle-bookjnrain.rhcloud.com/everydaymood","username="&username&"&mood="&mood&"&words="&EditText1.Text&"&pubtime="&now&"&date="&date)
 End Sub
 
 

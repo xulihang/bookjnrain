@@ -37,11 +37,14 @@ Sub Initialize(Activity As Activity, Module As Object, EventName As String, Top 
 	mListView.Initialize("mListView")
 	mListView.TwoLinesAndBitmap.SecondLabel.Visible = False
 	mListView.TwoLinesAndBitmap.ItemHeight = 50dip
-	mListView.TwoLinesAndBitmap.Label.Gravity = Gravity.CENTER_VERTICAL
+	mListView.TwoLinesAndBitmap.Label.Gravity = Bit.OR(Gravity.LEFT,Gravity.CENTER_VERTICAL)
 	mListView.TwoLinesAndBitmap.Label.Height = mListView.TwoLinesAndBitmap.ItemHeight
-	mListView.TwoLinesAndBitmap.Label.Top = 0
-	mListView.TwoLinesAndBitmap.ImageView.SetLayout(13dip, 13dip, 24dip, 24dip)
-	mListView.Color = Colors.Black
+	mListView.TwoLinesAndBitmap.Label.TextSize= 16
+	mListView.TwoLinesAndBitmap.Label.Top = -3dip
+	mListView.TwoLinesAndBitmap.Label.Left= 3dip
+	mListView.TwoLinesAndBitmap.Label.Width=Width-33dip
+	mListView.TwoLinesAndBitmap.ImageView.SetLayout(Width-30dip, 10dip, 30dip, 30dip)
+	mListView.Color = Colors.ARGB(235,0,0,0)
 
 	mInAnimation.InitializeTranslate("", -Width, 0, 0, 0)
 	mInAnimation.Duration = 200

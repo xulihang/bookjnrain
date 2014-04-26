@@ -33,7 +33,7 @@ Sub Globals
 	Dim Label5 As Label
 	Dim Label6 As Label
 	Dim Label7 As Label
-	Dim Label8 As Label
+	Dim Button3 As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -147,6 +147,6 @@ Sub Button1_Click
 		ToastMessageShow("关注成功！",False)
 	End If
 End Sub
-Sub Label8_Click
+Sub Button3_Click
 	StartActivity(userhistory)
 End Sub

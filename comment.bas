@@ -253,4 +253,8 @@ Sub storecomment
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
     SQL1.ExecNonQuery2("INSERT INTO book VALUES(?, ?, ?, ?)", Array As Object(Main.booktitle, Main.book, time, EditText1.Text))
 	'ToastMessageShow("已存储",False)
+	Dim getcomment As HttpJob
+	getcomment.Initialize("getcomment",Me)
+    getcomment.Download("https://bottle-bookjnrain.rhcloud.com/getcomment/"&Main.book)
+	ProgressDialogShow("更新...")
 End Sub

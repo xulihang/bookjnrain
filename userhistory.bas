@@ -73,6 +73,7 @@ Sub loadlist
 	Label3 = ListView1.TwoLinesLayout.SecondLabel
     Label2.TextSize = 14
 	Label3.TextColor= Colors.Black
+	Label3.TextSize=13
 	If SQL1.IsInitialized = False Then
 	    SQL1.Initialize(File.DirInternal, comment.queryuser&".db", False)
 	End If

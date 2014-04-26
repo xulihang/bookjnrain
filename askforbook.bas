@@ -54,16 +54,16 @@ Sub Button1_Click
 		username = Reader.ReadLine
 		password = Reader.ReadLine
         Reader.Close 
+		ProgressDialogShow("上传中...")
+        Dim now As Long
+	    now = DateTime.now
+	    Dim job4 As HttpJob
+        job4.Initialize("Job4",Me)
+        job4.PostString("https://bottle-bookjnrain.rhcloud.com/askforbook","username="&username&"&password="&password&"&bookname="&EditText1.Text&"&detail="&EditText2.Text&"&pubtime="&now)
 	Else
 		Msgbox("请先登录！","")
 		Activity.Finish
 	End If
-	ProgressDialogShow("上传中...")
-    Dim now As Long
-	now = DateTime.now
-	Dim job4 As HttpJob
-    job4.Initialize("Job4",Me)
-    job4.PostString("https://bottle-bookjnrain.rhcloud.com/askforbook","username="&username&"&password="&password&"&bookname="&EditText1.Text&"&detail="&EditText2.Text&"&pubtime="&now)
 End Sub
 
 

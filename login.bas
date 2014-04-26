@@ -57,13 +57,18 @@ Sub JobDone (job As HttpJob)
 					job2.Initialize("Job2", Me)
                     job2.Download("http://e.jiangnan.edu.cn/valcode.jpg")
 				Else 
-				    ToastMessageShow("登录成功!",False)
-					Dim Writer As TextWriter
-                    Writer.Initialize(File.OpenOutput(File.DirInternal, "user", False))
-                    Writer.WriteLine(EditText1.Text)
-                    Writer.WriteLine(EditText2.Text)
-                    Writer.Close 
-					Activity.Finish
+				    If EditText1.Text="" Then
+					    Msgbox("用户名为空","")
+						Activity.Finish
+					Else
+				        ToastMessageShow("登录成功!",False)
+					    Dim Writer As TextWriter
+                        Writer.Initialize(File.OpenOutput(File.DirInternal, "user", False))
+                        Writer.WriteLine(EditText1.Text)
+                        Writer.WriteLine(EditText2.Text)
+                        Writer.Close 
+					    Activity.Finish
+					End If
 				End If
 			Case "Job2"
 			    Dim ValCode As ImageView
