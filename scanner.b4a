@@ -60,7 +60,7 @@ ModuleVisible28=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=24
 File1=about.bal
 File2=askforbook.bal
@@ -616,10 +616,11 @@ End Sub
 
 Sub SetDefaults
 	'defaults are only set on the first run.
-	manager.SetBoolean("check1", True)
+	manager.SetBoolean("check1", False)
 	manager.SetBoolean("check2", False)
 	'manager.SetBoolean("check3", True)
 	manager.SetBoolean("check4", True)
+	manager.SetBoolean("check5", True)
 	manager.SetString("list1","5")
 	manager.SetString("list2","图书封面")
 End Sub
@@ -627,7 +628,7 @@ End Sub
 Sub CreatePreferenceScreen
 	screen.Initialize("设置", "")
 	'create two categories
-	Dim cat1, cat2, cat3 As PreferenceCategory
+	Dim cat1, cat2, cat3, cat4 As PreferenceCategory
 	cat1.Initialize("扫描")
 	cat1.AddCheckBox("check1", "查书后自动存储", "手工存储可确保存储成功。", True)
 	'cat1.AddEditText("edit1", "EditText1", "This is EditText1", "")
@@ -642,10 +643,13 @@ Sub CreatePreferenceScreen
         Array As String("2","5", "10", "15", "20", "30"))
 	cat3.AddList("list2", "显示图片", "设置显示图书封面还是用户头像或不显示", "", _
         Array As String("不显示","图书封面","用户头像"))
+	cat4.Initialize("评论")
+	cat4.AddCheckBox("check5", "评论后更新内容", "评论后重新加载全部评论，耗费一点点流量.", True)
 	'add the categories to the main screen
 	screen.AddPreferenceCategory(cat1)
 	screen.AddPreferenceCategory(cat2)
 	screen.AddPreferenceCategory(cat3)
+	screen.AddPreferenceCategory(cat4)
 End Sub
 
 Sub HandleSettings
