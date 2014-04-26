@@ -58,6 +58,7 @@ Sub JobDone (job As HttpJob)
 				'print the result to the logs
 				ProgressDialogHide
                 ToastMessageShow(job.GetString,False)
+				Activity.Finish
 		End Select
 	Else
 	    ProgressDialogHide
@@ -83,15 +84,16 @@ Sub Button1_Click
         job1.PostString("https://bottle-bookjnrain.rhcloud.com/user/new","username="&EditText1.Text&"&password="&EditText2.Text)
 	Else
 	    ToastMessageShow("修改成功",False)
+		Dim write As TextWriter
+	    write.Initialize(File.OpenOutput(File.DirInternal,EditText1.Text&"-account",False))
+	    write.WriteLine(0)
+	    write.Close
+	    write.Initialize(File.OpenOutput(File.DirInternal,"user",False))
+	    write.WriteLine(EditText1.Text)
+	    write.WriteLine(EditText2.Text)
+	    write.Close
+		Activity.Finish
 	End If
-	Dim write As TextWriter
-	write.Initialize(File.OpenOutput(File.DirInternal,EditText1.Text&"-account",False))
-	write.WriteLine(0)
-	write.Close
-	write.Initialize(File.OpenOutput(File.DirInternal,"user",False))
-	write.WriteLine(EditText1.Text)
-	write.WriteLine(EditText2.Text)
-	write.Close
 End Sub
 Sub Label1_Click
 	'StartActivity(login)
