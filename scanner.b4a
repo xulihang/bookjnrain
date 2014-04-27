@@ -182,8 +182,6 @@ Sub Globals
 	Dim searchtype=0 As Int
 	Dim mm=1 As Int
 	Dim nn=1 As Int
-	Dim duration=4 As Int
-	Dim timeend As Int
 	Dim timebegin As Int
 End Sub
 
@@ -1418,19 +1416,17 @@ End Sub
 Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
     If KeyCode = KeyCodes.KEYCODE_BACK Then
 
-	    Dim minutes As Int
-	    Dim seconds As Int
         Dim now As Long
 	    now = DateTime.now
-	    minutes=DateTime.Getminute(now)
-        seconds=DateTime.GetSecond(now)
-		
+		Dim duration=4000 As Int
+		Dim timeend As Int
 		If nn=0 Then
-		  timeend=minutes*60+seconds
+		  timeend=now
+		  Log(timeend-timebegin)
 		  duration=timeend-timebegin
 		End If
 		
-		If duration<3 Then
+		If duration<3000 Then
 		  ExitApplication
 		Else  'time out,reset.
 		  mm=1
@@ -1439,7 +1435,7 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the ev
 		
         If mm=1 Then  
 		  ToastMessageShow("再按一次退出",False)
-		  timebegin=minutes*60+seconds
+		  timebegin=now
 		  nn=0 'start counting duration.
 		End If
 		
