@@ -60,7 +60,7 @@ ModuleVisible28=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=24
 File1=about.bal
 File2=askforbook.bal
@@ -180,6 +180,11 @@ Sub Globals
 	Dim page2=1 As Int
 	Dim queryorder=1 As Int
 	Dim searchtype=0 As Int
+	Dim mm=1 As Int
+	Dim nn=1 As Int
+	Dim duration=4 As Int
+	Dim timeend As Int
+	Dim timebegin As Int
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -1407,4 +1412,39 @@ Sub addlistview(jsonresult As String)
 	End If
 	clv1.AsView.Visible=True
 	WebView1.Visible=False
+End Sub
+
+
+Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
+    If KeyCode = KeyCodes.KEYCODE_BACK Then
+
+	    Dim minutes As Int
+	    Dim seconds As Int
+        Dim now As Long
+	    now = DateTime.now
+	    minutes=DateTime.Getminute(now)
+        seconds=DateTime.GetSecond(now)
+		
+		If nn=0 Then
+		  timeend=minutes*60+seconds
+		  duration=timeend-timebegin
+		End If
+		
+		If duration<3 Then
+		  ExitApplication
+		Else  'time out,reset.
+		  mm=1
+		  nn=1
+		End If
+		
+        If mm=1 Then  
+		  ToastMessageShow("再按一次退出",False)
+		  timebegin=minutes*60+seconds
+		  nn=0 'start counting duration.
+		End If
+		
+        Return True
+    Else
+        Return False
+    End If	
 End Sub

@@ -97,5 +97,5 @@ Sub ListView1_ItemClick (Position As Int, Value As Object)
 	StartActivity(userinfo)
 End Sub
 Sub Button1_Click
-	Activity.Finish
+    Activity.Finish
 End Sub
