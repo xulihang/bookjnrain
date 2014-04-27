@@ -61,6 +61,7 @@ Sub JobDone (job As HttpJob)
 				Activity.Finish
 		End Select
 	Else
+	    File.Delete(File.DirInternal,EditText1.Text&"-account")
 	    ProgressDialogHide
 		Log("Error: " & job.ErrorMessage)
 		ToastMessageShow("Error: " & job.ErrorMessage, True)
@@ -78,24 +79,28 @@ Sub Button1_Click
 	'ToastMessageShow(out,False)
 
 	If File.Exists(File.DirInternal,EditText1.Text&"-account")=False Then
+	    writeuser
 	    ProgressDialogShow("注册中")
 	    Dim job1 As HttpJob
 	    job1.Initialize("Job1",Me)
         job1.PostString("https://bottle-bookjnrain.rhcloud.com/user/new","username="&EditText1.Text&"&password="&EditText2.Text)
 	Else
 	    ToastMessageShow("修改成功",False)
-		Dim write As TextWriter
-	    write.Initialize(File.OpenOutput(File.DirInternal,EditText1.Text&"-account",False))
-	    write.WriteLine(0)
-	    write.Close
-	    write.Initialize(File.OpenOutput(File.DirInternal,"user",False))
-	    write.WriteLine(EditText1.Text)
-	    write.WriteLine(EditText2.Text)
-	    write.Close
-		Activity.Finish
+        writeuser
 	End If
 End Sub
 Sub Label1_Click
 	'StartActivity(login)
 	Msgbox("已有账户仍点注册。","")
+End Sub
+
+Sub writeuser
+	Dim write As TextWriter
+	write.Initialize(File.OpenOutput(File.DirInternal,EditText1.Text&"-account",False))
+	write.WriteLine(0)
+	write.Close
+	write.Initialize(File.OpenOutput(File.DirInternal,"user",False))
+	write.WriteLine(EditText1.Text)
+	write.WriteLine(EditText2.Text)
+	write.Close
 End Sub
