@@ -35,17 +35,21 @@ Sub Activity_Create(FirstTime As Boolean)
 	Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
 	username = Reader.ReadLine
 	Reader.Close
-    Reader.Initialize(File.OpenInput(File.DirInternal, username&"-follow"))
-    Dim line As String
-    line = Reader.ReadLine
-    Do While line <> Null
-        Log(line)
-		If line<>"" Then
-		    ListView1.AddSingleLine2(line,line)
-		End If
+	If File.Exists(File.DirInternal,username&"-follow") Then
+        Reader.Initialize(File.OpenInput(File.DirInternal, username&"-follow"))
+        Dim line As String
         line = Reader.ReadLine
-    Loop
-    Reader.Close 
+        Do While line <> Null
+            Log(line)
+		    If line<>"" Then
+		        ListView1.AddSingleLine2(line,line)
+		    End If
+            line = Reader.ReadLine
+        Loop
+        Reader.Close
+	Else
+	    ToastMessageShow("你未关注任何人。",False)
+	End If
 End Sub
 
 Sub Activity_Resume

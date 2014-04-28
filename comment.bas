@@ -86,6 +86,9 @@ Sub createlistview
 	
 	Dim Cursor1 As Cursor
 	Cursor1 = SQL4.ExecQuery("SELECT * FROM statics")
+	If Cursor1.RowCount=0 Then
+	    clv1.Add(nonelistitem(clv1.AsView.Width, 40dip),40dip,0)
+	End If
 	For i = 0 To Cursor1.RowCount - 1
 		Cursor1.Position = i
 
@@ -110,19 +113,21 @@ End Sub
 
 Sub clv1_ItemClick (Index As Int, Value As Object)
 	'Msgbox("Hello","Hello")
-	Dim r As List 
-    r.Initialize 
-    r.AddAll(Array As String("复制用户名"))
-    Dim m As Int
-    Dim x As id 
-    m = x.InputList1(r,Index)
+	If Value<>0 Then
+	    Dim r As List 
+        r.Initialize 
+        r.AddAll(Array As String("复制用户名"))
+        Dim m As Int
+        Dim x As id 
+        m = x.InputList1(r,Index)
 	
-	Select m
-	    Case 0
-            Dim CC As BClipboard
-            CC.setText(Value)
-	        ToastMessageShow("结果已复制到剪切板。",False)
-	End Select		
+	    Select m
+	        Case 0
+                Dim CC As BClipboard
+                CC.setText(Value)
+	            ToastMessageShow("结果已复制到剪切板。",False)
+	    End Select
+	End If
 End Sub
 
 
@@ -206,19 +211,15 @@ Sub Button1_Click
         Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
 		username = Reader.ReadLine
         Reader.Close 
+		ProgressDialogShow("上传中...")
+        Dim now As Long
+	    now = DateTime.now
+	    Dim job4 As HttpJob
+        job4.Initialize("Job4",Me)
+        job4.PostString("https://bottle-bookjnrain.rhcloud.com/addcomment","username="&username&"&isbn="&Main.book&"&comment="&EditText1.Text&"&time="&now)
 	Else
-	    ToastMessageShow("将会以匿名发布",False)
-		username="guest"
+	    ToastMessageShow("请登录！",False)
 	End If
-	ProgressDialogShow("上传中...")
-    Dim now As Long
-    'Dim time As String
-	now = DateTime.now
-    'time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
-	'Log(time)
-	Dim job4 As HttpJob
-    job4.Initialize("Job4",Me)
-    job4.PostString("https://bottle-bookjnrain.rhcloud.com/addcomment","username="&username&"&isbn="&Main.book&"&comment="&EditText1.Text&"&time="&now)
 End Sub
 
 Sub userinfo_click
@@ -239,13 +240,20 @@ Sub IME_HeightChanged(NewHeight As Int, OldHeight As Int)
 End Sub
 
 Sub storecomment
-	If File.Exists(File.DirInternal,"comment.db")=False Then
-	    SQL1.Initialize(File.DirInternal, "comment.db", True)
+	Dim Reader As TextReader
+    Dim username As String
+	If File.Exists(File.DirInternal,"user") Then
+        Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		username = Reader.ReadLine
+        Reader.Close 
+	End If
+	If File.Exists(File.DirInternal,username&"-comment.db")=False Then
+	    SQL1.Initialize(File.DirInternal, username&"-comment.db", True)
 		SQL1.ExecNonQuery("CREATE TABLE book (title , isbn, time, comment)")
 	End If
 	
 	If SQL1.IsInitialized = False Then
-	    SQL1.Initialize(File.DirInternal, "comment.db", False)
+	    SQL1.Initialize(File.DirInternal, username&"-comment.db", False)
 	End If
     Dim now As Long
     Dim time As String
@@ -259,4 +267,18 @@ Sub storecomment
         getcomment.Download("https://bottle-bookjnrain.rhcloud.com/getcomment/"&Main.book)
 	    ProgressDialogShow("更新...")
 	End If
+End Sub
+
+Sub nonelistitem(Width As Int, Height As Int) As Panel
+	Dim p As Panel
+	p.Initialize("")
+	p.Color = Colors.RGB(245,245,245)
+	Dim nothing As Label
+	nothing.Initialize("nothing")
+	nothing.Text="还没有人说话。"
+	nothing.Gravity=Bit.OR(Gravity.CENTER_HORIZONTAL,Gravity.CENTER_VERTICAL)
+	nothing.TextSize=18
+	nothing.TextColor=Colors.Gray
+	p.AddView(nothing, 0dip, 0dip, Width, 40dip) 'view #0
+	Return p
 End Sub

@@ -180,6 +180,13 @@ def getuserinfo(username):
     
     return static_file(username+".db",root='db',mimetype="*/*",download=username+".db")
 
+#获取用户评论历史
+@route("/getusercomment/<username:path>")
+def getusercomment(username):
+    
+    return static_file(username+"-comment.db",root='user',mimetype="*/*",download=username+"-comment.db")
+
+
 #下载全数据
 @route("/getroot")
 def getroot():
@@ -551,6 +558,7 @@ def editprofile():
     fw.close
     return "保存成功"
 
+#头像上传
 @route('/user/avatar')
 def avatar():
     return template("upload")
@@ -564,6 +572,28 @@ def do_avatarupload():
         return "File extension not allowed."
 
     save_path = "./avatar/"
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    file_path = "{path}/{file}".format(path=save_path, file=upload.filename)
+    if os.path.exists(file_path)==True:
+        os.remove(file_path)
+    upload.save(file_path)
+    return "File successfully saved to '{0}'.".format(save_path)
+
+#评论上传
+@route('/user/comment')
+def avatar():
+    return template("syncomment")
+
+@route('/user/commentupload', method='POST')
+def do_commentupload():
+    upload = request.files.get('upload')
+    name, ext = os.path.splitext(upload.filename)
+    if ext not in ('.db'):
+        return "File extension not allowed."
+
+    save_path = "./user/"
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
