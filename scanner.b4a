@@ -62,7 +62,7 @@ ModuleVisible29=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
 NumberOfFiles=24
 File1=about.bal
 File2=askforbook.bal
@@ -314,7 +314,8 @@ Sub Initilize_scrollview
 		If File.Exists(File.DirInternal,username&"-messagetimes")=True Then
 	        Dim Reader As TextReader
 	        Reader.Initialize(File.OpenInput(File.DirInternal,username&"-messagetimes"))
-	        old=Reader.ReadLine
+	        Reader.ReadLine
+			old=Reader.ReadLine '读的是总的留言数，不管都没读过
 		    Reader.Close
 			messagetimesint=old
 	    End If
@@ -375,10 +376,11 @@ Sub Activity_Resume
 	If manager.GetBoolean("check6")=True Then
 	    getmessagetimes
 	End If
+	Log("mm"&newmessage)
 	If newmessage=0 Then
 	    If hintcircle.IsInitialized Then
-        hintcircle.RemoveView
-		messagetimes.TextColor=follow.TextColor
+            hintcircle.RemoveView
+		    messagetimes.TextColor=follow.TextColor
         End If
 	End If
 End Sub
@@ -1484,7 +1486,8 @@ Sub messagetimes_click
 	End If
 	Dim Writer As TextWriter
 	Writer.Initialize(File.OpenOutput(File.DirInternal,username&"-messagetimes",False))
-	Writer.WriteLine(messagetimesint)
+	Writer.WriteLine(messagetimesint) '第一行读过的留言数
+	Writer.WriteLine(messagetimesint) '第二行总留言数
 	Writer.Close
     comment.queryuser=username
     StartActivity(usermessage)
@@ -1511,6 +1514,11 @@ Sub hint
 	Log(oldint)
 	newmessage=messagetimesint-oldint
     Log("ll:"&newmessage)
+	Dim Writer As TextWriter
+	Writer.Initialize(File.OpenOutput(File.DirInternal,username&"-messagetimes",False))
+	Writer.WriteLine(oldint) '第一行读过的留言数
+	Writer.WriteLine(messagetimesint) '第二行总留言数
+	Writer.Close
     If newmessage>=1 Then
 	    messagetimes.TextColor=Colors.Red
 		hintcircle.Initialize("")
