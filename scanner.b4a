@@ -686,7 +686,7 @@ Sub CreatePreferenceScreen
 	
 	cat2.Initialize("账户")
 	cat2.AddCheckBox("check2", "退出时清除登录记录。", "", True)
-	cat2.AddCheckBox("check6", "每次返回主界面查询新留言。", "否则只在启动程序时查询。", False)
+	cat2.AddCheckBox("check6", "每次返回主界面查询新留言。", "否则只在启动程序时查询。网速不好或流量有限慎用。", False)
 	cat3.Initialize("查询")
 	'cat3.AddCheckBox("check3", "显示图书封面", "一张图片约6KB.", True)
 	cat3.AddCheckBox("check4", "显示不再闲置的图书", "显示状态为结束的书.", True)

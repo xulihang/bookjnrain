@@ -31,15 +31,28 @@ Sub Globals
 	Dim Button2 As Button
 	Dim SeekBar5 As SeekBar
 	Dim SeekBar6 As SeekBar
+	'Dim hintpanel As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("crop.bal")
+	'If FirstTime Then
+	'	Dim hint1 As Label
+	'	hint1.Initialize("")
+	'	hint1.Text="滑动滑块调整截取大小，注意不要过界。"
+	'	hint1.TextSize=12
+	'	hint1.TextColor=Colors.White
+	'	hintpanel.Initialize("hintpanel")
+	'	hintpanel.Color=Colors.ARGB(150,0,0,0)
+	'	hintpanel.AddView(hint1,SeekBar1.Left,SeekBar1.Top,200dip,40dip)
+	'	Activity.AddView(hintpanel,0,0,100%x,100%y)
+	'	hintpanel.BringToFront
+	'End If
 	IO.Initialize
 	scale = GetDeviceLayoutValues.scale
 	Activity.AddMenuItem("选图片","choose")
-	Activity.AddMenuItem("剪裁","crop")
+	Activity.AddMenuItem("完成剪裁","crop")
 
 	btmpFlower.Initialize(File.DirAssets,"image4.jpg")
 	loadimage(File.DirAssets,"image4.jpg")
@@ -185,3 +198,7 @@ Sub Button1_Click
 	Hscale=btmpFlower.Height/ImageView1.Height/scale
 	Wscale=btmpFlower.Width/ImageView1.Width/scale
 End Sub
+
+'Sub hintpanel_click
+'    hintpanel.RemoveView
+'End Sub
