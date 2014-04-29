@@ -645,6 +645,9 @@ Sub Button7_Click
 	ToastMessageShow("注销成功！",False)
 	File.Delete(File.DirInternal,"user")
 	newmessage=0
+	If hintcircle.IsInitialized Then
+	    hintcircle.RemoveView
+	End If
 	Initilize_scrollview
 End Sub
 Sub Button5_Click

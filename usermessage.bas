@@ -139,6 +139,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
                 comment.queryuser=lbl2.Tag
 				StartActivity(userinfo)
 			Case 1
+			    clv1.RemoveAt(Index)
 			    ProgressDialogShow("操作中")
 				Dim job1 As HttpJob
                 job1.Initialize("Job1",Me)
