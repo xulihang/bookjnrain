@@ -62,7 +62,7 @@ ModuleVisible29=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=24
 File1=about.bal
 File2=askforbook.bal
@@ -375,6 +375,12 @@ Sub Activity_Resume
 	If manager.GetBoolean("check6")=True Then
 	    getmessagetimes
 	End If
+	If newmessage=0 Then
+	    If hintcircle.IsInitialized Then
+        hintcircle.RemoveView
+		messagetimes.TextColor=follow.TextColor
+        End If
+	End If
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -665,7 +671,7 @@ Sub SetDefaults
 	'manager.SetBoolean("check3", True)
 	manager.SetBoolean("check4", True)
 	manager.SetBoolean("check5", True)
-	manager.SetBoolean("check6", True)
+	manager.SetBoolean("check6", False)
 	manager.SetString("list1","5")
 	manager.SetString("list2","图书封面")
 End Sub
@@ -680,7 +686,7 @@ Sub CreatePreferenceScreen
 	
 	cat2.Initialize("账户")
 	cat2.AddCheckBox("check2", "退出时清除登录记录。", "", True)
-	cat2.AddCheckBox("check6", "每次返回主界面查询新留言。", "否则只在启动程序时查询", True)
+	cat2.AddCheckBox("check6", "每次返回主界面查询新留言。", "否则只在启动程序时查询。", False)
 	cat3.Initialize("查询")
 	'cat3.AddCheckBox("check3", "显示图书封面", "一张图片约6KB.", True)
 	cat3.AddCheckBox("check4", "显示不再闲置的图书", "显示状态为结束的书.", True)
@@ -1469,10 +1475,6 @@ End Sub
 
 Sub messagetimes_click
     newmessage=0
-    If hintcircle.IsInitialized Then
-        hintcircle.RemoveView
-		messagetimes.TextColor=follow.TextColor
-    End If
 	If File.Exists(File.DirInternal,"user") Then
 	    Dim Reader As TextReader
 	    Dim username As String

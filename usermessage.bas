@@ -198,10 +198,10 @@ Sub CreateListItem(FirstLineText As String,username As String,time As String, Wi
 	links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getavatar/"&username)
 	
 	CallSubDelayed2(ImageDownloader, "Download", links)
-	p.AddView(lbl, Height+5dip, 2dip, Width-72dip, Height-4dip) 'view #0
-	p.AddView(lbl2, Height+5dip, Height-20dip, Width-144dip, 20dip) 'view #1
+	p.AddView(lbl, 64dip+10dip, 2dip, Width-74dip, Height-4dip) 'view #0
+	p.AddView(lbl2, 64dip+10dip, Height-20dip, Width-144dip, 20dip) 'view #1
 	p.AddView(lbl3, Width-144dip, Height-20dip, 144dip, 20dip) 'view #2
-	p.AddView(cover, 5dip, 5dip, Height-10dip, Height-10dip) 'view #3
+	p.AddView(cover, 2dip, 2dip, 64dip, 64dip) 'view #3
 	Return p
 End Sub
 
@@ -213,7 +213,7 @@ Sub autosize(Text As String) As Int
 	example.Text = Text
 	example.TextSize = 18
 	example.TextColor = Colors.White
-	Activity.AddView(example,0,0,clv1.AsView.Width-72dip,20dip)
+	Activity.AddView(example,0,0,clv1.AsView.Width-74dip,20dip)
 	example.Visible=False
 	Dim minHeight,ProperHeight As Int
 	minHeight = su.MeasureMultilineTextHeight(example, Text)

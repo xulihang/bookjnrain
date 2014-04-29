@@ -28,6 +28,7 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("about")
+	Activity.AddMenuItem("给管理员留言","messageboard")
 End Sub
 
 Sub Activity_Resume
@@ -106,4 +107,9 @@ Sub Label2_Click
 		caidan2=0
 		StartActivity(slotmachine)
     End If	
+End Sub
+
+Sub messageboard_click
+    comment.queryuser="1120113325"
+	StartActivity(usermessage)
 End Sub
