@@ -64,6 +64,9 @@ Sub JobDone (job As HttpJob)
 			Case "Job4"
 			    ProgressDialogHide
 				ToastMessageShow("留言成功!",False)
+			Case "Job1"
+			    ProgressDialogHide
+				ToastMessageShow(job.GetString,False)
 		End Select
 	Else
 	    ProgressDialogHide
@@ -98,7 +101,7 @@ Sub createlistview
 	    ProperHeight=autosize(Cursor1.GetString("words"))+20dip
 		Log(ProperHeight)
 
-		clv1.Add(CreateListItem(Cursor1.GetString("words"),Cursor1.GetString("username"),time, clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("username"))
+		clv1.Add(CreateListItem(Cursor1.GetString("words"),Cursor1.GetString("username"),time, clv1.AsView.Width, ProperHeight), ProperHeight, Cursor1.GetString("time"))
 	Next
 	Cursor1.Close
 	SQL4.Close
@@ -111,16 +114,35 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 	If Value<>0 Then
 	    Dim r As List 
         r.Initialize 
-        r.AddAll(Array As String("复制用户名"))
+        r.AddAll(Array As String("查看用户"))
+		Dim Reader As TextReader
+        Dim username,password As String
+	    If File.Exists(File.DirInternal,"user") Then
+            Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		    username = Reader.ReadLine
+			password = Reader.ReadLine
+            Reader.Close 
+		    If username=tusername Then
+			    r.Add("删除该留言")
+			End If
+		End If
+		Dim pnl As Panel
+	    pnl = clv1.GetPanel(Index)
+		Dim lbl2 As Label
+	    lbl2 = pnl.GetView(1)
         Dim m As Int
         Dim x As id 
         m = x.InputList1(r,Index)
 	
 	    Select m
 	        Case 0
-                Dim CC As BClipboard
-                CC.setText(Value)
-	            ToastMessageShow("结果已复制到剪切板。",False)
+                comment.queryuser=lbl2.Tag
+				StartActivity(userinfo)
+			Case 1
+			    ProgressDialogShow("操作中")
+				Dim job1 As HttpJob
+                job1.Initialize("Job1",Me)
+                job1.PostString("https://bottle-bookjnrain.rhcloud.com/deletemessage/","username="&username&"&password="&password&"&tusername="&tusername&"&time="&Value)
 	    End Select
 	End If
 End Sub
@@ -178,7 +200,7 @@ Sub CreateListItem(FirstLineText As String,username As String,time As String, Wi
 	p.AddView(lbl, Height+5dip, 2dip, Width-72dip, Height-4dip) 'view #0
 	p.AddView(lbl2, Height+5dip, Height-20dip, Width-144dip, 20dip) 'view #1
 	p.AddView(lbl3, Width-144dip, Height-20dip, 144dip, 20dip) 'view #2
-	p.AddView(cover, 5dip, 5dip, Height-10dip, Height-10dip) 'view #2
+	p.AddView(cover, 5dip, 5dip, Height-10dip, Height-10dip) 'view #3
 	Return p
 End Sub
 

@@ -177,11 +177,14 @@ def getusermessage(username):
 #获取用户留言次数
 @route("/getmessagetimes/<username:path>")
 def getmessagetimes(username):
-    conn = sqlite3.connect('user/'+username+'-message.db')
-    c = conn.cursor()
-    c.execute('select * from statics')
-    times=len(c.fetchall())
-    return str(times)
+    if os.path.exists('user/'+username+'-message.db')==True:
+        conn = sqlite3.connect('user/'+username+'-message.db')
+        c = conn.cursor()
+        c.execute('select * from statics')
+        times=len(c.fetchall())
+        return str(times)
+    else:
+        return "0"
 
 #获取用户头像
 @route("/getavatar/<username:path>")
@@ -1032,6 +1035,31 @@ def leavemessage():
 
     return template("leavemessage")
 
+#删除留言
+@route("/deletemessage/", method="POST")
+def deletemessage():
+    username = request.forms.get("username")
+    password = request.forms.get("password")
+    tusername = request.forms.get("tusername")
+    time = request.forms.get("time")
+    if auth()=='登录成功!':
+        if os.path.exists('user/'+username+'-message.db')==True:
+            conn = sqlite3.connect('user/'+username+'-message.db')
+            c = conn.cursor()
+            c.execute("delete from statics where time Like "+time+" and username Like "+tusername+"")
+            conn.commit()
+            c.close()
+            conn.close()
+            return "操作成功"
+        else:
+            return "数据不存在"
+    else :
+        return username+'登录失败'
+#删除留言界面
+@route("/deletemessagepage")
+def deletemessagepage():
+
+    return template("deletemessage")
 #@route('/hello/:name')
 #def index(name='World'):
 #    return '<b>Hello %s!</b>' % name
