@@ -168,6 +168,21 @@ def getusernickname(username):
     name=fh.readline()   
     return name
 
+#获取用户留言
+@route("/getusermessage/<username:path>")
+def getusermessage(username):
+    
+    return static_file(username+"-message.db",root='user',mimetype="*/*",download=username+"-message.db")
+
+#获取用户留言次数
+@route("/getmessagetimes/<username:path>")
+def getmessagetimes(username):
+    conn = sqlite3.connect('user/'+username+'-message.db')
+    c = conn.cursor()
+    c.execute('select * from statics')
+    times=len(c.fetchall())
+    return str(times)
+
 #获取用户头像
 @route("/getavatar/<username:path>")
 def getavatar(username):
@@ -987,6 +1002,35 @@ def moodjson():
 
     return template("moodjson")
 
+#用户个人留言板
+@route("/user/message", method="POST")
+def messagedb():
+    tusername = request.forms.get("tusername")
+    username = request.forms.get("username")
+    time = request.forms.get("time")
+    words = request.forms.get("words")
+    if os.path.exists("user/"+tusername+"-message.db")==False:
+        conn = sqlite3.connect("user/"+tusername+"-message.db")
+        c = conn.cursor()
+        c.execute("CREATE TABLE statics (username, time, words)")
+        c.execute("insert into statics values ('"+username+"','"+time+"','"+words+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+    else:
+        conn = sqlite3.connect("user/"+tusername+"-message.db")
+        c = conn.cursor()
+        c.execute("insert into statics values ('"+username+"','"+time+"','"+words+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+    return "评论成功！"
+        
+#给用户留言
+@route("/leavemessage")
+def leavemessage():
+
+    return template("leavemessage")
 
 #@route('/hello/:name')
 #def index(name='World'):

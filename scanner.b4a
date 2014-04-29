@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=28
+NumberOfModules=29
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -57,10 +57,12 @@ Module27=pubmood
 ModuleVisible27=1
 Module28=everydaymood
 ModuleVisible28=1
+Module29=usermessage
+ModuleVisible29=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=24
 File1=about.bal
 File2=askforbook.bal
@@ -176,6 +178,8 @@ Sub Globals
 	Dim follow As Label
 	Dim qrcodeTool As Button
 	Dim commenthis As Label
+	Dim messagetimes As Label
+	Dim hintcircle As Label
 	Dim Spinner1 As Spinner
 	Dim page2=1 As Int
 	Dim queryorder=1 As Int
@@ -183,11 +187,16 @@ Sub Globals
 	Dim mm=1 As Int
 	Dim nn=1 As Int
 	Dim timebegin As Int
+	Dim messagetimesint=0 As Int
+	Dim newmessage=0 As Int
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	If FirstTime Then
+	    If manager.GetBoolean("check6")=False Then
+	        getmessagetimes
+		End If
 		CreatePreferenceScreen
 		If manager.GetAll.Size = 0 Then SetDefaults
 	End If
@@ -262,6 +271,7 @@ Sub Initilize_scrollview
 		changeprofile.RemoveView
 		qrcodeTool.RemoveView
 		commenthis.RemoveView
+		messagetimes.RemoveView
 	End If
 	If File.Exists(File.DirInternal,"user") Then
         Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
@@ -300,6 +310,22 @@ Sub Initilize_scrollview
 		follow.Initialize("follow")
 		follow.Text="关注:"&num
 		follow.TextSize=20
+		Dim old As Int
+		If File.Exists(File.DirInternal,username&"-messagetimes")=True Then
+	        Dim Reader As TextReader
+	        Reader.Initialize(File.OpenInput(File.DirInternal,username&"-messagetimes"))
+	        old=Reader.ReadLine
+		    Reader.Close
+			messagetimesint=old
+	    End If
+		messagetimes.Initialize("messagetimes")
+		messagetimes.Text="留言:"&messagetimesint
+		messagetimes.TextSize=20
+		If newmessage>=1 Then
+		    messagetimes.TextColor=Colors.Red
+		Else
+		    messagetimes.TextColor=follow.TextColor
+        End If
 		qrcodeTool.Initialize("qrcodeTool")
 		qrcodeTool.Text="二维码工具"
 	    Button7.Initialize("Button7")
@@ -319,7 +345,8 @@ Sub Initilize_scrollview
 		ScrollView1.Panel.AddView(changeprofile,10dip,160dip,ScrollView1.Width-20dip,50dip)
 		ScrollView1.Panel.AddView(qrcodeTool,10dip,210dip,ScrollView1.Width-20dip,50dip)
 		ScrollView1.Panel.AddView(follow,10dip,260dip,ScrollView1.Width-100dip,40dip)
-		ScrollView1.Panel.AddView(commenthis,10dip,310dip,ScrollView1.Width-100dip,40dip)
+		ScrollView1.Panel.AddView(commenthis,10dip,300dip,ScrollView1.Width-100dip,40dip)
+		ScrollView1.Panel.AddView(messagetimes,10dip,340dip,ScrollView1.Width-100dip,40dip)
 	Else
 	    Button5.Initialize("Button5")
 	    Button5.Text="登录"
@@ -345,6 +372,9 @@ Sub Activity_Resume
     Initilize_sm
 	Initilize_scrollview
 	HandleSettings
+	If manager.GetBoolean("check6")=True Then
+	    getmessagetimes
+	End If
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -427,11 +457,18 @@ Sub JobDone (job As HttpJob)
 			Case "endpub"  
 				ProgressDialogHide
 				ToastMessageShow(job.GetString,False)
+			Case "gmt"
+			    Log("留言次数"&job.getstring)
+				messagetimesint=job.getstring
+				messagetimes.Text="留言:"&messagetimesint
+				hint
 		End Select
 	Else
 	    ProgressDialogHide
-		Log("Error: " & job.ErrorMessage)
-		ToastMessageShow("Error: " & job.ErrorMessage, True)
+	    If job.JobName<>"gmt" Then
+		    Log("Error: " & job.ErrorMessage)
+		    ToastMessageShow("Error: " & job.ErrorMessage, True)
+		End If
 	End If
 	job.Release
 End Sub
@@ -484,8 +521,8 @@ Sub storetodatabase_Click
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
 	Dim Cursor1 As Cursor
 	Cursor1 = SQL1.ExecQuery("SELECT title FROM book")
-    For I = 0 To Cursor1.RowCount - 1
-	    Cursor1.Position = I
+    For i = 0 To Cursor1.RowCount - 1
+	    Cursor1.Position = i
 		If Cursor1.GetString("title")=bookname Then
 		    exist=1
 			ToastMessageShow("该图书已扫描过。",False)
@@ -624,6 +661,7 @@ Sub SetDefaults
 	'manager.SetBoolean("check3", True)
 	manager.SetBoolean("check4", True)
 	manager.SetBoolean("check5", True)
+	manager.SetBoolean("check6", True)
 	manager.SetString("list1","5")
 	manager.SetString("list2","图书封面")
 End Sub
@@ -638,7 +676,7 @@ Sub CreatePreferenceScreen
 	
 	cat2.Initialize("账户")
 	cat2.AddCheckBox("check2", "退出时清除登录记录。", "", True)
-	
+	cat2.AddCheckBox("check6", "每次返回主界面查询新留言。", "否则只在启动程序时查询", True)
 	cat3.Initialize("查询")
 	'cat3.AddCheckBox("check3", "显示图书封面", "一张图片约6KB.", True)
 	cat3.AddCheckBox("check4", "显示不再闲置的图书", "显示状态为结束的书.", True)
@@ -952,8 +990,8 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	        End If
 	        Dim Cursor2 As Cursor
 	        Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
-	        For I = 0 To Cursor2.RowCount - 1
-	            Cursor2.Position = I
+	        For i = 0 To Cursor2.RowCount - 1
+	            Cursor2.Position = i
 		        If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=0 Then
 	                beenpraised=0
 	            Else If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=1 Then
@@ -1412,6 +1450,74 @@ Sub addlistview(jsonresult As String)
 	WebView1.Visible=False
 End Sub
 
+Sub getmessagetimes
+    If File.Exists(File.DirInternal,"user") Then
+	    Dim Reader As TextReader
+	    Dim username As String
+	    Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+	    username = Reader.ReadLine
+	    Reader.Close
+        Dim gmt As HttpJob
+	    gmt.Initialize("gmt",Me)
+	    gmt.Download("https://bottle-bookjnrain.rhcloud.com/getmessagetimes/"&username)
+	End If
+End Sub
+
+Sub messagetimes_click
+    If hintcircle.IsInitialized Then
+        hintcircle.RemoveView
+		messagetimes.TextColor=follow.TextColor
+    End If
+	If File.Exists(File.DirInternal,"user") Then
+	    Dim Reader As TextReader
+	    Dim username As String
+	    Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+	    username = Reader.ReadLine
+	    Reader.Close
+	End If
+	Dim Writer As TextWriter
+	Writer.Initialize(File.OpenOutput(File.DirInternal,username&"-messagetimes",False))
+	Writer.WriteLine(messagetimesint)
+	Writer.Close
+    comment.queryuser=username
+    StartActivity(usermessage)
+End Sub
+
+Sub hint
+    If File.Exists(File.DirInternal,"user") Then
+	    Dim Reader As TextReader
+	    Dim username As String
+	    Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+	    username = Reader.ReadLine
+	    Reader.Close
+	End If
+    Dim old=0 As String
+	If File.Exists(File.DirInternal,username&"-messagetimes")=True Then
+	    Dim Reader As TextReader
+	    Reader.Initialize(File.OpenInput(File.DirInternal,username&"-messagetimes"))
+	    old=Reader.ReadLine
+		Reader.Close
+	End If
+	'Log(old)
+	Dim oldint As Int
+	oldint=old
+	Log(oldint)
+	newmessage=messagetimesint-oldint
+    Log("ll:"&newmessage)
+    If newmessage>=1 Then
+	    messagetimes.TextColor=Colors.Red
+		hintcircle.Initialize("")
+		hintcircle.Text=newmessage
+		hintcircle.TextSize=16
+		hintcircle.TextColor=Colors.White
+		hintcircle.SetBackgroundImage(LoadBitmap(File.DirAssets,"red.png"))
+		hintcircle.Gravity=Bit.OR(Gravity.CENTER_VERTICAL,Gravity.CENTER_HORIZONTAL)
+		Activity.AddView(hintcircle,Label6.Left+Label6.Width-24dip,Label6.Top,24dip,24dip)
+	Else If hintcircle.IsInitialized Then
+	    hintcircle.RemoveView
+		messagetimes.TextColor=follow.TextColor
+	End If
+End Sub
 
 Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
     If KeyCode = KeyCodes.KEYCODE_BACK Then

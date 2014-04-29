@@ -39,6 +39,7 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("userinfo")
+	Activity.AddMenuItem("看留言","message")
     EditText1.Enabled=False
 	EditText2.Enabled=False
 	EditText3.Enabled=False
@@ -149,4 +150,8 @@ Sub Button1_Click
 End Sub
 Sub Button3_Click
 	StartActivity(userhistory)
+End Sub
+
+Sub message_click
+    StartActivity(usermessage)
 End Sub
