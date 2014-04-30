@@ -1,6 +1,6 @@
 ﻿Version=3
 IconFile=
-NumberOfModules=29
+NumberOfModules=30
 Module1=about
 ModuleVisible1=1
 Module2=web
@@ -59,11 +59,13 @@ Module28=everydaymood
 ModuleVisible28=1
 Module29=usermessage
 ModuleVisible29=1
+Module30=note
+ModuleVisible30=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
-NumberOfFiles=24
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+NumberOfFiles=25
 File1=about.bal
 File2=askforbook.bal
 File3=comment.bal
@@ -74,20 +76,21 @@ File7=follows.bal
 File8=handinput.bal
 File9=idlebook.bal
 File10=login.bal
-File11=praise_no.png
-File12=praise_yes.png
-File13=profile.bal
-File14=pubmood.bal
-File15=qrcode.bal
-File16=query.bal
-File17=register.bal
-File18=scanner.bal
-File19=search.bal
-File20=uploaderlist.bal
-File21=userinfo.bal
-File22=web.bal
-File23=wheelview.bal
-File24=wv.bal
+File11=note.bal
+File12=praise_no.png
+File13=praise_yes.png
+File14=profile.bal
+File15=pubmood.bal
+File16=qrcode.bal
+File17=query.bal
+File18=register.bal
+File19=scanner.bal
+File20=search.bal
+File21=uploaderlist.bal
+File22=userinfo.bal
+File23=web.bal
+File24=wheelview.bal
+File25=wv.bal
 NumberOfLibraries=19
 Library1=animation
 Library2=b4azxing
@@ -189,6 +192,8 @@ Sub Globals
 	Dim timebegin As Int
 	Dim messagetimesint=0 As Int
 	Dim newmessage=0 As Int
+	Dim inputkeyword As EditText
+	Dim searchspinner As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -231,6 +236,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.AddMenuItem("手工录入","manualinput")
 	Activity.AddMenuItem("查看本地数据","query")
 	Activity.AddMenuItem("上传到服务器","upload")
+	'Activity.AddMenuItem("做笔记","makenote")
 	Activity.AddMenuItem("关于","about")
 	Activity.AddMenuItem("退出","Quit")
 	'DBload //（调用函数）
@@ -243,6 +249,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Button11.Visible=False
 	Button13.Visible=False
     Initilize_sm
+	Initilize_viewsaboutsearch
 	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看","查看闲置的书","公布闲置的书","查看求书列表","我要求书","每日心情"))
 	Spinner1.BringToFront
 	'Spinner1.Enabled=False
@@ -255,6 +262,18 @@ Sub myzx_result(atype As String,Values As String)
 	Button2.Enabled=True
 End Sub
 
+Sub Initilize_viewsaboutsearch
+	searchspinner.Initialize("searchspinner")
+    searchspinner.TextColor=Colors.Green
+	searchspinner.TextSize=12
+	searchspinner.AddAll(Array As String("书名","用户名(数字)"))
+	inputkeyword.Initialize("")
+    inputkeyword.SingleLine=True
+	Activity.AddView(searchspinner,0,0,60dip,42dip)
+	Activity.AddView(inputkeyword,60dip,0,100%x-100dip,42dip)
+	searchspinner.Visible=False
+	inputkeyword.Visible=False
+End Sub
 Sub Initilize_scrollview
     Dim Reader As TextReader
     Dim username As String
@@ -529,8 +548,8 @@ Sub storetodatabase_Click
     time=DateTime.GetYear(now)&"/"&DateTime.GetMonth(now)&"/"&DateTime.GetDayOfMonth(now)&"/"&DateTime.GetHour(now)&"/"&DateTime.GetMinute(now)&"/"
 	Dim Cursor1 As Cursor
 	Cursor1 = SQL1.ExecQuery("SELECT title FROM book")
-    For i = 0 To Cursor1.RowCount - 1
-	    Cursor1.Position = i
+    For I = 0 To Cursor1.RowCount - 1
+	    Cursor1.Position = I
 		If Cursor1.GetString("title")=bookname Then
 		    exist=1
 			ToastMessageShow("该图书已扫描过。",False)
@@ -676,6 +695,7 @@ Sub SetDefaults
 	manager.SetBoolean("check6", False)
 	manager.SetString("list1","5")
 	manager.SetString("list2","图书封面")
+	manager.SetString("list3","评论")
 End Sub
 
 Sub CreatePreferenceScreen
@@ -696,6 +716,8 @@ Sub CreatePreferenceScreen
         Array As String("2","5", "10", "15", "20", "30"))
 	cat3.AddList("list2", "显示图片", "设置显示图书封面还是用户头像或不显示", "", _
         Array As String("不显示","图书封面","用户头像"))
+	cat3.AddList("list3", "热度依据", "按评论数还是点赞数排序", "", _
+        Array As String("评论", "点赞"))
 	cat4.Initialize("评论")
 	cat4.AddCheckBox("check5", "评论后更新内容", "评论后重新加载全部评论，耗费一点点流量.", True)
 	'add the categories to the main screen
@@ -728,7 +750,11 @@ Sub Button8_Click
 End Sub
 
 Sub Button11_Click
-    queryorder=1 '按热度
+    If manager.GetString("list3")="评论" Then
+        queryorder=1 '按评论热度
+	Else
+	    queryorder=6 '按点赞
+	End If
 	page2=1
 	searchtype=0
 	Dim getlatest As HttpJob
@@ -783,23 +809,23 @@ Sub createlistview(jsonresult As String)
 	End If
 	Log("size:"&list1.Size)
 	If searchtype=0 Then
-	    For i =0 To list1.Size-1
+	    For I =0 To list1.Size-1
 	        Dim map1 As Map
-            map1 = list1.get(i)
+            map1 = list1.get(I)
 		
 		    Dim ProperHeight As Int
 	        ProperHeight=autosize(map1.get("bookname"))+20dip+20dip
 		    Log(ProperHeight)
 		
 		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
-		    If i=list1.Size-1 Then
+		    If I=list1.Size-1 Then
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
 	Else If searchtype=1 Then
-		For i =0 To list1.Size-1
+		For I =0 To list1.Size-1
 	        Dim map1 As Map
-            map1 = list1.get(i)
+            map1 = list1.get(I)
 		
 		    Dim ProperHeight As Int
 	        ProperHeight=autosize(map1.get("detail"))+60dip
@@ -813,7 +839,7 @@ Sub createlistview(jsonresult As String)
 			If map1.get("finished")="0" Then
 			    clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
 		    End If
-			If i=list1.Size-1 Then
+			If I=list1.Size-1 Then
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
@@ -1002,8 +1028,8 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	        End If
 	        Dim Cursor2 As Cursor
 	        Cursor2 = SQL2.ExecQuery("SELECT * FROM statics")
-	        For i = 0 To Cursor2.RowCount - 1
-	            Cursor2.Position = i
+	        For I = 0 To Cursor2.RowCount - 1
+	            Cursor2.Position = I
 		        If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=0 Then
 	                beenpraised=0
 	            Else If Cursor2.GetString("isbn")=lbl2.Text AND Cursor2.GetString("praise")=1 Then
@@ -1298,20 +1324,43 @@ End Sub
 
 'Search
 Sub Button12_Click
-    Dim resultofmsgbox As Int
-    resultofmsgbox=Msgbox2("当前关键词为"&search.keyword,"查询","去输入","","已输入",Null)
-	If resultofmsgbox=DialogResponse.POSITIVE Then
-	    StartActivity(search)
-	Else
+    If inputkeyword.Visible=True Then
+	    Button3.Visible=True
+		Button10.Visible=True
+		Button6.Visible=True
+		Label3.Visible=True
+		searchspinner.Visible=False
+		inputkeyword.Visible=False
+		Button12.Left=100%x-120dip
 	    page2=1
-	    queryorder=3
-	    Dim getlatest As HttpJob
-	    getlatest.Initialize("getlatest",Me)
-	    getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype="&searchtype)
-	    ProgressDialogShow("获取数据中...")
+		'Log(queryorder)
+		If queryorder=3 OR queryorder=5 Then
+	        Dim getlatest As HttpJob
+	        getlatest.Initialize("getlatest",Me)
+	        getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&inputkeyword.Text&"&searchtype="&searchtype)
+	        ProgressDialogShow("获取数据中...")
+		Else
+		    Msgbox("请选搜索类型","")
+		End If
+	Else
+	    Button3.Visible=False
+		Button10.Visible=False
+		Button6.Visible=False
+		Label3.Visible=False
+        searchspinner.Visible=True
+		inputkeyword.Visible=True
+		Button12.Left=100%x-40dip
 	End If
 End Sub
 
+Sub searchspinner_ItemClick (Position As Int, Value As Object)
+    Select Position
+	    Case 0
+		    queryorder=3
+		Case 1
+		    queryorder=5
+	End Select
+End Sub
 '以下暂不用，改用本地存储
 '现已启用
 Sub uploadpraise(isbn As String)
@@ -1405,7 +1454,7 @@ Sub more_click
 	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&date="&timewheelview.searchtime
 	Else
 	    URL="https://bottle-bookjnrain.rhcloud.com/getjson"
-	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype="&searchtype
+	    Param="itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&inputkeyword.Text&"&searchtype="&searchtype
 	End If
 	Dim loadmore As HttpJob
 	loadmore.Initialize("loadmore",Me)
@@ -1424,23 +1473,23 @@ Sub addlistview(jsonresult As String)
 	End If
 	Log("size:"&list1.Size)
 	If searchtype=0 Then
-	    For i =0 To list1.Size-1
+	    For I =0 To list1.Size-1
 	        Dim map1 As Map
-            map1 = list1.get(i)
+            map1 = list1.get(I)
 		
 		    Dim ProperHeight As Int
 	        ProperHeight=autosize(map1.get("bookname"))+20dip+20dip
 		    Log(ProperHeight)
 		
 		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
-		    If i=list1.Size-1 Then
+		    If I=list1.Size-1 Then
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
 	Else If searchtype=1 Then
-		For i =0 To list1.Size-1
+		For I =0 To list1.Size-1
 	        Dim map1 As Map
-            map1 = list1.get(i)
+            map1 = list1.get(I)
 		
 		    Dim ProperHeight As Int
 	        ProperHeight=autosize(map1.get("detail"))+60dip
@@ -1453,7 +1502,7 @@ Sub addlistview(jsonresult As String)
 			If map1.get("finished")="0" Then
 			    clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
 		    End If
-		    If i=list1.Size-1 Then
+		    If I=list1.Size-1 Then
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
@@ -1534,6 +1583,9 @@ Sub hint
 	End If
 End Sub
 
+'Sub makenote_click
+'    StartActivity(note)
+'End Sub
 Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
     If KeyCode = KeyCodes.KEYCODE_BACK Then
 
@@ -1548,7 +1600,7 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the ev
 		End If
 		
 		If duration<3000 Then
-		  ExitApplication
+		  Quit_Click
 		Else  'time out,reset.
 		  mm=1
 		  nn=1

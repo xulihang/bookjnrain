@@ -120,32 +120,36 @@ Sub Button2_Click
 	Activity.Finish
 End Sub
 Sub Button1_Click
-	Dim Reader As TextReader
-	Dim username As String
-	Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
-	username = Reader.ReadLine
-	Reader.Close
-	Dim exist=0 As Int '默认没关注
-    If File.Exists(File.DirInternal,username&"-follow") Then
-	    Reader.Initialize(File.OpenInput(File.DirInternal, username&"-follow"))
-	    Dim line As String
-        line = Reader.ReadLine
-        Do While line <> Null
-            If line=comment.queryuser Then
-			    ToastMessageShow("已关注！",False)
-				exist=1
-				Exit
-			End If
+    If File.Exists(File.DirInternal,"user")=False Then
+	    ToastMessageShow("请先登录!",False)
+	Else
+	    Dim Reader As TextReader
+	    Dim username As String
+	    Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+	    username = Reader.ReadLine
+	    Reader.Close
+	    Dim exist=0 As Int '默认没关注
+        If File.Exists(File.DirInternal,username&"-follow") Then
+	        Reader.Initialize(File.OpenInput(File.DirInternal, username&"-follow"))
+	        Dim line As String
             line = Reader.ReadLine
-        Loop
-        Reader.Close 
-	End If
-	If exist=0 Then
-	    Dim Writer As TextWriter
-        Writer.Initialize(File.OpenOutput(File.DirInternal, username&"-follow", False))
-        Writer.WriteLine(comment.queryuser)
-        Writer.Close
-		ToastMessageShow("关注成功！",False)
+            Do While line <> Null
+                If line=comment.queryuser Then
+			        ToastMessageShow("已关注！",False)
+				    exist=1
+				    Exit
+			    End If
+                line = Reader.ReadLine
+            Loop
+            Reader.Close 
+	    End If
+	    If exist=0 Then
+	        Dim Writer As TextWriter
+            Writer.Initialize(File.OpenOutput(File.DirInternal, username&"-follow", False))
+            Writer.WriteLine(comment.queryuser)
+            Writer.Close
+		    ToastMessageShow("关注成功！",False)
+	    End If
 	End If
 End Sub
 Sub Button3_Click

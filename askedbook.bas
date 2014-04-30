@@ -9,13 +9,13 @@ Version=3
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-    Dim SQL1 As SQL
+    
 End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-
+    Dim SQL1 As SQL
 	Dim Button1 As Button
 	Dim ListView1 As ListView
 	Dim ImageView1 As ImageView
