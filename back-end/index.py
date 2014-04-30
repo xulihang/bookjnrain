@@ -642,13 +642,16 @@ def find():
 #得到图片
 @route("/getimage/<isbn:path>")
 def getimage(isbn):
-    f = urllib.urlopen("https://api.douban.com/v2/book/isbn/:"+isbn)
-    jresult=f.read()
-    jsonVal = json.loads(jresult)
-    link=jsonVal["image"]  
-    data = urllib.urlretrieve(link,"./images/"+isbn+".jpg")
-    return static_file(isbn+".jpg",root='images',mimetype="*/*",download=isbn+".jpg")
-
+    if os.path.exists("./images/"+isbn+".jpg")==False:
+        f = urllib.urlopen("https://api.douban.com/v2/book/isbn/:"+isbn)
+        jresult=f.read()
+        jsonVal = json.loads(jresult)
+        link=jsonVal["image"]  
+        data = urllib.urlretrieve(link,"./images/"+isbn+".jpg")
+        return static_file(isbn+".jpg",root='images',mimetype="*/*",download=isbn+".jpg")
+    else:
+        return static_file(isbn+".jpg",root='images',mimetype="*/*",download=isbn+".jpg")
+    
 #得到json
 @route('/getjson', method='POST')    
 def getjson():
