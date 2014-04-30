@@ -64,7 +64,7 @@ ModuleVisible30=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
 NumberOfFiles=25
 File1=about.bal
 File2=askforbook.bal
@@ -741,7 +741,7 @@ Sub Button9_Click
 	searchtype=0
 	Dim getlatest As HttpJob
 	getlatest.Initialize("getlatest",Me)
-	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype=0")
+	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&inputkeyword.Text&"&searchtype=0")
 	ProgressDialogShow("获取数据中...")
 End Sub
 Sub Button8_Click
@@ -759,7 +759,7 @@ Sub Button11_Click
 	searchtype=0
 	Dim getlatest As HttpJob
 	getlatest.Initialize("getlatest",Me)
-	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype=0")
+	getlatest.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&inputkeyword.Text&"&searchtype=0")
 	ProgressDialogShow("获取数据中...")
 End Sub
 
@@ -1422,7 +1422,7 @@ Sub getidlebook
     searchtype=1
 	Dim getidle As HttpJob
 	getidle.Initialize("getlatest",Me)
-	getidle.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&search.keyword&"&searchtype="&searchtype)
+	getidle.PostString("https://bottle-bookjnrain.rhcloud.com/getjson","itemnumber="&manager.GetString("list1")&"&page="&page2&"&queryorder="&queryorder&"&keyword="&inputkeyword.Text&"&searchtype="&searchtype)
 End Sub
 
 Sub pubidlebook

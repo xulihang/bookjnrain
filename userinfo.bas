@@ -145,7 +145,7 @@ Sub Button1_Click
 	    End If
 	    If exist=0 Then
 	        Dim Writer As TextWriter
-            Writer.Initialize(File.OpenOutput(File.DirInternal, username&"-follow", False))
+            Writer.Initialize(File.OpenOutput(File.DirInternal, username&"-follow", True))
             Writer.WriteLine(comment.queryuser)
             Writer.Close
 		    ToastMessageShow("关注成功！",False)

@@ -679,10 +679,10 @@ def getjson():
 	SqlSentence="SELECT * FROM statics Order by time desc"
     elif queryorder == 3:
 	SqlSentence="SELECT * FROM statics WHERE bookname like '%"+keyword+"%'"
-    elif queryorder == 4:
-	SqlSentence="SELECT * FROM statics WHERE username like '%"+keyword+"%'"
     elif queryorder == 5:
-	SqlSentence="SELECT * FROM statics Order by praise desc"
+	SqlSentence="SELECT * FROM statics WHERE username like '%"+keyword+"%'"
+    elif queryorder == 6:
+	SqlSentence="SELECT * FROM staticsOrder by praise desc"
     
     i=0
     j=0
