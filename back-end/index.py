@@ -679,6 +679,10 @@ def getjson():
 	SqlSentence="SELECT * FROM statics Order by time desc"
     elif queryorder == 3:
 	SqlSentence="SELECT * FROM statics WHERE bookname like '%"+keyword+"%'"
+    elif queryorder == 4:
+	SqlSentence="SELECT * FROM statics WHERE username like '%"+keyword+"%'"
+    elif queryorder == 5:
+	SqlSentence="SELECT * FROM statics Order by praise desc"
     
     i=0
     j=0
@@ -693,11 +697,11 @@ def getjson():
                 bookname=row[3]
                 username=row[4]
                 time=row[5]
-                single={"isbn":str(isbn),
-                       "praise":str(praise),
-                       "comment":str(comment),
+                single={"isbn":str(isbn.encode("utf-8")),
+                       "praise":str(praise.encode("utf-8")),
+                       "comment":str(comment.encode("utf-8")),
                        "bookname":str(bookname.encode("utf-8")),
-                       "username":str(username),
+                       "username":str(username.encode("utf-8")),
                         "time":str(time)}
                 result.append(single)
             if j==itemnumber:
@@ -717,13 +721,13 @@ def getjson():
                 pubtime=row[6]
                 finished=row[7]
                 single={"bookname":str(bookname.encode("utf-8")),
-                       "isbn":str(isbn),
-                       "purpose":str(purpose),
+                       "isbn":str(isbn.encode("utf-8")),
+                       "purpose":str(purpose.encode("utf-8")),
                        "price":str(price.encode("utf-8")),
                        "detail":str(detail.encode("utf-8")),
-                       "username":str(username),
-                       "pubtime":str(pubtime),
-                       "finished":str(finished)}
+                       "username":str(username.encode("utf-8")),
+                       "pubtime":str(pubtime.encode("utf-8")),
+                       "finished":str(finished.encode("utf-8"))}
                 result.append(single)
             if j==itemnumber:
                 break
@@ -768,12 +772,12 @@ def getdailyjson():
             bookname=row[3]
             username=row[4]
             time=row[5]
-            single={"isbn":str(isbn),
-                   "praise":str(praise),
-                   "comment":str(comment),
+            single={"isbn":str(isbn.encode("utf-8")),
+                   "praise":str(praise.encode("utf-8")),
+                   "comment":str(comment.encode("utf-8")),
                    "bookname":str(bookname.encode("utf-8")),
-                   "username":str(username),
-                    "time":str(time)}
+                   "username":str(username.encode("utf-8")),
+                    "time":str(time.encode("utf-8"))}
             result.append(single)
         if j==itemnumber:
             break
