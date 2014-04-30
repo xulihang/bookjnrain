@@ -143,7 +143,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 			    ProgressDialogShow("操作中")
 				Dim job1 As HttpJob
                 job1.Initialize("Job1",Me)
-                job1.PostString("https://bottle-bookjnrain.rhcloud.com/deletemessage/","username="&username&"&password="&password&"&tusername="&tusername&"&time="&Value)
+                job1.PostString("https://bottle-bookjnrain.rhcloud.com/deletemessage/","username="&username&"&password="&password&"&tusername="&lbl2.Tag&"&time="&Value)
 	    End Select
 	End If
 End Sub
