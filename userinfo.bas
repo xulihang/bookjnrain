@@ -39,6 +39,7 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("userinfo")
+	Activity.AddMenuItem("复制用户ID","cpid")
 	Activity.AddMenuItem("看留言","message")
     EditText1.Enabled=False
 	EditText2.Enabled=False
@@ -158,4 +159,10 @@ End Sub
 
 Sub message_click
     StartActivity(usermessage)
+End Sub
+
+Sub cpid_click
+    Dim CC As BClipboard
+    CC.setText(comment.queryuser)
+	ToastMessageShow("结果已复制到剪切板。",False)
 End Sub

@@ -31,6 +31,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("comment")
 	tusername=comment.queryuser
+	Label1.Width=100%x
+	Label1.Left=0
+	Label1.Text=tusername&"的留言"
 	Dim getmessage As HttpJob
 	getmessage.Initialize("getmessage",Me)
     getmessage.Download("https://bottle-bookjnrain.rhcloud.com/getusermessage/"&tusername)

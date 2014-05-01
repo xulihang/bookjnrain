@@ -41,6 +41,7 @@ Sub Activity_Create(FirstTime As Boolean)
     Label2 = ListView1.TwoLinesLayout.Label
 	Label3 = ListView1.TwoLinesLayout.SecondLabel
     Label2.TextSize = 14
+	Label3.TextSize=12
 	Label3.TextColor= Colors.Black
 
 	If SQL1.IsInitialized = False Then
