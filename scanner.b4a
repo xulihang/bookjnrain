@@ -194,6 +194,7 @@ Sub Globals
 	Dim newmessage=0 As Int
 	Dim inputkeyword As EditText
 	Dim searchspinner As Spinner
+	Dim links As Map
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -250,6 +251,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Button13.Visible=False
     Initilize_sm
 	Initilize_viewsaboutsearch
+	links.Initialize
 	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看","查看闲置的书","公布闲置的书","查看求书列表","我要求书","每日心情"))
 	Spinner1.BringToFront
 	'Spinner1.Enabled=False
@@ -792,6 +794,7 @@ End Sub
 
 '以下是Panel2上的ListView
 Sub createlistview(jsonresult As String)
+    links.Clear '清空原来的链接
     If clv1.IsInitialized=True Then
 	    clv1.AsView.RemoveView
 	End If
@@ -819,6 +822,11 @@ Sub createlistview(jsonresult As String)
 		
 		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
 		    If I=list1.Size-1 Then
+			    If manager.GetString("list2")="图书封面" AND links.Size<>0 Then
+			        CallSubDelayed2(ImageDownloader, "DownloadCover", links)
+				Else If manager.GetString("list2")="用户头像" AND links.Size<>0 Then
+				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
+				End If
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
@@ -840,6 +848,11 @@ Sub createlistview(jsonresult As String)
 			    clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
 		    End If
 			If I=list1.Size-1 Then
+			    If manager.GetString("list2")="图书封面" Then
+			        CallSubDelayed2(ImageDownloader, "DownloadCover", links)
+				Else If manager.GetString("list2")="用户头像" Then
+				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
+				End If
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
@@ -1067,18 +1080,16 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	    cover.Visible=True
 	    n=54dip
 		y=63dip
-	    Dim links As Map
-	    links.Initialize
-	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getimage/"&SecondLineText)
-	    CallSubDelayed2(ImageDownloader, "Download", links)
+		If File.Exists(File.DirDefaultExternal,SecondLineText&".jpg")=False OR File.Size(File.DirDefaultExternal,SecondLineText&".jpg")<=0 Then
+	        links.Put(cover, SecondLineText)
+		Else
+		    cover.Bitmap=LoadBitmap(File.DirDefaultExternal,SecondLineText&".jpg")
+		End If
 	Else If manager.GetString("list2")="用户头像" Then
 		cover.Visible=True
 	    n=54dip
 		y=54dip
-	    Dim links As Map
-	    links.Initialize
-	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getavatar/"&uploader)
-	    CallSubDelayed2(ImageDownloader, "Download", links)
+	    links.Put(cover, uploader)
 	Else If manager.GetString("list2")="不显示" Then
 	    If cover.Visible=True Then
 		    cover.RemoveView
@@ -1167,23 +1178,21 @@ Sub CreateListItem2(booksname As String, isbn As String, price As String, detail
 	cover.Visible=False
 	
 	Dim n As Int
-	Dim y As Int
+	Dim y As Int	
 	If manager.GetString("list2")="图书封面" Then
 	    cover.Visible=True
 	    n=54dip
 		y=63dip
-	    Dim links As Map
-	    links.Initialize
-	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getimage/"&isbn)
-	    CallSubDelayed2(ImageDownloader, "Download", links)
+		If File.Exists(File.DirDefaultExternal,isbn&".jpg")=False OR File.Size(File.DirDefaultExternal,isbn&".jpg")<=0 Then
+	        links.Put(cover, isbn)
+		Else
+		    cover.Bitmap=LoadBitmap(File.DirDefaultExternal,isbn&".jpg")
+		End If
 	Else If manager.GetString("list2")="用户头像" Then
 		cover.Visible=True
 	    n=54dip
 		y=54dip
-	    Dim links As Map
-	    links.Initialize
-	    links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getavatar/"&uploader)
-	    CallSubDelayed2(ImageDownloader, "Download", links)
+	    links.Put(cover, uploader)
 	Else If manager.GetString("list2")="不显示" Then
 	    If cover.Visible=True Then
 		    cover.RemoveView
@@ -1463,6 +1472,7 @@ Sub more_click
 End Sub
 
 Sub addlistview(jsonresult As String)
+    links.Clear '清空原来的链接
     Dim JSON As JSONParser
     'JSON.Initialize(File.ReadString(File.DirAssets, "out.json")) 'Read the text from a file.
 	JSON.Initialize(jsonresult)
@@ -1483,6 +1493,11 @@ Sub addlistview(jsonresult As String)
 		
 		    clv1.Add(CreateListItem(map1.get("bookname"),map1.get("isbn"),map1.get("praise"),map1.get("comment"),map1.get("username"), clv1.AsView.Width, ProperHeight), ProperHeight, map1.get("isbn"))
 		    If I=list1.Size-1 Then
+			    If manager.GetString("list2")="图书封面" AND links.Size<>0 Then
+			        CallSubDelayed2(ImageDownloader, "DownloadCover", links)
+				Else If manager.GetString("list2")="用户头像" AND links.Size<>0 Then
+				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
+				End If
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
@@ -1503,6 +1518,11 @@ Sub addlistview(jsonresult As String)
 			    clv1.Add(CreateListItem2(map1.get("bookname"),map1.get("isbn"),map1.get("price"),map1.get("detail"),map1.get("purpose"),map1.get("pubtime"),map1.get("username"),map1.get("finished"), clv1.AsView.Width, ProperHeight), ProperHeight, 1)
 		    End If
 		    If I=list1.Size-1 Then
+			    If manager.GetString("list2")="图书封面" Then
+			        CallSubDelayed2(ImageDownloader, "DownloadCover", links)
+				Else If manager.GetString("list2")="用户头像" Then
+				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
+				End If
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next

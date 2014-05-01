@@ -107,7 +107,7 @@ Sub Button2_Click
 End Sub
 Sub Button1_Click
     writeprofile
-	ToastMessageShow("保存成功",False)
+	ToastMessageShow("已保存到本地",False)
 	Activity.Finish
 End Sub
 

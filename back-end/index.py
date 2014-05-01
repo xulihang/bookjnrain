@@ -642,7 +642,7 @@ def find():
 #得到图片
 @route("/getimage/<isbn:path>")
 def getimage(isbn):
-    if os.path.exists("./images/"+isbn+".jpg")==False:
+    if os.path.exists("./images/"+isbn+".jpg")==False or os.path.getsize("./images/"+isbn+".jpg")<=0:
         f = urllib.urlopen("https://api.douban.com/v2/book/isbn/:"+isbn)
         jresult=f.read()
         jsonVal = json.loads(jresult)
