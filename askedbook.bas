@@ -88,7 +88,7 @@ Sub loadlist
 	Cursor1.Close
 End Sub
 
-Sub ListView1_ItemClick (Position As Int, Value As Object)
+Sub ListView1_ItemLongClick (Position As Int, Value As Object)
     Dim r As List 
     r.Initialize
 	r.Add("显示用户信息")
@@ -127,6 +127,17 @@ Sub ListView1_ItemClick (Position As Int, Value As Object)
 			job2.PostString("https://bottle-bookjnrain.rhcloud.com/deleteaskbook","username="&Value&"&pubtime="&time)
 	End Select	
 End Sub
+
 Sub Button2_Click
 	Msgbox("暂不支持","")
+End Sub
+
+Sub ListView1_ItemClick (Position As Int, Value As Object)
+    Dim detail As String
+    Dim Cursor1 As Cursor
+	Cursor1 = SQL1.ExecQuery("SELECT * FROM statics")
+	Cursor1.Position = Position
+	detail=Cursor1.GetString("detail")
+	Cursor1.Close
+	Msgbox(detail,"详细")
 End Sub
