@@ -64,7 +64,7 @@ ModuleVisible30=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=25
 File1=about.bal
 File2=askforbook.bal
@@ -195,6 +195,7 @@ Sub Globals
 	Dim inputkeyword As EditText
 	Dim searchspinner As Spinner
 	Dim links As Map
+	Dim links2 As Map
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -252,6 +253,7 @@ Sub Activity_Create(FirstTime As Boolean)
     Initilize_sm
 	Initilize_viewsaboutsearch
 	links.Initialize
+	links2.Initialize
 	Spinner1.AddAll(Array As String("最热上传","最新上传","按天查看","查看闲置的书","公布闲置的书","查看求书列表","我要求书","每日心情"))
 	Spinner1.BringToFront
 	'Spinner1.Enabled=False
@@ -795,6 +797,7 @@ End Sub
 '以下是Panel2上的ListView
 Sub createlistview(jsonresult As String)
     links.Clear '清空原来的链接
+	links2.Clear
     If clv1.IsInitialized=True Then
 	    clv1.AsView.RemoveView
 	End If
@@ -827,6 +830,7 @@ Sub createlistview(jsonresult As String)
 				Else If manager.GetString("list2")="用户头像" AND links.Size<>0 Then
 				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
 				End If
+				CallSubDelayed2(nicknameloader, "Download", links2)
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
@@ -1098,10 +1102,7 @@ Sub CreateListItem(FirstLineText As String, SecondLineText As String, PraiseTime
 	End If
 	
 	'获取用户昵称
-	Dim links2 As Map
-	links2.Initialize
 	links2.Put(lbl5, "https://bottle-bookjnrain.rhcloud.com/getusernickname/"&uploader)
-	CallSubDelayed2(nicknameloader, "Download", links2)
 	
 	p.AddView(lbl, 5dip+n, 2dip, Width-72dip-n, Height-4dip) 'view #0
     p.AddView(lbl2, 5dip+n, Height-20dip, Width-72dip, 20dip) 'view #1
@@ -1473,6 +1474,7 @@ End Sub
 
 Sub addlistview(jsonresult As String)
     links.Clear '清空原来的链接
+	links2.Clear
     Dim JSON As JSONParser
     'JSON.Initialize(File.ReadString(File.DirAssets, "out.json")) 'Read the text from a file.
 	JSON.Initialize(jsonresult)
@@ -1523,6 +1525,7 @@ Sub addlistview(jsonresult As String)
 				Else If manager.GetString("list2")="用户头像" Then
 				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
 				End If
+				CallSubDelayed2(nicknameloader, "Download", links2)
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next

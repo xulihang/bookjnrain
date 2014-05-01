@@ -195,9 +195,9 @@ Sub CreateListItem(FirstLineText As String,username As String,time As String, Wi
 	'获取用户头像
 	Dim links As Map
 	links.Initialize
-	links.Put(cover, "https://bottle-bookjnrain.rhcloud.com/getavatar/"&username)
+	links.Put(cover, username)
 	
-	CallSubDelayed2(ImageDownloader, "Download", links)
+	CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
 	p.AddView(lbl, 64dip+10dip, 2dip, Width-74dip, Height-4dip) 'view #0
 	p.AddView(lbl2, 64dip+10dip, Height-20dip, Width-144dip, 20dip) 'view #1
 	p.AddView(lbl3, Width-144dip, Height-20dip, 144dip, 20dip) 'view #2
