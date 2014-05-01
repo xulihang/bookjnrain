@@ -1,11 +1,46 @@
-听雨扫描器（自己先这样叫）
+听雨书房（自己先这样叫）
 =======
 
 #功能
 
-  通过扫描条码，统计图书信息，数字化管理资源。
+##在线
 
-#语言选择
++ 有个人账户，带社交功能。
+
++ 扫描图书后上传，给图书评论、点赞。
+
++ 发布闲置书供于换书、借书或卖书。
+
++ 求书，网上买不到，而学生可能有的书。
+
++ 可查询图书信息，并关联豆瓣和图书馆的信息页面。
+
+……
+
+##本地
+
++ 扫描查书后可存储到本地管理。支持导出csv。
+
++ 读书笔记，管理读书。
+
+……
+
+##彩蛋
+
+
+……
+
+#后端
+
+##服务器
+
+  现采用openshift提供的免费空间做后台。由于gfw，只能用https连接，但不影响使用。
+
+##语言与数据库
+  
+  Python 2.6+Bottle+sqlite3，简单实用的组合。本人水平有限。  
+
+#客户端语言选择
 
 + Java 
 
@@ -19,24 +54,10 @@
 
   语法类似VB，IDE简洁实用，调试功能很强，生成的是与Java一样的bytecode，效率一样。现在Basic4android  的社区支持也还是很给力的。我本身学过AU3，使用起来很顺滑，就选它了。
 
+#可能存在的问题
 
-#现状
++ 后端安全问题。
 
-  框架大体写好了，UI简单也设计了一下。
++ 较低分辨率手机可能会有出界问题。
 
-#后端
-
-  现采用openshift提供的免费空间做后台。由于gfw，只能用https连接，但不影响使用。
-
-  `https://bottle-bookjnrain.rhcloud.com/index` （登入数据页面）
-
-  `https://bottle-bookjnrain.rhcloud.com/get` （下载sqlite数据库文件）
-
-  `https://bottle-bookjnrain.rhcloud.com/getxls` （生成并提供xls文件下载）
-
-  `https://bottle-bookjnrain.rhcloud.com/query` （在线查询页面）
-
-  `https://bottle-bookjnrain.rhcloud.com/reset` （危险操作，清空数据库）
-
-
-  
++ 不同手机界面效果可能不一样。
