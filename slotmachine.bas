@@ -33,6 +33,7 @@ End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
     Activity.LoadLayout("wv")
+	Activity.AddMenuItem("查看排行榜","seerank")
 	Activity.AddMenuItem("返回","back")
     init_wheels
 	Label2.Left=wv2.Left
@@ -117,6 +118,7 @@ Sub Button1_Click
 		    Else If Label3.Text<=0 Then
 		        ToastMessageShow("Game Over",False)
 			    Button1.Enabled=False
+				uploadrank
 			End If
         Else
 		    '点击again
@@ -191,4 +193,46 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the ev
 		Activity.Finish
 		Return True
 	End If
+End Sub
+
+Sub uploadrank
+    Dim resultofmsgbox As Int
+    resultofmsgbox=Msgbox2("要上传分数吗？","排行榜","上传","","等分数高点",Null)
+	If resultofmsgbox=DialogResponse.POSITIVE Then
+		Dim Reader As TextReader
+        Dim username As String
+	    If File.Exists(File.DirInternal,"user") Then
+            Reader.Initialize(File.OpenInput(File.DirInternal, "user"))
+		    username = Reader.ReadLine
+            Reader.Close 
+	        Dim now As Long
+		    now=DateTime.Now
+	        Dim upload As HttpJob
+	        upload.Initialize("upload",Me)
+            upload.PostString("https://bottle-bookjnrain.rhcloud.com/user/slotrank","username="&username&"&time="&now&"&score="&Label5.Text)
+	        ProgressDialogShow("上传中...")
+        Else
+		    Msgbox("请先登录！","")
+        End If
+	End If
+End Sub
+
+Sub JobDone (job As HttpJob)
+	Log("JobName = " & job.JobName & ", Success = " & job.Success)
+	If job.Success = True Then
+		Select job.JobName
+			Case "upload"
+			    ProgressDialogHide
+				ToastMessageShow("上传成功",False)
+		End Select
+	Else
+	    ProgressDialogHide
+		Log("Error: " & job.ErrorMessage)
+		ToastMessageShow("Error: " & job.ErrorMessage, True)
+	End If
+	job.Release
+End Sub
+
+Sub seerank_click
+    StartActivity(slotrank)
 End Sub

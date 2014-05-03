@@ -219,8 +219,8 @@ def getxls():
     os.system("python newxls.py")
     return static_file("test.xls","./",download="test.xls")
 
-#手工输入
-@route("/handlogin",method="post")
+#手工输入-暂不开通
+#@route("/handlogin",method="post")
 def reset():
     username = request.forms.get("username")
     password = request.forms.get("password")
@@ -269,7 +269,7 @@ def reset():
         return username+'登录失败'
 
 #手工输入页面
-@route("/hand")
+#@route("/hand")
 def resetpage():
     return template("hand")  
 
@@ -1067,6 +1067,69 @@ def deletemessage():
 def deletemessagepage():
 
     return template("deletemessage")
+
+#处理老虎机排行
+@route("/user/slotrank", method="POST")
+def slotrank():
+    username = request.forms.get("username")
+    time = request.forms.get("time")
+    score = request.forms.get("score")
+    if os.path.exists("db/slotrank.db")==False:
+        conn = sqlite3.connect("db/slotrank.db")
+        c = conn.cursor()
+        c.execute("CREATE TABLE statics (username, time, score)")
+        c.execute("insert into statics values ('"+username+"','"+time+"','"+score+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+    else:
+        conn = sqlite3.connect("db/slotrank.db")
+        c = conn.cursor()
+        c.execute("insert into statics values ('"+username+"','"+time+"','"+score+"')")
+        conn.commit()
+        c.close()
+        conn.close()
+    return "上传成功！"
+        
+#上传老虎机分数页面
+@route("/uploadslotrank")
+def uploadslotrank():
+
+    return template("slotrank")
+
+#得到心情json
+@route('/getslotrank')    
+def getmoodjson():
+    itemnumber=20
+    page=1
+    result=[]
+    dbpath='db/slotrank.db'
+    conn = sqlite3.connect(dbpath)
+    c = conn.cursor()
+    SqlSentence="SELECT * FROM statics Order By score desc"
+
+    i=0
+    j=0
+    for row in c.execute(SqlSentence):
+        if i==(page-1)*itemnumber+j and j<itemnumber:
+            j=j+1
+            username=row[0]
+            time=row[1]
+            score=row[2]
+            single={"username":str(username.encode("utf-8")),
+                   "time":str(time.encode("utf-8")),
+                   "score":str(score.encode("utf-8"))}
+            result.append(single)
+        if j==itemnumber:
+            break
+        i=i+1
+    conn.commit()
+    c.close()
+    conn.close()
+    out=json.dumps(result, ensure_ascii=False) 
+    return str(out)
+
+
 #@route('/hello/:name')
 #def index(name='World'):
 #    return '<b>Hello %s!</b>' % name
