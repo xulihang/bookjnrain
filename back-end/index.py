@@ -1077,7 +1077,7 @@ def slotrank():
     if os.path.exists("db/slotrank.db")==False:
         conn = sqlite3.connect("db/slotrank.db")
         c = conn.cursor()
-        c.execute("CREATE TABLE statics (username, time, score)")
+        c.execute("CREATE TABLE statics (username, time, score NUMERIC)")
         c.execute("insert into statics values ('"+username+"','"+time+"','"+score+"')")
         conn.commit()
         c.close()
@@ -1097,9 +1097,9 @@ def uploadslotrank():
 
     return template("slotrank")
 
-#得到心情json
+#得到排行榜json
 @route('/getslotrank')    
-def getmoodjson():
+def getslotjson():
     itemnumber=20
     page=1
     result=[]
@@ -1116,9 +1116,9 @@ def getmoodjson():
             username=row[0]
             time=row[1]
             score=row[2]
-            single={"username":str(username.encode("utf-8")),
-                   "time":str(time.encode("utf-8")),
-                   "score":str(score.encode("utf-8"))}
+            single={"username":username,
+                   "time":time,
+                   "score":score}
             result.append(single)
         if j==itemnumber:
             break
