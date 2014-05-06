@@ -206,7 +206,7 @@ Sub uploadrank
 		    username = Reader.ReadLine
             Reader.Close 
 	        Dim now As Long
-		    now=DateTime.Now
+		    now=DateTime.now
 	        Dim upload As HttpJob
 	        upload.Initialize("upload",Me)
             upload.PostString("https://bottle-bookjnrain.rhcloud.com/user/slotrank","username="&username&"&time="&now&"&score="&Label5.Text)

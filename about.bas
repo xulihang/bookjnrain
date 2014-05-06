@@ -9,7 +9,7 @@ Version=3
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-
+    Dim MP As MediaPlayer 'should be done in Sub Process_Globals
 End Sub
 
 Sub Globals
@@ -91,7 +91,6 @@ Sub ImageView2_Click
 		a1.Start(ImageView2)
 		caidan=0
 		ToastMessageShow("6L+Z5piv5Liq5b2p6JuL",False)
-		Dim MP As MediaPlayer 'should be done in Sub Process_Globals
         MP.Initialize2("MP")
 		MP.Stop 
         MP.Load(File.DirAssets, "wuqu.mid")
