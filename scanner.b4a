@@ -66,7 +66,7 @@ ModuleVisible31=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(about, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
+UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
 NumberOfFiles=25
 File1=about.bal
 File2=askforbook.bal
@@ -972,7 +972,12 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 	            lbl1 = pnl.GetView(0)
 			    Dim encodedUrl As String
 	            encodedUrl = su.EncodeUrl(lbl1.Text, "UTF8")
-				WebView1.LoadUrl("http://202.195.144.48:8080/search?kw="&encodedUrl&"&xc=6&searchtype=title")
+				resultofmsgbox2=Msgbox2("选择网页类型","详情","电脑版","","手机版",Null)
+				If resultofmsgbox2=DialogResponse.NEGATIVE Then
+				    WebView1.LoadUrl("http://202.195.144.48:8080/search?kw="&encodedUrl&"&xc=6&searchtype=title")
+				Else
+				    WebView1.LoadUrl("http://202.195.144.118:8080/opac/openlink.php?strSearchType=title&match_flag=forward&historyCount=1&strText="&encodedUrl&"&doctype=ALL&displaypg=20&showmode=list&sort=CATA_DATE&orderby=desc&location=ALL")
+				End If
 	    End Select		
 	End If
 End Sub
