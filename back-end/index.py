@@ -685,7 +685,7 @@ def getjson():
     elif queryorder == 5:
 	SqlSentence="SELECT * FROM statics WHERE username like '%"+keyword+"%'"
     elif queryorder == 6:
-	SqlSentence="SELECT * FROM staticsOrder by praise desc"
+	SqlSentence="SELECT * FROM statics Order by praise desc"
     
     i=0
     j=0
@@ -1129,7 +1129,41 @@ def getslotjson():
     out=json.dumps(result, ensure_ascii=False) 
     return str(out)
 
-
+#得到book.db的json
+@route("/getalljson/<page:path>")
+def getalljson(page):
+    page=int(page)
+    itemnumber=5
+    result=[]
+    i=0
+    j=0
+    conn = sqlite3.connect('book.db')
+    c = conn.cursor()
+    for ss in c.execute('select * from book'):
+        if i==(page-1)*itemnumber+j and j<itemnumber:
+            j=j+1
+            title=ss[0].encode('utf8')
+            price=ss[1].encode('utf8')
+            publisher=ss[2].encode('utf8')
+            isbn=ss[3].encode('utf8')
+            pubdate=ss[4].encode('utf8')
+            lasttime=ss[5].encode('utf8')  
+            single={"title":title,
+                       "price":price,
+                       "publisher":publisher,
+                       "isbn":isbn,
+                       "pubdate":pubdate,
+                       "lasttime":lasttime}
+            result.append(single)
+        if j==itemnumber:
+            break
+        i=i+1
+    conn.commit()
+    c.close()
+    conn.close()    
+    
+    out=json.dumps(result, ensure_ascii=False) 
+    return str(out)
 #@route('/hello/:name')
 #def index(name='World'):
 #    return '<b>Hello %s!</b>' % name
