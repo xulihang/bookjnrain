@@ -66,7 +66,7 @@ ModuleVisible31=1
 Package=org.jnrain.book
 DoNotOverwriteManifest=False
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetActivityAttribute(comment, android:windowSoftInputMode, adjustResize|stateHidden)~\n~SetActivityAttribute(Main, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(about, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(profile, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(register, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(login, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(userinfo, android:screenOrientation, "portrait") ~\n~SetActivityAttribute(handinput, android:screenOrientation, "portrait") ~\n~AddApplicationText(<activity android:name="anywheresoftware.b4a.objects.preferenceactivity"/>)~\n~AddApplicationText(<activity android:name="ice.zxing.CaptureActivity"~\n~			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"~\n~			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"~\n~			android:windowSoftInputMode="stateAlwaysHidden">~\n~		</activity>)~\n~~\n~'End of default text.~\n~
-UserTypesHint=FileData,CustomListView,SlideMenu,ActionItem
+UserTypesHint=ActionItem,SlideMenu,CustomListView,FileData
 NumberOfFiles=25
 File1=about.bal
 File2=askforbook.bal
@@ -249,6 +249,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Button12.Visible=False
 	Panel2.Visible=False
 	Panel3.Visible=False
+	'Button8.Visible=False
 	Button9.Visible=False '弃用按钮，改为spinner
 	Button11.Visible=False
 	Button13.Visible=False
@@ -859,6 +860,7 @@ Sub createlistview(jsonresult As String)
 				Else If manager.GetString("list2")="用户头像" Then
 				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
 				End If
+				CallSubDelayed2(nicknameloader, "Download", links2)
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
@@ -1208,6 +1210,9 @@ Sub CreateListItem2(booksname As String, isbn As String, price As String, detail
 	    n=0
 	End If
 	
+	'获取用户昵称
+	links2.Put(lbl6, "https://bottle-bookjnrain.rhcloud.com/getusernickname/"&uploader)
+	
 	p.AddView(lbl, 5dip+n, 2dip, Width-80dip-n, 40dip) 'view #0
     p.AddView(lbl2, 5dip+n, Height-20dip, Width-160dip-n, 20dip) 'view #1
 	p.AddView(lbl3, Width-80dip,Height-20dip, 80dip, 20dip) 'view #2
@@ -1507,6 +1512,7 @@ Sub addlistview(jsonresult As String)
 				Else If manager.GetString("list2")="用户头像" AND links.Size<>0 Then
 				    CallSubDelayed2(ImageDownloader, "DownloadAvatar", links)
 				End If
+				CallSubDelayed2(nicknameloader, "Download", links2)
 		        clv1.Add(morelistitem(clv1.AsView.Width, 40dip),40dip,0)
 		    End If
 	    Next
