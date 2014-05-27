@@ -46,7 +46,7 @@ Sub JobDone (job As HttpJob)
 			Case "getver"
 				'print the result to the logs
 				ProgressDialogHide
-				If job.GetString<90 Then
+				If job.GetString<=110 Then
 					ToastMessageShow("已是最新版",False)
 				Else
 				    Dim result As Int
@@ -74,7 +74,8 @@ Sub Button2_Click
     ProgressDialogShow("检查中")
     Dim getver As HttpJob
 	getver.Initialize("getver",Me)
-	getver.Download("https://bottle-bookjnrain.rhcloud.com/getver")
+	'getver.Download("https://bottle-bookjnrain.rhcloud.com/getver")
+	getver.Download("http://xulihang.wicp.net/apk/ver")
 End Sub
 Sub ImageView2_Click
 	caidan=caidan+1

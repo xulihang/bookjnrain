@@ -893,7 +893,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
             Reader.Close 
 		End If
 		
-		If username=lbl6.Text Then
+		If username=lbl6.Tag Then
 		    r.Add("修改状态为结束")
 		End If
 		
@@ -920,7 +920,7 @@ Sub clv1_ItemClick (Index As Int, Value As Object)
 	                WebView1.LoadUrl("http://books.google.com.hk/books?vid=ISBN"&lbl2.Text)
 			    End If
 		    Case 3
-		        comment.queryuser=lbl6.Text
+		        comment.queryuser=lbl6.Tag
                 StartActivity(userinfo)
 			Case 4
 	            Dim lbl1 As Label
@@ -1179,6 +1179,7 @@ Sub CreateListItem2(booksname As String, isbn As String, price As String, detail
 	lbl6.Initialize("")
 	lbl6.Gravity = Gravity.RIGHT
 	lbl6.Text = uploader
+	lbl6.Tag = uploader
 	lbl6.TextSize = 12
 	lbl6.TextColor = Colors.Gray
 		
